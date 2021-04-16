@@ -5,12 +5,14 @@ import {
   Toolbar, Divider, Container, SvgIconTypeMap, Button, CssBaseline, makeStyles, Typography
 } from '@material-ui/core';
 import {Link, Redirect, Route, RouteComponentProps, Switch, withRouter} from "react-router-dom";
-import Routes, {HOME} from "./Routes";
+import Routes, {HOME, LOGIN, REGISTER} from "./Routes";
 import {OverridableComponent} from "@material-ui/core/OverridableComponent";
 import clsx from 'clsx';
 import MenuIcon from '@material-ui/icons/Menu';
 import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import Login from "../components/signInUp/Login";
+import Registration from "../components/signInUp/Registration";
 
 type Props = {
   location: { pathname: string },
@@ -115,7 +117,8 @@ const Sidebar: FC<Props> = (props) => {
       <main className={classes.content}>
         <div className={classes.appBarSpacer}/>
         <Container maxWidth="lg" className={classes.container}>
-          {/*<Route path={HOME} exact component={Temp}/>*/}
+          <Route path={LOGIN} exact component={Login}/>
+          <Route path={REGISTER} exact component={Registration}/>
           <Switch>
             <Route
               exact
