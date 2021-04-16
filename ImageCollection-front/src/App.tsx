@@ -1,26 +1,23 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useState} from 'react';
 import './App.css';
+import {HashRouter} from "react-router-dom";
+import Sidebar from "./shared/Sidebar";
+
+// export const UserContext = React.createContext<{userInfo: GetUserDto | null, setUserInfo: (val: <JakiesDTO> | null) => void}>(null!);
+
+// const HashRouter = require("react-router-dom").HashRouter;
 
 function App() {
+  // const [userInfo, setUserInfo] = useState< <JakiesDto> | null>(null)
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    // <UserContext.Provider value={{userInfo, setUserInfo}}>
+      <HashRouter>
+        <Sidebar/>
+      </HashRouter>
+    // </UserContext.Provider>
   );
 }
 
 export default App;
+
