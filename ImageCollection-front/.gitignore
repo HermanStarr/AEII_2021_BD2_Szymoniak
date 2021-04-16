@@ -20,3 +20,10 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+/.idea/aws.xml
+/.idea/codeStyles/codeStyleConfig.xml
+/.idea/ImageCollection-front.iml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/vcs.xml
+/.idea/.gitignore
