@@ -4,9 +4,9 @@ export const HOME = '/home';
 export const Routes = [
   {
     path: HOME,
-    sidebarName: 'Articles',
+    sidebarName: 'Images',
     icon: DescriptionIcon,
-    component: "Articles",
+    component: "Images",
   },
 
 ];
