@@ -5,7 +5,7 @@ import {
   Toolbar, Divider, Container, SvgIconTypeMap, Button, CssBaseline, makeStyles, Typography
 } from '@material-ui/core';
 import {Link, Redirect, Route, RouteComponentProps, Switch, withRouter} from "react-router-dom";
-import Routes, {HOME, LOGIN, REGISTER} from "./Routes";
+import Routes, {ACCOUNT, BACKUP, HOME, LOGIN, PROFILES, REGISTER} from "./Routes";
 import {OverridableComponent} from "@material-ui/core/OverridableComponent";
 import clsx from 'clsx';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -13,6 +13,10 @@ import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import Login from "../components/signInUp/Login";
 import Registration from "../components/signInUp/Registration";
+import Images from "../components/images/Images";
+import {Account} from "../components/Account";
+import {Backup} from "../components/Backup";
+import {Profiles} from "../components/Profiles";
 
 type Props = {
   location: { pathname: string },
@@ -92,12 +96,6 @@ const Sidebar: FC<Props> = (props) => {
         </div>
         <Divider/>
         <MenuList>
-          {/*Filtering order:
-          1. Not logged in (quest)
-          2. Reviewer, but not author
-          3. Author, but not reviewer
-          4. Author and reviewer
-          */}
           {Routes
             .map((prop: { path: string, sidebarName: string, icon: OverridableComponent<SvgIconTypeMap> }, key: number) => {
               return (
@@ -119,14 +117,10 @@ const Sidebar: FC<Props> = (props) => {
         <Container maxWidth="lg" className={classes.container}>
           <Route path={LOGIN} exact component={Login}/>
           <Route path={REGISTER} exact component={Registration}/>
-          <Switch>
-            <Route
-              exact
-              path="/"
-              render= {() => {
-                return <Redirect to={HOME}/>
-              }} />
-          </Switch>
+          <Route path={HOME} exact component={Images} />
+          <Route path={ACCOUNT} exact component={Account} />
+          <Route path={BACKUP} exact component={Backup} />
+          <Route path={PROFILES} exact component={Profiles} />
         </Container>
       </main>
     </div>
