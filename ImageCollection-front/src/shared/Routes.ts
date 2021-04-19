@@ -8,6 +8,7 @@ import {Account} from "../components/Account";
 import {Backup} from "../components/Backup";
 import {Profiles} from "../components/Profiles";
 
+
 export const HOME = '/home';
 export const REGISTER = '/register';
 export const LOGIN = '/login';
