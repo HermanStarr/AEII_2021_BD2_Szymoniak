@@ -8,7 +8,9 @@ import pl.polsl.dsa.imagecollection.model.*;
 import java.util.List;
 
 @Repository
-public interface ImageRepository extends CrudRepository<ImageEntity, Integer>, JpaSpecificationExecutor<ImageEntity> {
+public interface ImageRepository extends
+        CrudRepository<ImageEntity, Integer>,
+        JpaSpecificationExecutor<ImageEntity> {
     public List<ImageEntity> getAllBySize(Integer size);
     public ImageEntity getById(Long id);
 }
