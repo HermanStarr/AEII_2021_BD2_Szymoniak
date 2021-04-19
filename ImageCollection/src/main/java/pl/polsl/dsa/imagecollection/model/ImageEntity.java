@@ -1,10 +1,6 @@
 package pl.polsl.dsa.imagecollection.model;
 
-import pl.polsl.dsa.imagecollection.model.category.CategoryInAnImage;
-import pl.polsl.dsa.imagecollection.model.tag.TagInAnImage;
-
 import javax.persistence.*;
-import java.sql.Blob;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Set;
@@ -28,17 +24,17 @@ public class ImageEntity {
 
     @Lob
     @Column(name = "thumb")
-    private Blob thumbnail;
+    private Byte[] thumbnail;
 
     @Lob
-    @Column(name = "original_image")
-    private Blob originalImage;
+    @Column(name = "image_proper")
+    private Byte[] originalImage;
 
-    @OneToMany(mappedBy = "image", fetch = FetchType.LAZY)
-    private Set<CategoryInAnImage> categories;
+    @ManyToMany(mappedBy = "id_image", fetch = FetchType.LAZY)
+    private Set<CategoryEntity> categories;
 
-    @OneToMany(mappedBy = "image", fetch = FetchType.LAZY)
-    private Set<TagInAnImage> tags;
+    @ManyToMany(mappedBy = "id_image", fetch = FetchType.LAZY)
+    private Set<TagEntity> tags;
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
@@ -58,6 +54,10 @@ public class ImageEntity {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="id_user", referencedColumnName = "id")
+    private UserEntity owner;
+
     public Long getId() {
         return id;
     }
@@ -74,35 +74,35 @@ public class ImageEntity {
         this.name = name;
     }
 
-    public Blob getThumbnail() {
+    public Byte[] getThumbnail() {
         return thumbnail;
     }
 
-    public void setThumbnail(Blob thumbnail) {
+    public void setThumbnail(Byte[] thumbnail) {
         this.thumbnail = thumbnail;
     }
 
-    public Blob getOriginalImage() {
+    public Byte[] getOriginalImage() {
         return originalImage;
     }
 
-    public void setOriginalImage(Blob originalImage) {
+    public void setOriginalImage(Byte[] originalImage) {
         this.originalImage = originalImage;
     }
 
-    public Set<CategoryInAnImage> getCategories() {
+    public Set<CategoryEntity> getCategories() {
         return categories;
     }
 
-    public void setCategories(Set<CategoryInAnImage> categories) {
+    public void setCategories(Set<CategoryEntity> categories) {
         this.categories = categories;
     }
 
-    public Set<TagInAnImage> getTags() {
+    public Set<TagEntity> getTags() {
         return tags;
     }
 
-    public void setTags(Set<TagInAnImage> tagEntities) {
+    public void setTags(Set<TagEntity> tagEntities) {
         this.tags = tagEntities;
     }
 
@@ -171,5 +171,10 @@ public class ImageEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id, name, thumbnail, originalImage, creationDate, size, format, resolutionX, resolutionY, description);
+    }
+
+
+    public void setOwner(UserEntity owner) {
+        this.owner = owner;
     }
 }
