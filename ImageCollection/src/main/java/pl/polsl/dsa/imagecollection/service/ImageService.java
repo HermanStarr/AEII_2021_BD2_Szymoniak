@@ -1,14 +1,21 @@
 package pl.polsl.dsa.imagecollection.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.polsl.dsa.imagecollection.PaginatedResult;
+import pl.polsl.dsa.imagecollection.SearchCriteria;
 import pl.polsl.dsa.imagecollection.dao.ImageRepository;
 import pl.polsl.dsa.imagecollection.dao.UserRepository;
 import pl.polsl.dsa.imagecollection.dto.ImageRequest;
+import pl.polsl.dsa.imagecollection.dto.ImageResponse;
+import pl.polsl.dsa.imagecollection.dto.ImageThumbResponse;
 import pl.polsl.dsa.imagecollection.exception.ResourceNotFoundException;
 import pl.polsl.dsa.imagecollection.model.ImageEntity;
 import pl.polsl.dsa.imagecollection.model.UserEntity;
 
+import java.awt.*;
 import java.time.LocalDateTime;
 
 @Service
@@ -36,8 +43,66 @@ public class ImageService {
         image.setResolutionY(imageRequest.getResolutionY());
         image.setDescription(imageRequest.getDescription());
         image.setOwner(user);
+
         //TODO Add thumbnail processing, set categories and tags
 
+        imageRepository.save(image);
     }
 
+    public void editImage(ImageRequest imageRequest, Long id, String nickname) {
+        UserEntity user = userRepository.findByNickname(nickname)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "nickname", nickname));
+
+        ImageEntity image = imageRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Image", "id", id));
+        if (!image.getOwner().equals(user)) {
+            return;
+            //TODO Throw some runtime exception
+        }
+        image.setName(imageRequest.getName());
+        image.setDescription(imageRequest.getDescription());
+
+        //TODO Set categories and tags
+
+        imageRepository.save(image);
+    }
+
+    @Transactional(readOnly = true)
+    public ImageResponse getImage(Long id) {
+        ImageEntity image = imageRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Image", "id", id));
+        return ImageResponse.fromEntity(image);
+    }
+
+    @Transactional(readOnly = true)
+    public PaginatedResult<ImageThumbResponse> getImageThumbnails(Long userId, Boolean mode, SearchCriteria<ImageEntity> criteria) {
+
+        Specification<ImageEntity> specification;
+        if (mode == true) {
+            specification = criteria.getSpecification();
+            //TODO Search with OR
+        } else {
+            specification = criteria.getSpecification();
+        }
+        if (userId != null) {
+            specification = specification.and((Specification<ImageEntity>) (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("owner").get("nickname"), userId));
+        }
+        return new PaginatedResult<>(imageRepository
+                .findAll(specification, criteria.getPaging())
+                .map(ImageThumbResponse::fromEntity)
+        );
+    }
+
+    @Transactional
+    public void deleteImage(Long id, String nickname) {
+        UserEntity user = userRepository.findByNickname(nickname)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "nickname", nickname));
+        ImageEntity image = imageRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Image", "id", id));
+        if (!image.getOwner().equals(user)) {
+            return;
+            //TODO Throw some runtime exception
+        }
+        imageRepository.deleteById(id);
+    }
 }

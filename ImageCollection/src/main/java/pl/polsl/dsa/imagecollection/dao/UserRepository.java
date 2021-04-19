@@ -9,6 +9,6 @@ import java.util.Optional;
 
 
 @Repository
-public interface UserRepository extends CrudRepository<UserEntity, Integer>, JpaSpecificationExecutor<UserEntity> {
+public interface UserRepository extends CrudRepository<UserEntity, Long>, JpaSpecificationExecutor<UserEntity> {
     Optional<UserEntity> findByNickname(String nickname);
 }

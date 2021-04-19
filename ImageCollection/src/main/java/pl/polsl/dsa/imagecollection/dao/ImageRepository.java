@@ -9,8 +9,9 @@ import java.util.List;
 
 @Repository
 public interface ImageRepository extends
-        CrudRepository<ImageEntity, Integer>,
+        CrudRepository<ImageEntity, Long>,
         JpaSpecificationExecutor<ImageEntity> {
     public List<ImageEntity> getAllBySize(Integer size);
     public ImageEntity getById(Long id);
+
 }
