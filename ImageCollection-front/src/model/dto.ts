@@ -1,5 +1,6 @@
 export interface TileImageResponse {
-    thumb: undefined;
+    id: number
+    thumb: string;
     title: string;
     author: string;
     authorId: number;
@@ -7,11 +8,8 @@ export interface TileImageResponse {
 }
 
 export interface ImageResponse {
-    image: undefined;
+    image: string;
     title: string;
-    author: string;
-    authorId: number;
-    description: string;
 }
 
 export interface UserLoginRequest {
