@@ -61,6 +61,10 @@ public class ImageEntity {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
+    public UserEntity getOwner() {
+        return owner;
+    }
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_user", referencedColumnName = "id")
     private UserEntity owner;

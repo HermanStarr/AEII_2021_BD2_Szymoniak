@@ -5,7 +5,7 @@ import org.springframework.data.repository.CrudRepository;
 import pl.polsl.dsa.imagecollection.model.TagEntity;
 
 public interface TagRepository extends
-        CrudRepository<TagEntity, Integer>,
+        CrudRepository<TagEntity, Long>,
         JpaSpecificationExecutor<TagEntity> {
 
 }

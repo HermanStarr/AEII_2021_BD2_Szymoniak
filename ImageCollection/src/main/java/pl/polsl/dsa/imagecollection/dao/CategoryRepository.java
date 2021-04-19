@@ -5,7 +5,7 @@ import org.springframework.data.repository.CrudRepository;
 import pl.polsl.dsa.imagecollection.model.CategoryEntity;
 
 public interface CategoryRepository extends
-        CrudRepository<CategoryEntity, Integer>,
+        CrudRepository<CategoryEntity, Long>,
         JpaSpecificationExecutor<CategoryEntity> {
 
 }
