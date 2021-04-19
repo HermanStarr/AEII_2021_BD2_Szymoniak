@@ -1,4 +1,4 @@
-package pl.polsl.dsa.imagecollection.model.tag;
+package pl.polsl.dsa.imagecollection.model;
 
 import javax.persistence.*;
 import java.util.Objects;
