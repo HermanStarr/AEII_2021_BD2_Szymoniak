@@ -26,7 +26,7 @@ export const Account = (props: Props) => {
     }, []);
 
     return (
-        <Container maxWidth='xs'>
+        <Container>
             {isLoading ? (
                 <></>
             ) : (
