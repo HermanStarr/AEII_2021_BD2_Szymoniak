@@ -2,6 +2,7 @@ package pl.polsl.dsa.imagecollection.model;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
 
@@ -30,10 +31,16 @@ public class ImageEntity {
     @Column(name = "image_proper")
     private Byte[] originalImage;
 
-    @ManyToMany(mappedBy = "id_image", fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name="many_category_has_many_image",
+            joinColumns = @JoinColumn(name="id_image", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name="id_category", referencedColumnName = "id"))
     private Set<CategoryEntity> categories;
 
-    @ManyToMany(mappedBy = "id_image", fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name="many_tag_has_many_image",
+            joinColumns = @JoinColumn(name="id_image", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name="id_tag", referencedColumnName = "id"))
     private Set<TagEntity> tags;
 
     @Column(name = "creation_date")
@@ -46,10 +53,10 @@ public class ImageEntity {
     private String format;
 
     @Column(name = "resolution_x")
-    private Short resolutionX;
+    private Integer resolutionX;
 
     @Column(name = "resolution_y")
-    private Short resolutionY;
+    private Integer resolutionY;
 
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
@@ -130,19 +137,19 @@ public class ImageEntity {
         this.format = format;
     }
 
-    public Short getResolutionX() {
+    public Integer getResolutionX() {
         return resolutionX;
     }
 
-    public void setResolutionX(Short resolutionX) {
+    public void setResolutionX(Integer resolutionX) {
         this.resolutionX = resolutionX;
     }
 
-    public Short getResolutionY() {
+    public Integer getResolutionY() {
         return resolutionY;
     }
 
-    public void setResolutionY(Short resolutionY) {
+    public void setResolutionY(Integer resolutionY) {
         this.resolutionY = resolutionY;
     }
 
@@ -165,12 +172,20 @@ public class ImageEntity {
         ImageEntity imageEntity = (ImageEntity) o;
         return Objects.equals(id, imageEntity.id)
                 && Objects.equals(name, imageEntity.name)
-                && Objects.equals(creationDate, imageEntity.creationDate);
+                && Arrays.equals(thumbnail, imageEntity.thumbnail)
+                && Arrays.equals(originalImage, imageEntity.originalImage)
+                && Objects.equals(creationDate, imageEntity.creationDate)
+                && Objects.equals(size, imageEntity.size)
+                && Objects.equals(format, imageEntity.format)
+                && Objects.equals(resolutionX, imageEntity.resolutionX)
+                && Objects.equals(resolutionY, imageEntity.resolutionY)
+                && Objects.equals(description, imageEntity.description)
+                && Objects.equals(owner, imageEntity.owner);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, thumbnail, originalImage, creationDate, size, format, resolutionX, resolutionY, description);
+        return Objects.hash(id, name, thumbnail, originalImage, creationDate, size, format, resolutionX, resolutionY, description, owner);
     }
 
 
