@@ -83,16 +83,15 @@ const Images = (props: Props) => {
                                     ))}
                                 </Select>
                             </FormControl>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={() => setAddImageDialogOpened(true)}
+                            >
+                                Add image
+                            </Button>
                         </Toolbar>
                     </AppBar>
-                <Button
-                    fullWidth
-                    variant="contained"
-                    color="primary"
-                    onClick={() => setAddImageDialogOpened(true)}
-                >
-                    Add image
-                </Button>
                 <GridList spacing={20} className={classes.gridList}>
                     {images.map((tile) => (
                         <GridListTile
@@ -149,7 +148,6 @@ const useStyles = makeStyles((theme: Theme) =>
         gridList: {
             width: 800,
             height: 800,
-            // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
             transform: 'translateZ(0)',
         },
         titleBar: {
