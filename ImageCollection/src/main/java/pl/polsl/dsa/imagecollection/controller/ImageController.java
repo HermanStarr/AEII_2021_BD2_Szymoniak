@@ -1,8 +1,17 @@
 package pl.polsl.dsa.imagecollection.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import pl.polsl.dsa.imagecollection.PaginatedResult;
+import pl.polsl.dsa.imagecollection.SearchCriteria;
+import pl.polsl.dsa.imagecollection.dto.ApiResponse;
+import pl.polsl.dsa.imagecollection.dto.ImageRequest;
+import pl.polsl.dsa.imagecollection.dto.ImageResponse;
+import pl.polsl.dsa.imagecollection.dto.ImageThumbResponse;
+import pl.polsl.dsa.imagecollection.model.ImageEntity;
 import pl.polsl.dsa.imagecollection.service.ImageService;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/image")
@@ -11,5 +20,56 @@ public class ImageController {
 
     public ImageController(ImageService imageService) {
         this.imageService = imageService;
+    }
+
+    @PostMapping
+    public ResponseEntity<ApiResponse> addImage(@Valid @RequestBody ImageRequest request) {
+        //TODO Add user authorization
+        imageService.createImage(request, "Some name");
+        return ResponseEntity.ok(
+                new ApiResponse(true, "Added image")
+        );
+    }
+
+    @PutMapping("/{imageId}")
+    public ResponseEntity<ApiResponse> editImage(
+            @PathVariable Long imageId,
+            @Valid @RequestBody ImageRequest request) {
+        //TODO Add user authorization
+        imageService.editImage(request, imageId, "Some name");
+        return ResponseEntity.ok(
+                new ApiResponse(true, "Edited image")
+        );
+    }
+
+    @GetMapping("/image/{imageId}")
+    public ResponseEntity<ImageResponse> getImage(@PathVariable Long imageId) {
+        return ResponseEntity.ok(imageService.getImage(imageId));
+    }
+
+    @GetMapping("/{isOr}")
+    public ResponseEntity<PaginatedResult<ImageThumbResponse>> getImageThumbs(
+            @PathVariable Boolean isOr,
+            SearchCriteria<ImageEntity> searchCriteria ) {
+        //TODO Add user authentication
+        return ResponseEntity.ok(imageService.getImageThumbnails(null, isOr, searchCriteria));
+    }
+
+    @GetMapping("/{userId}/{isOr}")
+    public ResponseEntity<PaginatedResult<ImageThumbResponse>> getUserImageThumbs(
+            @PathVariable Long userId,
+            @PathVariable Boolean isOr,
+            SearchCriteria<ImageEntity> searchCriteria) {
+        //TODO Add user authentication
+        return ResponseEntity.ok(imageService.getImageThumbnails(userId, isOr, searchCriteria));
+    }
+
+    @DeleteMapping("/{imageId}")
+    public ResponseEntity<ApiResponse> deleteImage(@PathVariable Long imageId) {
+        //TODO Add user authentication
+        imageService.deleteImage(imageId, "Some name");
+        return ResponseEntity.ok(
+                new ApiResponse(true, "Deleted image")
+        );
     }
 }

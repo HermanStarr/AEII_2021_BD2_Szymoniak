@@ -1,6 +1,5 @@
 package pl.polsl.dsa.imagecollection.service;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,11 +10,11 @@ import pl.polsl.dsa.imagecollection.dao.UserRepository;
 import pl.polsl.dsa.imagecollection.dto.ImageRequest;
 import pl.polsl.dsa.imagecollection.dto.ImageResponse;
 import pl.polsl.dsa.imagecollection.dto.ImageThumbResponse;
+import pl.polsl.dsa.imagecollection.exception.UnauthorizedException;
 import pl.polsl.dsa.imagecollection.exception.ResourceNotFoundException;
 import pl.polsl.dsa.imagecollection.model.ImageEntity;
 import pl.polsl.dsa.imagecollection.model.UserEntity;
 
-import java.awt.*;
 import java.time.LocalDateTime;
 
 @Service
@@ -56,8 +55,7 @@ public class ImageService {
         ImageEntity image = imageRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Image", "id", id));
         if (!image.getOwner().equals(user)) {
-            return;
-            //TODO Throw some runtime exception
+            throw new UnauthorizedException("User is not authorized to edit this image");
         }
         image.setName(imageRequest.getName());
         image.setDescription(imageRequest.getDescription());
@@ -78,7 +76,7 @@ public class ImageService {
     public PaginatedResult<ImageThumbResponse> getImageThumbnails(Long userId, Boolean mode, SearchCriteria<ImageEntity> criteria) {
 
         Specification<ImageEntity> specification;
-        if (mode == true) {
+        if (mode) {
             specification = criteria.getSpecification();
             //TODO Search with OR
         } else {
@@ -100,8 +98,7 @@ public class ImageService {
         ImageEntity image = imageRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Image", "id", id));
         if (!image.getOwner().equals(user)) {
-            return;
-            //TODO Throw some runtime exception
+            throw new UnauthorizedException("User is not authorized to delete this image");
         }
         imageRepository.deleteById(id);
     }

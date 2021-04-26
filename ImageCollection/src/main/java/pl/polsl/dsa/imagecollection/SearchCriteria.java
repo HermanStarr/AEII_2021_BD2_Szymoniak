@@ -3,8 +3,6 @@ package pl.polsl.dsa.imagecollection;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
-import java.util.List;
-
 public class SearchCriteria<T> {
     private Specification<T> specification;
     private Pageable paging;
