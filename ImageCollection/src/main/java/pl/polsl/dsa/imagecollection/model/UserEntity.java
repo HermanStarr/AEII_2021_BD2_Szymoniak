@@ -1,17 +1,16 @@
 package pl.polsl.dsa.imagecollection.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Objects;
 
 @Entity
-@Table(name="user")
+@Table(name="user", schema = "public")
 public class UserEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
     private Long id;
 
@@ -32,6 +31,28 @@ public class UserEntity {
 
     @Column(name="is_admin")
     private Boolean isAdmin;
+
+    public UserEntity() {
+    }
+
+     public UserEntity( String nickname, String email ,Byte[] passwordSalt, Byte[] passwordSHash ) {
+        this.nickname = nickname;
+        this.email = email;
+        this.passwordSalt = passwordSalt;
+        this.passwordHash = passwordSHash;
+        this.icon = new Byte[] {};
+        this.isAdmin = false;
+
+    }
+
+    /*public UserEntity( String nickname, String email, Byte[] passwordSalt, Byte[] passwordHash, Byte[] icon) {
+        this.nickname = nickname;
+        this.email = email;
+        this.passwordSalt = passwordSalt;
+        this.passwordHash = passwordHash;
+        this.icon = icon;
+        this.isAdmin = false;
+    }*/
 
     public Long getId() {
         return id;
