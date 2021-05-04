@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import pl.polsl.dsa.imagecollection.dao.UserRepository;
 import pl.polsl.dsa.imagecollection.model.UserEntity;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 
 @Service
@@ -17,6 +18,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private UserRepository userRepository;
 
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(String nickname) throws UsernameNotFoundException {
 
         UserEntity user = userRepository.findByNickname(nickname)
@@ -26,13 +28,5 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         return UserDetailsImpl.build(user);
     }
-
-
-        //load user from database
-        /*UserEntity user = userRepository.findByNickname(nickname)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "nickname", nickname));
-        return new User(user.getNickname(),user.getPasswordHash(),new ArrayList<>());
-        return new User("foo","foo",new ArrayList<>());
-        */
 
 }

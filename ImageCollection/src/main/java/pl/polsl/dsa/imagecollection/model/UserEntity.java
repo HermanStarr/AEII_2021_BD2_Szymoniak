@@ -35,24 +35,14 @@ public class UserEntity {
     public UserEntity() {
     }
 
-     public UserEntity( String nickname, String email ,Byte[] passwordSalt, Byte[] passwordSHash ) {
+     public UserEntity( String nickname, String email , Byte[] passwordSHash ) {
         this.nickname = nickname;
         this.email = email;
-        this.passwordSalt = passwordSalt;
+        this.passwordSalt = new Byte[] {};
         this.passwordHash = passwordSHash;
         this.icon = new Byte[] {};
         this.isAdmin = false;
-
     }
-
-    /*public UserEntity( String nickname, String email, Byte[] passwordSalt, Byte[] passwordHash, Byte[] icon) {
-        this.nickname = nickname;
-        this.email = email;
-        this.passwordSalt = passwordSalt;
-        this.passwordHash = passwordHash;
-        this.icon = icon;
-        this.isAdmin = false;
-    }*/
 
     public Long getId() {
         return id;

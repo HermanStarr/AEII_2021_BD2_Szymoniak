@@ -1,18 +1,19 @@
 package pl.polsl.dsa.imagecollection.service;
 
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.yaml.snakeyaml.util.ArrayUtils;
 import pl.polsl.dsa.imagecollection.dao.UserRepository;
 import pl.polsl.dsa.imagecollection.dto.*;
 import pl.polsl.dsa.imagecollection.exception.ResourceNotFoundException;
 import pl.polsl.dsa.imagecollection.model.UserEntity;
+import pl.polsl.dsa.imagecollection.security.JwtUtils;
 
 import java.nio.charset.StandardCharsets;
 
@@ -20,29 +21,33 @@ import java.nio.charset.StandardCharsets;
 public class UserService {
     private final UserRepository userRepository;
 
+    @Autowired
+    AuthenticationManager authenticationManager;
+
+    @Autowired
+    PasswordEncoder encoder;
+
+    @Autowired
+    JwtUtils jwtUtils;
+
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    @Transactional
-    public void signUp(SignUpRequest signUpRequest, String nickname) {
 
-        String key = "secret"; // generate something random
-        Pbkdf2PasswordEncoder encoder = new Pbkdf2PasswordEncoder(key);
+    @Transactional
+    public void signUp(SignUpRequest signUpRequest) {
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String encodedPassword = encoder.encode(signUpRequest.getPassword());
 
         UserEntity user = new UserEntity( signUpRequest.getUsername(),
-                signUpRequest.getEmail(), stringToByte(key) , stringToByte(encodedPassword) );
+                signUpRequest.getEmail(), stringToByte(encodedPassword) );
 
         userRepository.save(user);
     }
 
-  /*  public void login(LoginRequest loginRequest, String nickname){
-
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-
-        UserEntity user = userRepository.findByNickname(loginRequest.getUsername())
-                .orElseThrow(() -> new ResourceNotFoundException("User", "nickname", loginRequest.getUsername()));
+    public JwtResponse login(LoginRequest loginRequest){
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -53,13 +58,9 @@ public class UserService {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
-
-        //UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-
-
-
+        return new JwtResponse(jwt);
     }
- */
+
 
     public Byte[] stringToByte (String s){
         byte[] bytes = s.getBytes(StandardCharsets.UTF_8);

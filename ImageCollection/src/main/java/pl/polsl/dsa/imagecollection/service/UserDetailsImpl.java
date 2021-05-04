@@ -39,7 +39,13 @@ public class UserDetailsImpl implements UserDetails {
 
     public static UserDetailsImpl build(UserEntity user) {
         List authorities = new ArrayList<>();
-        String psw =  new String(String.valueOf(user.getPasswordHash()));
+
+        int j=0;
+        byte[] bytes = new byte[user.getPasswordHash().length];
+        for(Byte b: user.getPasswordHash())
+            bytes[j++] = b.byteValue();
+        String psw = new String(bytes);
+
         return new UserDetailsImpl(
                 user.getId(),
                 user.getNickname(),

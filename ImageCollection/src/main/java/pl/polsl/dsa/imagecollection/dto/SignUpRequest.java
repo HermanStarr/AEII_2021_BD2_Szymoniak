@@ -6,7 +6,6 @@ import javax.validation.constraints.*;
 
 
 public class SignUpRequest {
-
     @NotNull
     private String username;
 
@@ -15,7 +14,6 @@ public class SignUpRequest {
 
     @NotNull
     private String password;
-
 
     public String getUsername() {
         return username;
