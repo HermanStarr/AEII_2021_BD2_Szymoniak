@@ -14,7 +14,7 @@ import pl.polsl.dsa.imagecollection.service.ImageService;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/api/image")
+@RequestMapping("/images")
 public class ImageController {
     private final ImageService imageService;
 
