@@ -21,7 +21,7 @@ import pl.polsl.dsa.imagecollection.service.UserService;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 public class AuthController {
 
 

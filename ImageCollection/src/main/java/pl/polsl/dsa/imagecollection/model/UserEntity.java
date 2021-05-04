@@ -24,9 +24,6 @@ public class UserEntity {
     @Column(name="email")
     private String email;
 
-    @Column(name="password_salt")
-    private Byte[] passwordSalt;
-
     @Column(name="password_hash")
     private Byte[] passwordHash;
 
@@ -39,11 +36,10 @@ public class UserEntity {
     public UserEntity() {
     }
 
-     public UserEntity( String nickname, String email , Byte[] passwordSHash ) {
+     public UserEntity( String nickname, String email , Byte[] passwordHash ) {
         this.nickname = nickname;
         this.email = email;
-        this.passwordSalt = new Byte[] {};
-        this.passwordHash = passwordSHash;
+        this.passwordHash = passwordHash;
         this.icon = new Byte[] {};
         this.isAdmin = false;
     }
@@ -72,13 +68,6 @@ public class UserEntity {
         this.email = email;
     }
 
-    public Byte[] getPasswordSalt() {
-        return passwordSalt;
-    }
-
-    public void setPasswordSalt(Byte[] passwordSalt) {
-        this.passwordSalt = passwordSalt;
-    }
 
     public Byte[] getPasswordHash() {
         return passwordHash;
@@ -117,13 +106,12 @@ public class UserEntity {
                 && Objects.equals(nickname, userEntity.nickname)
                 && Objects.equals(email, userEntity.email)
                 && Arrays.equals(passwordHash, userEntity.passwordHash)
-                && Arrays.equals(passwordSalt, userEntity.passwordSalt)
                 && Arrays.equals(icon, userEntity.icon)
                 && Objects.equals(isAdmin, userEntity.isAdmin);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, nickname, email, passwordHash, passwordSalt, icon, isAdmin);
+        return Objects.hash(id, nickname, email, passwordHash, icon, isAdmin);
     }
 }
