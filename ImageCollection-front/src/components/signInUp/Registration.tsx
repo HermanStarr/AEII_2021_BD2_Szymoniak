@@ -16,17 +16,18 @@ import * as Yup from 'yup';
 import {RouteComponentProps, withRouter} from "react-router";
 import {inputProps} from "../../shared/apiapp";
 import {LOGIN} from "../../shared/Routes";
+import {SignUpRequest} from "../../model/dto";
+import {registerUser} from "../../actions/loginRegister";
 
 type Props = {
-  RegisterData?: any; //type specific dto type here
+  RegisterData?: SignUpRequest;
   passwordConfirmation: string;
 } & RouteComponentProps
 
 type FormValues = {
-  FirstName: string;
-  LastName: string;
-  EmailAddress: string;
-  Password: string;
+  username: string;
+  email: string;
+  password: string;
   passwordConfirmation: string;
 }
 
@@ -34,36 +35,37 @@ const formikEnhancer = withFormik<Props, FormValues>({
   enableReinitialize: true,
   validationSchema: Yup.object()
     .shape({
-      FirstName: Yup.string()
-        .required('First name is required')
+      username: Yup.string()
+        .required('Username is required')
         .max(18, 'Maximum input size is: ${max}'),
-      LastName: Yup.string()
-        .required('Last name is required')
-        .max(18, 'Maximum input size is: ${max}'),
-      EmailAddress: Yup.string().email()
+      email: Yup.string().email()
         .required('E-mail is required')
         .max(30, 'Maximum input size is: ${max}'),
-      Password: Yup.string()
+      password: Yup.string()
         .required('Password is required')
         .max(20, 'Password should have maximum ${max} characters')
         .min(7, 'Password should have at least ${min} characters '),
       passwordConfirmation: Yup.string()
-        .oneOf([Yup.ref('Password')], 'Passwords must match')
+        .oneOf([Yup.ref('password')], 'Passwords must match')
         .max(20, 'Password should have maximum ${max} characters')
         .required("Password confirmation is required"),
 
     }),
 
   mapPropsToValues: (props) => ({
-    FirstName: props.RegisterData ? props.RegisterData.FirstName : '',
-    LastName: props.RegisterData ? props.RegisterData.LastName : '',
-    EmailAddress: props.RegisterData ? props.RegisterData.EmailAddress : '',
-    Password: props.RegisterData ? props.RegisterData.Password : '',
+    username: props.RegisterData ? props.RegisterData.username : '',
+    email: props.RegisterData ? props.RegisterData.email : '',
+    password: props.RegisterData ? props.RegisterData.password : '',
     passwordConfirmation: props.passwordConfirmation ? props.passwordConfirmation : '',
   }),
 
   handleSubmit: (values, {props}) => {
-
+    registerUser(values).then((response) => {
+      console.log("error podczas rejestracji " + response)
+      props.history.push(`${LOGIN}`);
+    }).catch((error) => {
+      console.log("error podczas rejestracji" + error)
+    })
   },
 
   displayName: 'Registration',
@@ -83,28 +85,19 @@ const Registration: FunctionComponent<Props & FormikProps<FormValues>> = (props)
         </Typography>
         <form className={classes.form} noValidate>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12}>
               <TextField
                 variant="outlined"
                 required
                 fullWidth
-                {...inputProps(props, 'FirstName')}
-                label="First Name"
+                {...inputProps(props, 'username')}
+                label="Username"
                 autoFocus
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                label="Last Name"
-                {...inputProps(props, 'LastName')}
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
-                {...inputProps(props, 'EmailAddress')}
+                {...inputProps(props, 'email')}
                 variant="outlined"
                 required
                 fullWidth
@@ -113,7 +106,7 @@ const Registration: FunctionComponent<Props & FormikProps<FormValues>> = (props)
             </Grid>
             <Grid item xs={12}>
               <TextField
-                {...inputProps(props, 'Password')}
+                {...inputProps(props, 'password')}
                 variant="outlined"
                 required
                 fullWidth

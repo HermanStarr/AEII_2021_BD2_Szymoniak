@@ -16,37 +16,45 @@ import {Container} from "@material-ui/core";
 import {FormikProps} from "formik/dist/types";
 import {inputProps} from "../../shared/apiapp";
 import {REGISTER} from "../../shared/Routes";
+import {loginUser} from "../../actions/loginRegister";
+import {LoginRequest} from "../../model/dto";
 
 type Props = {
-  LoginData?: any; //Will be dto
+  loginData?: LoginRequest;
   // Context: { userInfo: SomeDto | null, setUserInfo: (val: (SomeDto | null)) => void };
 } & RouteComponentProps
 
 
 type FormValues = {
-  EmailAddress: string;
-  Password: string;
+  email: string;
+  password: string;
 }
 
 const formikEnhancer = withFormik<Props, FormValues>({
   enableReinitialize: true,
   validationSchema: Yup.object()
     .shape({
-      EmailAddress: Yup.string().email()
+      email: Yup.string().email()
         .required('E-mail is required')
         .max(30, 'Maximum input size is: ${max}'),
-      Password: Yup.string()
+      password: Yup.string()
         .required('Password is required')
         .max(20, 'Password should have maximum ${max} characters')
         .min(7, 'Password should have at least ${min} characters '),
     }),
 
   mapPropsToValues: (props) => ({
-    EmailAddress: props.LoginData ? props.LoginData.EmailAddress : '',
-    Password: props.LoginData ? props.LoginData.Password : '',
+    email: props.loginData ? props.loginData.email : '',
+    password: props.loginData ? props.loginData.password : '',
   }),
 
   handleSubmit: (values, {props}) => {
+    loginUser(values).then((response) => {
+      console.log("error podczas logowania " + response)
+      //TODO: tu pobrac dane usera do contextu
+    }).catch((error) => {
+      console.log("error podczas logowania")
+    })
 
   },
 
@@ -75,7 +83,7 @@ const Login: FunctionComponent<Props & FormikProps<FormValues>> = (props) => {
             label="Email Address"
             autoComplete="email"
             autoFocus
-            // {...inputProps(props, 'EmailAddress')}
+             {...inputProps(props, 'email')}
           />
           <TextField
             variant="outlined"
@@ -85,7 +93,7 @@ const Login: FunctionComponent<Props & FormikProps<FormValues>> = (props) => {
             label="Password"
             type="password"
             autoComplete="current-password"
-            // {/*{...inputProps(props, 'Password')}*/}
+            {...inputProps(props, 'password')}
           />
           <Button
             fullWidth
