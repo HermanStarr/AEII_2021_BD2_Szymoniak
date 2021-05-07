@@ -9,6 +9,11 @@ export interface TileImageResponse {
     resolutionY: number;
 }
 
+export interface ApiResponse {
+    success: boolean;
+    message: string;
+}
+
 export interface ImageResponse {
     id: number;
     image: string;
@@ -18,7 +23,13 @@ export interface ImageResponse {
     description: string;
 }
 
-export interface UserLoginRequest {
+export interface LoginRequest {
+    email: string;
+    password: string;
+}
+
+export interface SignUpRequest {
+    username: string;
     email: string;
     password: string;
 }
