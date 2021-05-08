@@ -1,17 +1,29 @@
-import React, {useEffect, useState} from 'react';
+import React, {ChangeEvent, useEffect, useState} from 'react';
 import {createStyles, Theme, makeStyles, fade} from '@material-ui/core/styles';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
 import IconButton from '@material-ui/core/IconButton';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
-import {CategoryResponse, TileImageResponse} from "../../model/dto";
+import {CategoryResponse, TagResponse, TileImageResponse} from "../../model/dto";
 import {RouteComponentProps, withRouter} from "react-router";
-import {AppBar, Container, FormControl, InputBase, InputLabel, MenuItem, Select, Toolbar} from "@material-ui/core";
+import {
+    AppBar,
+    Container,
+    FormControl,
+    Input,
+    InputBase,
+    InputLabel,
+    MenuItem,
+    Select,
+    Toolbar
+} from "@material-ui/core";
 import {ImageDialog} from "./ImageDialog";
 import {AddImage} from "./AddImageDialog";
 import Button from "@material-ui/core/Button";
 import SearchIcon from '@material-ui/icons/Search';
+import {Event} from "@material-ui/icons";
+import Chip from '@material-ui/core/Chip';
 
 
 type Props = RouteComponentProps & {}
@@ -24,11 +36,27 @@ const getImages = async (): Promise<TileImageResponse[]> => {
         {id: 3, thumb: '', title: 'Zdjęcie xD', author: 'them', authorId: 3, description: 'just a photo'},
     ];
 };
+const getCategories = async (): Promise<CategoryResponse[]> => {
+    return [
+        {id: 1, name: 'category'},
+        {id: 2, name: 'dunno'},
+    ];
+};
+
+const getTags = async (): Promise<TagResponse[]> => {
+    return [
+        {id: 1, name: 'cat'},
+        {id: 2, name: 'dog'},
+        {id: 3, name: 'pigeon'},
+    ];
+};
 // eslint-disable-next-line react-hooks/rules-of-hooks
 
 const Images = (props: Props) => {
     const [searchedImages, setSearchedImages] = useState<TileImageResponse[]>([]);
     const [categories, setCategories] = useState<CategoryResponse[]>([]);
+    const [selectedTag, setSelectedTag] = useState<TagResponse[]>([]);
+    const [tags, setTags] = useState<TagResponse[]>([]);
     const [images, setImages] = useState<TileImageResponse[]>([]);
     const [imageId, setImageId] = useState<number | null>(null);
     const [imageDialogOpened, setImageDialogOpened] = useState<boolean>(false);
@@ -46,6 +74,15 @@ const Images = (props: Props) => {
             setCategories(response);
         })
     }, [])
+    useEffect(() => {
+        getTags().then(response => {
+            setTags(response);
+        })
+    }, [])
+    const handleChange = (event: ChangeEvent<any>) => {
+        setSelectedTag(event.target.value);
+     };
+
     return (
         <>
             <Container className={classes.root}>
@@ -85,6 +122,35 @@ const Images = (props: Props) => {
                                         <em>All</em>
                                     </MenuItem>
                                     {categories.map(value => (
+                                        <MenuItem key={value.id} value={value.id}>{value.name}</MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                            <FormControl variant="outlined" className={classes.filterActions}>
+                                <InputLabel className={classes.selected}>Tags</InputLabel>
+                                <Select
+                                    className={classes.selected}
+                                    label="Tag"
+                                    multiple
+                                    //native
+                                    value={selectedTag}
+                                    input={<Input id="select-multiple-chip" />}
+                                    placeholder="Find by tag"
+                                    renderValue={(selected) => (
+                                        <div className={classes.chips}>
+                                            {selectedTag.map((value) => (
+                                                <Chip label={value.name} className={classes.chip}/>
+                                            ))}
+                                            {console.log(selectedTag)}
+                                        </div>
+                                    )}
+                                    onChange={(e) => {
+                                        handleChange(e);
+                                    }}>
+                                    <MenuItem key={0} value={0}>
+                                        <em>All</em>
+                                    </MenuItem>
+                                    {tags.map(value => (
                                         <MenuItem key={value.id} value={value.id}>{value.name}</MenuItem>
                                     ))}
                                 </Select>
@@ -177,6 +243,13 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         color: {
             color: "FFFFFF",
+        },
+        chip: {
+            margin: 2,
+        },
+        chips: {
+            display: 'flex',
+            flexWrap: 'wrap',
         },
         searchIcon: {
             padding: theme.spacing(0, 1),

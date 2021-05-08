@@ -5,6 +5,7 @@ export interface TileImageResponse {
     author: string;
     authorId: number;
     description: string;
+   // tags: TagResponse[];
 }
 
 export interface ImageResponse {
