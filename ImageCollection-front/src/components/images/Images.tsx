@@ -16,14 +16,23 @@ import SearchIcon from '@material-ui/icons/Search';
 
 type Props = RouteComponentProps & {}
 
+// eslint-disable-next-line react-hooks/rules-of-hooks
 const getImages = async (): Promise<TileImageResponse[]> => {
     //TODO
     return [
-        {id: 1, thumb: '', title: 'Zdjęcie xD', author: 'me', authorId: 1, description: 'just a photo'},
-        {id: 2, thumb: '', title: 'Zdjęcie xD', author: 'you', authorId: 2, description: 'just a photo'},
-        {id: 3, thumb: '', title: 'Zdjęcie xD', author: 'them', authorId: 3, description: 'just a photo'},
+        {id: 1, thumb: '', title: '1Zdjęcie xD', author: 'me', authorId: 1, description: 'just a photo'},
+        {id: 2, thumb: '', title: '2Zdjęcie xD', author: 'you', authorId: 2, description: 'just a photo'},
+        {id: 3, thumb: '', title: '3Zdjęcie xD', author: 'them', authorId: 3, description: 'just a photo'},
     ];
 };
+
+const getCategories = async (): Promise<CategoryResponse[]> => {
+    return [
+        {id: 1, name: 'category'},
+        {id: 2, name: 'dunno'},
+    ];
+};
+// eslint-disable-next-line react-hooks/rules-of-hooks
 
 const Images = (props: Props) => {
     const [searchedImages, setSearchedImages] = useState<TileImageResponse[]>([]);
@@ -36,10 +45,14 @@ const Images = (props: Props) => {
 
     useEffect( () => {
         getImages().then((response) => {
-            setImages(response);
+            setSearchedImages(response);
         })
     }, []);
-
+    useEffect(() => {
+        getCategories().then(response => {
+            setCategories(response);
+        })
+    }, [])
     return (
         <>
             <Container className={classes.root}>
@@ -93,7 +106,7 @@ const Images = (props: Props) => {
                         </Toolbar>
                     </AppBar>
                 <GridList spacing={20} className={classes.gridList}>
-                    {images.map((tile) => (
+                    {searchedImages.map((tile) => (
                         <GridListTile
                             key={tile.thumb}
                             cols={tile.author === 'me' ? 2 : 1}
