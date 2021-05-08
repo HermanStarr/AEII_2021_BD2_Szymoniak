@@ -45,6 +45,7 @@ const Images = (props: Props) => {
 
     useEffect( () => {
         getImages().then((response) => {
+            setImages(response);
             setSearchedImages(response);
         })
     }, []);
@@ -72,7 +73,7 @@ const Images = (props: Props) => {
                                     onChange={event => {
                                         let newList = images.filter(item => {
                                             const filter = event.target.value.toLowerCase();
-                                            return item.title.toLowerCase().includes(filter);
+                                            return item.description.toLowerCase().includes(filter);
                                         })
                                         setSearchedImages(newList);
                                     }}
