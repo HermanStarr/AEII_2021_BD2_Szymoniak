@@ -1,5 +1,7 @@
 package pl.polsl.dsa.imagecollection.model;
 
+import javax.persistence.*;
+import java.nio.charset.StandardCharsets;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -8,10 +10,11 @@ import java.util.Arrays;
 import java.util.Objects;
 
 @Entity
-@Table(name="user")
+@Table(name="user", schema = "public")
 public class UserEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
     private Long id;
 
@@ -21,9 +24,6 @@ public class UserEntity {
     @Column(name="email")
     private String email;
 
-    @Column(name="password_salt")
-    private Byte[] passwordSalt;
-
     @Column(name="password_hash")
     private Byte[] passwordHash;
 
@@ -32,6 +32,17 @@ public class UserEntity {
 
     @Column(name="is_admin")
     private Boolean isAdmin;
+
+    public UserEntity() {
+    }
+
+     public UserEntity( String nickname, String email , Byte[] passwordHash ) {
+        this.nickname = nickname;
+        this.email = email;
+        this.passwordHash = passwordHash;
+        this.icon = new Byte[] {};
+        this.isAdmin = false;
+    }
 
     public Long getId() {
         return id;
@@ -57,13 +68,6 @@ public class UserEntity {
         this.email = email;
     }
 
-    public Byte[] getPasswordSalt() {
-        return passwordSalt;
-    }
-
-    public void setPasswordSalt(Byte[] passwordSalt) {
-        this.passwordSalt = passwordSalt;
-    }
 
     public Byte[] getPasswordHash() {
         return passwordHash;
@@ -102,13 +106,12 @@ public class UserEntity {
                 && Objects.equals(nickname, userEntity.nickname)
                 && Objects.equals(email, userEntity.email)
                 && Arrays.equals(passwordHash, userEntity.passwordHash)
-                && Arrays.equals(passwordSalt, userEntity.passwordSalt)
                 && Arrays.equals(icon, userEntity.icon)
                 && Objects.equals(isAdmin, userEntity.isAdmin);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, nickname, email, passwordHash, passwordSalt, icon, isAdmin);
+        return Objects.hash(id, nickname, email, passwordHash, icon, isAdmin);
     }
 }
