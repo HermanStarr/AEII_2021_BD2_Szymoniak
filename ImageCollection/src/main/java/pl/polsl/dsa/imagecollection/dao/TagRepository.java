@@ -9,6 +9,6 @@ import java.util.stream.Stream;
 public interface TagRepository extends
         CrudRepository<TagEntity, Long>,
         JpaSpecificationExecutor<TagEntity> {
-    TagEntity findByName (String name);
-    Stream<TagEntity> getAll();
+        TagEntity findByName (String name);
+        Stream<TagEntity> getAll();
 }

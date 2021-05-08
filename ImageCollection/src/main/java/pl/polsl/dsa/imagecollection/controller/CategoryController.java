@@ -1,2 +1,4 @@
-package pl.polsl.dsa.imagecollection.controller;public class CategoryController {
+package pl.polsl.dsa.imagecollection.controller;
+
+public class CategoryController {
 }
