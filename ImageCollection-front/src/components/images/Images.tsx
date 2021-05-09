@@ -16,14 +16,23 @@ import SearchIcon from '@material-ui/icons/Search';
 
 type Props = RouteComponentProps & {}
 
+// eslint-disable-next-line react-hooks/rules-of-hooks
 const getImages = async (): Promise<TileImageResponse[]> => {
-  //TODO
-  return [
-    {id: 1, thumb: '', title: 'Zdjęcie xD', author: 'me', authorId: 1, description: 'just a photo', resolutionY: 450, resolutionX: 800},
-    {id: 2, thumb: '', title: 'Zdjęcie xD', author: 'you', authorId: 2, description: 'just a photo', resolutionY: 450, resolutionX: 800},
-    {id: 3, thumb: '', title: 'Zdjęcie xD', author: 'them', authorId: 3, description: 'just a photo', resolutionY: 450, resolutionX: 800},
-  ];
+    //TODO
+    return [
+        {id: 1, thumb: '', title: '1Zdjęcie xD', author: 'me', authorId: 1, description: 'just a photo'},
+        {id: 2, thumb: '', title: '2Zdjęcie xD', author: 'you', authorId: 2, description: 'just a photo'},
+        {id: 3, thumb: '', title: '3Zdjęcie xD', author: 'them', authorId: 3, description: 'just a photo'},
+    ];
+
 };
+const getCategories = async (): Promise<CategoryResponse[]> => {
+    return [
+        {id: 1, name: 'category'},
+        {id: 2, name: 'dunno'},
+    ];
+};
+// eslint-disable-next-line react-hooks/rules-of-hooks
 
 const Images = (props: Props) => {
   const [searchedImages, setSearchedImages] = useState<TileImageResponse[]>([]);
@@ -34,106 +43,110 @@ const Images = (props: Props) => {
   const [addImageDialogOpened, setAddImageDialogOpened] = useState<boolean>(false);
   const classes = useStyles();
 
-  useEffect( () => {
-    getImages().then((response) => {
-      setImages(response);
-    })
-  }, []);
+    useEffect( () => {
+        getImages().then((response) => {
+            setSearchedImages(response);
+        })
+    }, []);
+    useEffect(() => {
+        getCategories().then(response => {
+            setCategories(response);
+        })
+    }, [])
+    return (
+        <>
+            <Container className={classes.root}>
+                    <AppBar position="static">
+                        <Toolbar>
+                            <div className={classes.search}>
+                                <div className={classes.searchIcon}>
+                                    <SearchIcon/>
+                                </div>
+                                <InputBase
+                                    placeholder="Search…"
+                                    classes={{
+                                        root: classes.inputRoot,
+                                        input: classes.inputInput,
+                                    }}
 
-  return (
-    <>
-      <Container className={classes.root}>
-        <AppBar position="static">
-          <Toolbar>
-            <div className={classes.search}>
-              <div className={classes.searchIcon}>
-                <SearchIcon/>
-              </div>
-              <InputBase
-                placeholder="Search…"
-                classes={{
-                  root: classes.inputRoot,
-                  input: classes.inputInput,
-                }}
-
-                onChange={event => {
-                  let newList = images.filter(item => {
-                    const filter = event.target.value.toLowerCase();
-                    return item.title.toLowerCase().includes(filter);
-                  })
-                  setSearchedImages(newList);
-                }}
-                inputProps={{'aria-label': 'search'}}
-              />
-            </div>
-            <FormControl variant="outlined" className={classes.filterActions}>
-              <InputLabel className={classes.selected}>Category</InputLabel>
-              <Select
-                className={classes.selected}
-                label="Category"
-                placeholder="Choose a category"
-                onChange={(e) => {
-                  console.log(e.target.value);
-                }}>
-                <MenuItem key={0} value={0}>
-                  <em>All</em>
-                </MenuItem>
-                {categories.map(value => (
-                  <MenuItem key={value.id} value={value.id}>{value.name}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => setAddImageDialogOpened(true)}
-            >
-              Add image
-            </Button>
-          </Toolbar>
-        </AppBar>
-        <GridList spacing={20} className={classes.gridList}>
-          {images.map((tile) => (
-            <GridListTile
-              key={tile.thumb}
-              cols={tile.author === 'me' ? 2 : 1}
-              rows={tile.author ? 2 : 1}
-              onClick={() => {
-                setImageId(tile.id);
-                setImageDialogOpened(true);
-              }}
-            >
-              <div style={{background: '#ff0000'}}>
-                <div>
-                  {tile.thumb}
-                </div>
-                <img src={tile.thumb} alt={tile.title} />
-                <GridListTileBar
-                  title={tile.title}
-                  titlePosition="bottom"
-                  actionIcon={
-                    <IconButton aria-label={`star ${tile.title}`} className={classes.icon}>
-                      <StarBorderIcon />
-                    </IconButton>
-                  }
-                  actionPosition="left"
-                  className={classes.titleBar}
-                />
-              </div>
-            </GridListTile>
-          ))}
-        </GridList>
-      </Container>
-      <ImageDialog
-        imageId={imageId}
-        dialogOpened={imageDialogOpened}
-        onClose={() => setImageDialogOpened(false)} />
-      <AddImage
-        dialogOpened={addImageDialogOpened}
-        onClose={() => setAddImageDialogOpened(false)}
-      />
-    </>
-  )
+                                    onChange={event => {
+                                        let newList = images.filter(item => {
+                                            const filter = event.target.value.toLowerCase();
+                                            return item.title.toLowerCase().includes(filter);
+                                        })
+                                        setSearchedImages(newList);
+                                    }}
+                                    inputProps={{'aria-label': 'search'}}
+                                />
+                            </div>
+                            <FormControl variant="outlined" className={classes.filterActions}>
+                                <InputLabel className={classes.selected}>Category</InputLabel>
+                                <Select
+                                    className={classes.selected}
+                                    label="Category"
+                                    placeholder="Choose a category"
+                                    onChange={(e) => {
+                                        console.log(e.target.value);
+                                    }}>
+                                    <MenuItem key={0} value={0}>
+                                        <em>All</em>
+                                    </MenuItem>
+                                    {categories.map(value => (
+                                        <MenuItem key={value.id} value={value.id}>{value.name}</MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={() => setAddImageDialogOpened(true)}
+                            >
+                                Add image
+                            </Button>
+                        </Toolbar>
+                    </AppBar>
+                <GridList spacing={20} className={classes.gridList}>
+                    {searchedImages.map((tile) => (
+                        <GridListTile
+                            key={tile.thumb}
+                            cols={tile.author === 'me' ? 2 : 1}
+                            rows={tile.author ? 2 : 1}
+                            onClick={() => {
+                                setImageId(tile.id);
+                                setImageDialogOpened(true);
+                            }}
+                        >
+                            <div style={{background: '#ff0000'}}>
+                                <div>
+                                    {tile.thumb}
+                                </div>
+                                <img src={tile.thumb} alt={tile.title} />
+                                <GridListTileBar
+                                    title={tile.title}
+                                    titlePosition="bottom"
+                                    actionIcon={
+                                        <IconButton aria-label={`star ${tile.title}`} className={classes.icon}>
+                                            <StarBorderIcon />
+                                        </IconButton>
+                                    }
+                                    actionPosition="left"
+                                    className={classes.titleBar}
+                                />
+                            </div>
+                        </GridListTile>
+                    ))}
+                </GridList>
+            </Container>
+            <ImageDialog
+                imageId={imageId}
+                dialogOpened={imageDialogOpened}
+                onClose={() => setImageDialogOpened(false)} />
+            <AddImage
+                dialogOpened={addImageDialogOpened}
+                onClose={() => setAddImageDialogOpened(false)}
+            />
+        </>
+    )
 }
 
 const useStyles = makeStyles((theme: Theme) =>
