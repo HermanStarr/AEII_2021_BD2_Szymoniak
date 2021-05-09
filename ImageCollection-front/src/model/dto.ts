@@ -5,11 +5,17 @@ export interface TileImageResponse {
     author: string;
     authorId: number;
     description: string;
+    resolutionX: number;
+    resolutionY: number;
 }
 
 export interface ImageResponse {
+    id: number;
     image: string;
     title: string;
+    author: string;
+    authorId: number;
+    description: string;
 }
 
 export interface UserLoginRequest {
@@ -19,7 +25,7 @@ export interface UserLoginRequest {
 
 export interface UserResponse {
     id: number;
-    icon: undefined;
+    icon: undefined | string;
     nickname: string;
     email: string;
 }
@@ -29,13 +35,13 @@ export interface CategoryResponse {
     name: string;
 }
 
-export interface TagResponse{
-    id:number;
+export interface TagRequest{
     name:string;
 }
 
-export interface TagRequest{
-    name:string;
+export interface TagResponse {
+    id: number;
+    name: string;
 }
 
 export interface PaginatedResult<T> {

@@ -1,16 +1,12 @@
 import {Container, Grid, GridList, GridListTile} from "@material-ui/core";
 import React, {useEffect, useState} from "react";
 import Typography from "@material-ui/core/Typography";
-import {CategoryResponse, ImageResponse, TileImageResponse} from "../model/dto";
+import {CategoryResponse, TileImageResponse} from "../model/dto";
 import {DateRange} from "@material-ui/icons";
 
 const getImages = async (): Promise<TileImageResponse[]> => {
     //TODO
-    return [
-        {id: 1, thumb: 'undefined', title: 'Zdjęcie xD', author: 'me', authorId: 1, description: 'just a photo'},
-        {id: 2, thumb: 'undefined', title: 'Zdjęcie xD', author: 'you', authorId: 2, description: 'just a photo'},
-        {id: 3, thumb: 'undefined', title: 'Zdjęcie xD', author: 'them', authorId: 3, description: 'just a photo'},
-    ];
+    return [];
 };
 
 const getCategories = async (): Promise<CategoryResponse[]> => {

@@ -24,8 +24,8 @@ const getImages = async (): Promise<TileImageResponse[]> => {
         {id: 2, thumb: '', title: '2Zdjęcie xD', author: 'you', authorId: 2, description: 'just a photo'},
         {id: 3, thumb: '', title: '3Zdjęcie xD', author: 'them', authorId: 3, description: 'just a photo'},
     ];
-};
 
+};
 const getCategories = async (): Promise<CategoryResponse[]> => {
     return [
         {id: 1, name: 'category'},
@@ -35,13 +35,13 @@ const getCategories = async (): Promise<CategoryResponse[]> => {
 // eslint-disable-next-line react-hooks/rules-of-hooks
 
 const Images = (props: Props) => {
-    const [searchedImages, setSearchedImages] = useState<TileImageResponse[]>([]);
-    const [categories, setCategories] = useState<CategoryResponse[]>([]);
-    const [images, setImages] = useState<TileImageResponse[]>([]);
-    const [imageId, setImageId] = useState<number | null>(null);
-    const [imageDialogOpened, setImageDialogOpened] = useState<boolean>(false);
-    const [addImageDialogOpened, setAddImageDialogOpened] = useState<boolean>(false);
-    const classes = useStyles();
+  const [searchedImages, setSearchedImages] = useState<TileImageResponse[]>([]);
+  const [categories, setCategories] = useState<CategoryResponse[]>([]);
+  const [images, setImages] = useState<TileImageResponse[]>([]);
+  const [imageId, setImageId] = useState<number | null>(null);
+  const [imageDialogOpened, setImageDialogOpened] = useState<boolean>(false);
+  const [addImageDialogOpened, setAddImageDialogOpened] = useState<boolean>(false);
+  const classes = useStyles();
 
     useEffect( () => {
         getImages().then((response) => {
@@ -150,100 +150,100 @@ const Images = (props: Props) => {
 }
 
 const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        root: {
-            display: 'flex',
-            flexWrap: 'wrap',
-            justifyContent: 'space-around',
-            overflow: 'wrap',
-            backgroundColor: theme.palette.background.paper,
+  createStyles({
+    root: {
+      display: 'flex',
+      flexWrap: 'wrap',
+      justifyContent: 'space-around',
+      overflow: 'wrap',
+      backgroundColor: theme.palette.background.paper,
+    },
+    gridList: {
+      width: 800,
+      height: 800,
+      transform: 'translateZ(0)',
+    },
+    titleBar: {
+      background: '#afafaf',
+    },
+    icon: {
+      color: 'white',
+    },
+    search: {
+      position: 'relative',
+      borderRadius: theme.shape.borderRadius,
+      backgroundColor: fade(theme.palette.common.white, 0.15),
+      '&:hover': {
+        backgroundColor: fade(theme.palette.common.white, 0.25),
+      },
+      marginLeft: -15,
+      width: 200,
+      [theme.breakpoints.up('sm')]: {
+        width: 'auto',
+      },
+    },
+    color: {
+      color: "FFFFFF",
+    },
+    searchIcon: {
+      padding: theme.spacing(0, 1),
+      height: '100%',
+      position: 'absolute',
+      pointerEvents: 'none',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    inputRoot: {
+      color: 'inherit',
+    },
+    inputInput: {
+      padding: theme.spacing(1, 1, 1, 0),
+      // vertical padding + font size from searchIcon
+      paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+      transition: theme.transitions.create('width'),
+      width: '100%',
+      [theme.breakpoints.up('sm')]: {
+        width: '12ch',
+        '&:focus': {
+          width: '20ch',
         },
-        gridList: {
-            width: 800,
-            height: 800,
-            transform: 'translateZ(0)',
-        },
-        titleBar: {
-            background: '#afafaf',
-        },
-        icon: {
-            color: 'white',
-        },
-        search: {
-            position: 'relative',
-            borderRadius: theme.shape.borderRadius,
-            backgroundColor: fade(theme.palette.common.white, 0.15),
-            '&:hover': {
-                backgroundColor: fade(theme.palette.common.white, 0.25),
-            },
-            marginLeft: -15,
-            width: 200,
-            [theme.breakpoints.up('sm')]: {
-                width: 'auto',
-            },
-        },
-        color: {
-            color: "FFFFFF",
-        },
-        searchIcon: {
-            padding: theme.spacing(0, 1),
-            height: '100%',
-            position: 'absolute',
-            pointerEvents: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-        },
-        inputRoot: {
-            color: 'inherit',
-        },
-        inputInput: {
-            padding: theme.spacing(1, 1, 1, 0),
-            // vertical padding + font size from searchIcon
-            paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-            transition: theme.transitions.create('width'),
-            width: '100%',
-            [theme.breakpoints.up('sm')]: {
-                width: '12ch',
-                '&:focus': {
-                    width: '20ch',
-                },
-            },
-        },
-        header: {
-            backgroundColor: '#ADD8E6'
-        },
-        cell_medium: {
-            fontSize: "10px",
-            width: 250,
-            color: 'inherit',
-            minWidth: 1,
-            marginLeft: "20px",
-            backgroundColor: fade(theme.palette.common.white, 0.15),
-            '&:hover': {
-                backgroundColor: fade(theme.palette.common.white, 0.25),
-            },
-        },
-        cell_short: {
-            fontSize: "10px",
-            width: 170,
+      },
+    },
+    header: {
+      backgroundColor: '#ADD8E6'
+    },
+    cell_medium: {
+      fontSize: "10px",
+      width: 250,
+      color: 'inherit',
+      minWidth: 1,
+      marginLeft: "20px",
+      backgroundColor: fade(theme.palette.common.white, 0.15),
+      '&:hover': {
+        backgroundColor: fade(theme.palette.common.white, 0.25),
+      },
+    },
+    cell_short: {
+      fontSize: "10px",
+      width: 170,
 
-        },
-        filterActions: {
-            backgroundColor: fade(theme.palette.common.white, 0.15),
-            '&:hover': {
-                backgroundColor: fade(theme.palette.common.white, 0.25),
-            },
-            width: 170,
-            fontWeight: 100,
-            color: "white",
-            marginLeft: 10,
-        },
-        selected: {
-            color: fade(theme.palette.common.white, 0.85),
-            fontWeight: 100,
-        }
-    }),
+    },
+    filterActions: {
+      backgroundColor: fade(theme.palette.common.white, 0.15),
+      '&:hover': {
+        backgroundColor: fade(theme.palette.common.white, 0.25),
+      },
+      width: 170,
+      fontWeight: 100,
+      color: "white",
+      marginLeft: 10,
+    },
+    selected: {
+      color: fade(theme.palette.common.white, 0.85),
+      fontWeight: 100,
+    }
+  }),
 );
 
 
