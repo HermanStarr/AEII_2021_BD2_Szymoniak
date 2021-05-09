@@ -17,7 +17,7 @@ public class CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
-    public CategoryResponse getTagByName(TagRequest request) {
+    public CategoryResponse getCategoryByName(CategoryRequest request) {
         if (checkIfExist(request)) {
             CategoryEntity category = categoryRepository.findByName(request.getName());
             return CategoryResponse.fromEntity(category);
@@ -27,7 +27,7 @@ public class CategoryService {
         }
     }
 
-    public Boolean checkIfExist(TagRequest request) {
+    public Boolean checkIfExist(CategoryRequest request) {
         //notsure czy bd działać
         return !categoryRepository.findByName(request.getName()).getName().equals("");
     }
