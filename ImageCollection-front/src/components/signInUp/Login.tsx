@@ -26,7 +26,7 @@ type Props = {
 
 
 type FormValues = {
-  email: string;
+  username: string;
   password: string;
 }
 
@@ -34,8 +34,8 @@ const formikEnhancer = withFormik<Props, FormValues>({
   enableReinitialize: true,
   validationSchema: Yup.object()
     .shape({
-      email: Yup.string().email()
-        .required('E-mail is required')
+      username: Yup.string()
+        .required('Username is required')
         .max(30, 'Maximum input size is: ${max}'),
       password: Yup.string()
         .required('Password is required')
@@ -44,16 +44,16 @@ const formikEnhancer = withFormik<Props, FormValues>({
     }),
 
   mapPropsToValues: (props) => ({
-    email: props.loginData ? props.loginData.email : '',
+    username: props.loginData ? props.loginData.username : '',
     password: props.loginData ? props.loginData.password : '',
   }),
 
   handleSubmit: (values, {props}) => {
     loginUser(values).then((response) => {
-      console.log("error podczas logowania " + response)
+      console.log("Poprawnie zalogowano! " + response.message)
       //TODO: tu pobrac dane usera do contextu
     }).catch((error) => {
-      console.log("error podczas logowania")
+      console.log("error podczas logowania: " + error.message)
     })
 
   },
@@ -80,10 +80,9 @@ const Login: FunctionComponent<Props & FormikProps<FormValues>> = (props) => {
             margin="normal"
             required
             fullWidth
-            label="Email Address"
-            autoComplete="email"
+            label="Username"
             autoFocus
-             {...inputProps(props, 'email')}
+             {...inputProps(props, 'username')}
           />
           <TextField
             variant="outlined"

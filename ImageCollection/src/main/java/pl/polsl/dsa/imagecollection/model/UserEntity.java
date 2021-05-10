@@ -15,6 +15,11 @@ public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(
+        name = "user_sequence_generator",
+        sequenceName = "user_id",
+        allocationSize = 1
+    )
     @Column(name="id")
     private Long id;
 

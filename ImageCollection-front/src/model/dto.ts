@@ -24,7 +24,7 @@ export interface ImageResponse {
 }
 
 export interface LoginRequest {
-    email: string;
+    username: string;
     password: string;
 }
 
