@@ -61,8 +61,8 @@ public class AuthController {
                     .body(new ApiResponse(false,"Error: Wrong password"));
         }
 
-        userService.login(request);
-        return ResponseEntity.ok(new ApiResponse(true,"User logged in successfully!"));
+        String jwt = userService.login(request);
+        return ResponseEntity.ok(new ApiResponse(true,"User logged in successfully! "+"Bearer "+jwt));
     }
 
     @PostMapping("/signup")
