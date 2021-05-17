@@ -65,7 +65,7 @@ public class AuthController {
         }
 
         String jwt = userService.login(request);
-        return ResponseEntity.ok(new ApiResponse(true,"User logged in successfully! "+"Bearer "+jwt));
+        return ResponseEntity.ok(new ApiResponse(true,"Bearer "+jwt));
     }
 
     @PostMapping("/signup")
@@ -88,7 +88,7 @@ public class AuthController {
 
     @GetMapping("/userData")
     public UserResponse getUserData() {
-        UserDetails u = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetails u = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserEntity user = userRepository.findByNickname(u.getUsername())
             .orElseThrow(() -> new ResourceNotFoundException("", "", u.getUsername()));
         return UserResponse.fromEntity(user);
