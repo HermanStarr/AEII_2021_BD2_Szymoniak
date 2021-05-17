@@ -18,12 +18,12 @@ import {AddImage} from "./AddImageDialog";
 import Button from "@material-ui/core/Button";
 import SearchIcon from '@material-ui/icons/Search';
 import FilterSelect from "../../shared/FilterSelect";
+import {photos} from "./photos";
 
 
 type Props = RouteComponentProps & {}
 
 const getImages = async (): Promise<TileImageResponse[]> => {
-  //TODO
   return [
     {id: 1, thumb: '', title: 'Zdjęcie xD', author: 'me', authorId: 1, description: 'just a photo', resolutionY: 450, resolutionX: 800},
     {id: 2, thumb: '', title: 'Zdjęcie xD', author: 'you', authorId: 2, description: 'just a photo', resolutionY: 450, resolutionX: 800},
@@ -59,8 +59,18 @@ const Images = (props: Props) => {
 
   useEffect( () => {
     getImages().then((response) => {
-      setImages(response);
-      setSearchedImages(response);
+      let images1 = photos.map((photo, index) => ({
+        id: index,
+        thumb: photo.src,
+        title: "Zdjęcie xD",
+        author: "Me",
+        authorId: 1,
+        description: "Kartka papieru",
+        resolutionX: photo.width,
+        resolutionY: photo.height,
+      }))
+      setImages(images1);
+      setSearchedImages(images1);
     })
   }, []);
   useEffect(() => {
@@ -121,7 +131,7 @@ const Images = (props: Props) => {
             </Button>
           </Toolbar>
         </AppBar>
-        <GridList spacing={20} className={classes.gridList}>
+        <GridList spacing={10} className={classes.gridList}>
           {searchedImages.map((tile) => (
             <GridListTile
               key={tile.thumb}
@@ -133,9 +143,6 @@ const Images = (props: Props) => {
               }}
             >
               <div style={{background: '#ff0000'}}>
-                <div>
-                  {tile.thumb}
-                </div>
                 <img src={tile.thumb} alt={tile.title} />
                 <GridListTileBar
                   title={tile.title}
@@ -175,8 +182,8 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: theme.palette.background.paper,
     },
     gridList: {
-      width: 800,
-      height: 800,
+      paddingTop: 10,
+      width: '100%',
       transform: 'translateZ(0)',
     },
     titleBar: {

@@ -55,9 +55,10 @@ export const ImageDialog = (props: Props) => {
       //  setDisplayImage(reader.result as string);
       //}
       //reader.readAsDataURL(image!.image);
-      setDisplayImage(photos[1].src);
+      setDisplayImage(photos[props.imageId ?? 1].src);
+      setPhoto(photos[props.imageId ?? 1]);
     });
-  }, []);
+  }, [props.imageId]);
 
   useEffect(() => {
     if(image !== null) {
@@ -202,19 +203,6 @@ export const ImageDialog = (props: Props) => {
                 style={{fontSize: 0.015 * modalHeight}}
               >
                 Tylko jedno w głowie mam
-                Koksu pięć gram, odlecieć sam
-                W krainę zapomnienia
-                W głowie myśli mam
-                Kiedy skończy się ten stan
-                Gdy już nie będę sam
-                Bo wjedzie biały węgorz
-                Tylko jedno w głowie mam
-                Koksu pięć gram, odlecieć sam
-                W krainę zapomnienia
-                W głowie myśli mam
-                Kiedy skończy się ten stan
-                Gdy już nie będę sam
-                Bo wjedzie biały węgorz
               </Typography>
             </div>
             <div style={{

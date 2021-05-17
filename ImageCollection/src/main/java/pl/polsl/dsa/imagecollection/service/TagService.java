@@ -1,5 +1,6 @@
 package pl.polsl.dsa.imagecollection.service;
 
+import org.hibernate.Criteria;
 import org.springframework.stereotype.Service;
 import pl.polsl.dsa.imagecollection.dao.TagRepository;
 import pl.polsl.dsa.imagecollection.dto.*;
@@ -7,6 +8,7 @@ import pl.polsl.dsa.imagecollection.model.TagEntity;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class TagService {
@@ -44,7 +46,8 @@ public class TagService {
         //return tagRepository.getAll().forEach(x-> x.getName());
     //}
 
-    public List<TagResponse> getTagList(){
-        return tagRepository.getAll().map(TagResponse::fromEntity).collect(Collectors.toList());
+    public List<TagResponse> getTagList() {
+        return StreamSupport.stream(tagRepository.findAll().spliterator(), false)
+                .map(TagResponse::fromEntity).collect(Collectors.toList());
     }
 }
