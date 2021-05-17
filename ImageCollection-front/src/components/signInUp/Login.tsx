@@ -52,7 +52,7 @@ const formikEnhancer = withFormik<Props, FormValues>({
     loginUser(values).then((response) => {
       console.log("Poprawnie zalogowano! " + response.message)
 
-      getUserData(response.data).then((response) => {
+      getUserData(response.message).then((response) => {
         console.log(response);
         console.log(response.nickname)
       })
