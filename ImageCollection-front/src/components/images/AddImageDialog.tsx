@@ -120,6 +120,20 @@ export const AddImage = (props: Props) => {
                                     <MenuItem key={value.id} value={value.id}>{value.name} </MenuItem>
                                 ))}
                             </Select>
+                            <Select
+                                labelId="demo-simple-select-outlined-label"
+                                id="demo-simple-select-outlined"
+                                defaultValue={""}
+                                name="categoryId"
+                                label="Category"
+                                onChange={(e) => {
+                                    addImageForm.setFieldValue('categoryId', e.target.value as number);
+                                }}
+                            >
+                                {categories.map((value: CategoryResponse) => (
+                                    <MenuItem key={value.id} value={value.id}>{value.name} </MenuItem>
+                                ))}
+                            </Select>
                         </Grid>
                         <Grid item xs={12}>
                             <FormControl variant="outlined">

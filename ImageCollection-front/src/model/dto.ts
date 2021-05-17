@@ -46,9 +46,13 @@ export interface CategoryResponse {
     name: string;
 }
 
-export interface TagResponse {
-    id: number;
-    name: string;
+export interface TagResponse{
+    id:number;
+    name:string;
+}
+
+export interface TagRequest{
+    name:string;
 }
 
 export interface PaginatedResult<T> {
