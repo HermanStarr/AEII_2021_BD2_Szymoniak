@@ -16,12 +16,12 @@ import {Container} from "@material-ui/core";
 import {FormikProps} from "formik/dist/types";
 import {inputProps} from "../../shared/apiapp";
 import {REGISTER} from "../../shared/Routes";
-import {loginUser} from "../../actions/loginRegister";
-import {LoginRequest} from "../../model/dto";
+import {getUserData, loginUser} from "../../actions/loginRegister";
+import {LoginRequest, UserResponse} from "../../model/dto";
 
 type Props = {
   loginData?: LoginRequest;
-  // Context: { userInfo: SomeDto | null, setUserInfo: (val: (SomeDto | null)) => void };
+  Context: { userInfo: UserResponse | null, setUserInfo: (val: (UserResponse | null)) => void };
 } & RouteComponentProps
 
 
@@ -40,7 +40,7 @@ const formikEnhancer = withFormik<Props, FormValues>({
       password: Yup.string()
         .required('Password is required')
         .max(20, 'Password should have maximum ${max} characters')
-        .min(7, 'Password should have at least ${min} characters '),
+        .min(1, 'Password should have at least ${min} characters '),
     }),
 
   mapPropsToValues: (props) => ({
@@ -51,7 +51,12 @@ const formikEnhancer = withFormik<Props, FormValues>({
   handleSubmit: (values, {props}) => {
     loginUser(values).then((response) => {
       console.log("Poprawnie zalogowano! " + response.message)
-      //TODO: tu pobrac dane usera do contextu
+
+      getUserData(response.message).then((response) => {
+        console.log(response);
+        console.log(response.nickname)
+      })
+
     }).catch((error) => {
       console.log("error podczas logowania: " + error.message)
     })
