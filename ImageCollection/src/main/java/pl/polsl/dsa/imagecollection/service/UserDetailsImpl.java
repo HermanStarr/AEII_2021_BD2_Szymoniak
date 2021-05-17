@@ -25,15 +25,18 @@ public class UserDetailsImpl implements UserDetails {
 
     private Collection authorities;
 
+    private Byte[] icon;
+
     public UserDetailsImpl(Long id,
                            String username, String email, String password,
-                           Collection authorities) {
+                           Collection authorities, Byte[] icon) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
         this.isAdmin = false;
         this.authorities = authorities;
+        this.icon = icon;
     }
 
     public static UserDetailsImpl build(UserEntity user) {
@@ -50,7 +53,8 @@ public class UserDetailsImpl implements UserDetails {
                 user.getNickname(),
                 user.getEmail(),
                 psw,
-                authorities
+                authorities,
+                user.getIcon()
         );
     }
 

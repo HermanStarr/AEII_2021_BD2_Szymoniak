@@ -9,7 +9,8 @@ export interface TileImageResponse {
     resolutionY: number;
 }
 
-export interface ApiResponse {
+export interface ApiResponse<T> {
+    data: T;
     success: boolean;
     message: string;
 }
