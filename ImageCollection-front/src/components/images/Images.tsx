@@ -23,10 +23,11 @@ import FilterSelect from "../../shared/FilterSelect";
 type Props = RouteComponentProps & {}
 
 const getImages = async (): Promise<TileImageResponse[]> => {
+  //TODO
   return [
-    {id: 1, thumb: '', title: 'Zdjęcie xD', author: 'me', authorId: 1, description: 'just a photo'},
-    {id: 2, thumb: '', title: 'Zdjęcie xD', author: 'you', authorId: 2, description: 'just a photo'},
-    {id: 3, thumb: '', title: 'Zdjęcie xD', author: 'them', authorId: 3, description: 'just a photo'},
+    {id: 1, thumb: '', title: 'Zdjęcie xD', author: 'me', authorId: 1, description: 'just a photo', resolutionY: 450, resolutionX: 800},
+    {id: 2, thumb: '', title: 'Zdjęcie xD', author: 'you', authorId: 2, description: 'just a photo', resolutionY: 450, resolutionX: 800},
+    {id: 3, thumb: '', title: 'Zdjęcie xD', author: 'them', authorId: 3, description: 'just a photo', resolutionY: 450, resolutionX: 800},
   ];
 };
 const getCategories = async (): Promise<CategoryResponse[]> => {
@@ -244,6 +245,20 @@ const useStyles = makeStyles((theme: Theme) =>
       width: 170,
 
     },
+    filterActions: {
+      backgroundColor: fade(theme.palette.common.white, 0.15),
+      '&:hover': {
+        backgroundColor: fade(theme.palette.common.white, 0.25),
+      },
+      width: 170,
+      fontWeight: 100,
+      color: "white",
+      marginLeft: 10,
+    },
+    selected: {
+      color: fade(theme.palette.common.white, 0.85),
+      fontWeight: 100,
+    }
   }),
 );
 

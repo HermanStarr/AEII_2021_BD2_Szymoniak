@@ -5,22 +5,38 @@ export interface TileImageResponse {
     author: string;
     authorId: number;
     description: string;
-   // tags: TagResponse[];
+    resolutionX: number;
+    resolutionY: number;
+}
+
+export interface ApiResponse {
+    success: boolean;
+    message: string;
 }
 
 export interface ImageResponse {
+    id: number;
     image: string;
     title: string;
+    author: string;
+    authorId: number;
+    description: string;
 }
 
-export interface UserLoginRequest {
+export interface LoginRequest {
+    username: string;
+    password: string;
+}
+
+export interface SignUpRequest {
+    username: string;
     email: string;
     password: string;
 }
 
 export interface UserResponse {
     id: number;
-    icon: undefined;
+    icon: undefined | string;
     nickname: string;
     email: string;
 }

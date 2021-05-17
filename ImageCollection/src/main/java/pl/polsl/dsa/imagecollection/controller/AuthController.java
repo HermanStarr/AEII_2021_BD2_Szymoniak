@@ -44,7 +44,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity loginUser(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<ApiResponse> loginUser(@Valid @RequestBody LoginRequest request) {
         if(!userRepository.existsByNickname(request.getUsername()))
             return ResponseEntity
                     .badRequest()
@@ -61,7 +61,8 @@ public class AuthController {
                     .body(new ApiResponse(false,"Error: Wrong password"));
         }
 
-        return ResponseEntity.ok(userService.login(request));
+        userService.login(request);
+        return ResponseEntity.ok(new ApiResponse(true,"User logged in successfully!"));
     }
 
     @PostMapping("/signup")
