@@ -2,20 +2,19 @@ import React, {useState} from 'react';
 import './App.css';
 import {HashRouter} from "react-router-dom";
 import Sidebar from "./shared/Sidebar";
+import {UserResponse} from "./model/dto";
 
-// export const UserContext = React.createContext<{userInfo: GetUserDto | null, setUserInfo: (val: <JakiesDTO> | null) => void}>(null!);
-
-// const HashRouter = require("react-router-dom").HashRouter;
+export const UserContext = React.createContext<{userInfo: UserResponse | null, setUserInfo: (val: UserResponse | null) => void}>(null!);
 
 function App() {
-  // const [userInfo, setUserInfo] = useState< <JakiesDto> | null>(null)
+  const [userInfo, setUserInfo] = useState< UserResponse | null>(null)
 
   return (
-    // <UserContext.Provider value={{userInfo, setUserInfo}}>
+    <UserContext.Provider value={{userInfo, setUserInfo}}>
       <HashRouter>
         <Sidebar/>
       </HashRouter>
-    // </UserContext.Provider>
+    </UserContext.Provider>
   );
 }
 

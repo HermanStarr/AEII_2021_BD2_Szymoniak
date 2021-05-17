@@ -18,6 +18,8 @@ import {inputProps} from "../../shared/apiapp";
 import {LOGIN} from "../../shared/Routes";
 import {SignUpRequest} from "../../model/dto";
 import {registerUser} from "../../actions/loginRegister";
+import {ToastContainer, toast} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 type Props = {
   RegisterData?: SignUpRequest;
@@ -60,11 +62,13 @@ const formikEnhancer = withFormik<Props, FormValues>({
   }),
 
   handleSubmit: (values, {props}) => {
-    registerUser(values).then((response) => {
-      console.log("error podczas rejestracji " + response)
+    toast.configure();
+    registerUser(values)
+      .then((response) => {
+      toast.success("Registered succesfully");
       props.history.push(`${LOGIN}`);
     }).catch((error) => {
-      console.log("error podczas rejestracji" + error)
+      toast.error("Registered unsuccesfully" + error.message);
     })
   },
 
