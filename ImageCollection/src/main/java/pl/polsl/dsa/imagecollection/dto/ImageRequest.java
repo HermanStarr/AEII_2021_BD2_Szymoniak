@@ -5,7 +5,7 @@ import com.sun.istack.NotNull;
 public class ImageRequest {
     @NotNull
     private String name;
-    @NotNull
+
     private Byte[] image;
     @NotNull
     private String format;

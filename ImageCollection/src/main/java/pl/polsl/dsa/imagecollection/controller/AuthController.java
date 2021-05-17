@@ -3,19 +3,21 @@ package pl.polsl.dsa.imagecollection.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.polsl.dsa.imagecollection.dao.UserRepository;
 import pl.polsl.dsa.imagecollection.dto.ApiResponse;
 import pl.polsl.dsa.imagecollection.dto.LoginRequest;
 import pl.polsl.dsa.imagecollection.dto.SignUpRequest;
+import pl.polsl.dsa.imagecollection.dto.UserResponse;
 import pl.polsl.dsa.imagecollection.exception.ResourceNotFoundException;
 import pl.polsl.dsa.imagecollection.model.UserEntity;
 import pl.polsl.dsa.imagecollection.security.JwtUtils;
+import pl.polsl.dsa.imagecollection.service.UserDetailsImpl;
 import pl.polsl.dsa.imagecollection.service.UserService;
 
 import javax.validation.Valid;
@@ -36,6 +38,7 @@ public class AuthController {
 
     @Autowired
     JwtUtils jwtUtils;
+
 
     private final UserService userService;
 
@@ -81,6 +84,13 @@ public class AuthController {
         userService.signUp(request);
         return ResponseEntity.ok(
                 new ApiResponse(true,"User registered successfully!"));
+    }
+
+    @GetMapping("/userData")
+    public UserResponse getUserData() {
+        UserDetails u = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserEntity user = userRepository.findByNickname(u.getUsername()).orElseThrow(()->new ResourceNotFoundException("","",u.getUsername()));
+        return UserResponse.fromEntity(user);
     }
 
 }
