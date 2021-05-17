@@ -18,6 +18,7 @@ import pl.polsl.dsa.imagecollection.exception.ResourceNotFoundException;
 import pl.polsl.dsa.imagecollection.model.UserEntity;
 import pl.polsl.dsa.imagecollection.security.JwtUtils;
 import pl.polsl.dsa.imagecollection.service.UserDetailsImpl;
+import pl.polsl.dsa.imagecollection.service.UserDetailsServiceImpl;
 import pl.polsl.dsa.imagecollection.service.UserService;
 
 import javax.validation.Valid;
@@ -38,7 +39,6 @@ public class AuthController {
 
     @Autowired
     JwtUtils jwtUtils;
-
 
     private final UserService userService;
 
@@ -89,7 +89,8 @@ public class AuthController {
     @GetMapping("/userData")
     public UserResponse getUserData() {
         UserDetails u = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserEntity user = userRepository.findByNickname(u.getUsername()).orElseThrow(()->new ResourceNotFoundException("","",u.getUsername()));
+        UserEntity user = userRepository.findByNickname(u.getUsername())
+            .orElseThrow(() -> new ResourceNotFoundException("", "", u.getUsername()));
         return UserResponse.fromEntity(user);
     }
 

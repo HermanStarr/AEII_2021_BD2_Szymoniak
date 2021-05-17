@@ -13,5 +13,6 @@ public interface UserRepository extends CrudRepository<UserEntity, Long>, JpaSpe
     Optional<UserEntity> findByNickname(String nickname);
     Boolean existsByNickname(String nickname);
     Boolean existsByEmail(String email);
+    Optional<UserEntity> findAllByNickname(String nickname);
 
 }

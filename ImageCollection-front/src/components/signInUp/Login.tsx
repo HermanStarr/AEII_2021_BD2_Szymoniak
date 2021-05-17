@@ -16,17 +16,17 @@ import {Container} from "@material-ui/core";
 import {FormikProps} from "formik/dist/types";
 import {inputProps} from "../../shared/apiapp";
 import {REGISTER} from "../../shared/Routes";
-import {loginUser} from "../../actions/loginRegister";
-import {LoginRequest} from "../../model/dto";
+import {getUserData, loginUser} from "../../actions/loginRegister";
+import {LoginRequest, UserResponse} from "../../model/dto";
 
 type Props = {
   loginData?: LoginRequest;
-  // Context: { userInfo: SomeDto | null, setUserInfo: (val: (SomeDto | null)) => void };
+  Context: { userInfo: UserResponse | null, setUserInfo: (val: (UserResponse | null)) => void };
 } & RouteComponentProps
 
 
 type FormValues = {
-  email: string;
+  username: string;
   password: string;
 }
 
@@ -34,26 +34,31 @@ const formikEnhancer = withFormik<Props, FormValues>({
   enableReinitialize: true,
   validationSchema: Yup.object()
     .shape({
-      email: Yup.string().email()
-        .required('E-mail is required')
+      username: Yup.string()
+        .required('Username is required')
         .max(30, 'Maximum input size is: ${max}'),
       password: Yup.string()
         .required('Password is required')
         .max(20, 'Password should have maximum ${max} characters')
-        .min(7, 'Password should have at least ${min} characters '),
+        .min(1, 'Password should have at least ${min} characters '),
     }),
 
   mapPropsToValues: (props) => ({
-    email: props.loginData ? props.loginData.email : '',
+    username: props.loginData ? props.loginData.username : '',
     password: props.loginData ? props.loginData.password : '',
   }),
 
   handleSubmit: (values, {props}) => {
     loginUser(values).then((response) => {
-      console.log("error podczas logowania " + response)
-      //TODO: tu pobrac dane usera do contextu
+      console.log("Poprawnie zalogowano! " + response.message)
+
+      getUserData(response.data).then((response) => {
+        console.log(response);
+        console.log(response.nickname)
+      })
+
     }).catch((error) => {
-      console.log("error podczas logowania")
+      console.log("error podczas logowania: " + error.message)
     })
 
   },
@@ -80,10 +85,9 @@ const Login: FunctionComponent<Props & FormikProps<FormValues>> = (props) => {
             margin="normal"
             required
             fullWidth
-            label="Email Address"
-            autoComplete="email"
+            label="Username"
             autoFocus
-             {...inputProps(props, 'email')}
+             {...inputProps(props, 'username')}
           />
           <TextField
             variant="outlined"

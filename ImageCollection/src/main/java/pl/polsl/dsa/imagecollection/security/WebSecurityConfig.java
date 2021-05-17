@@ -19,7 +19,6 @@ import pl.polsl.dsa.imagecollection.service.UserDetailsServiceImpl;
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-
     @Autowired
     private UserDetailsServiceImpl userDetailsServiceImpl;
 
