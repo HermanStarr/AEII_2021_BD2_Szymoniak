@@ -18,10 +18,12 @@ import {inputProps} from "../../shared/apiapp";
 import {REGISTER} from "../../shared/Routes";
 import {getUserData, loginUser} from "../../actions/loginRegister";
 import {LoginRequest, UserResponse} from "../../model/dto";
+import {toast} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 type Props = {
   loginData?: LoginRequest;
-  Context: { userInfo: UserResponse | null, setUserInfo: (val: (UserResponse | null)) => void };
+  context: { userInfo: UserResponse | null, setUserInfo: (val: (UserResponse | null)) => void };
 } & RouteComponentProps
 
 
@@ -49,16 +51,21 @@ const formikEnhancer = withFormik<Props, FormValues>({
   }),
 
   handleSubmit: (values, {props}) => {
-    loginUser(values).then((response) => {
+    toast.configure();
+    loginUser(values)
+      .then((response) => {
       console.log("Poprawnie zalogowano! " + response.message)
 
-      getUserData(response.message).then((response) => {
+      getUserData(response.message)
+        .then((response) => {
         console.log(response);
-        console.log(response.nickname)
-      })
+        props.context.setUserInfo(response)
+        toast.success("Login succesfull");
+      });
 
     }).catch((error) => {
-      console.log("error podczas logowania: " + error.message)
+      toast.error("blad podczas logowania");
+      console.log("blad podczas logowania" + error)
     })
 
   },
