@@ -48,42 +48,42 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse> loginUser(@Valid @RequestBody LoginRequest request) {
-        if (!userRepository.existsByNickname(request.getUsername()))
+        if(!userRepository.existsByNickname(request.getUsername()))
             return ResponseEntity
-                .badRequest()
-                .body(new ApiResponse(false, "Error: User does not exist!"));
+                    .badRequest()
+                    .body(new ApiResponse(false,"Error: User does not exist!"));
 
         UserEntity user = userRepository.findByNickname(request.getUsername())
-            .orElseThrow(() -> new ResourceNotFoundException("User", "nickname", request.getUsername()));
+                .orElseThrow(() -> new ResourceNotFoundException("User", "nickname", request.getUsername()));
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-        if (!encoder.matches(request.getPassword(), userService.byteToString(user.getPasswordHash()))) {
+        if ( !encoder.matches(request.getPassword(), userService.byteToString(user.getPasswordHash())) ) {
             return ResponseEntity
-                .badRequest()
-                .body(new ApiResponse(false, "Error: Wrong password"));
+                    .badRequest()
+                    .body(new ApiResponse(false,"Error: Wrong password"));
         }
 
-        userService.login(request);
-        return ResponseEntity.ok(new ApiResponse(true, "User logged in successfully!"));
+        String jwt = userService.login(request);
+        return ResponseEntity.ok(new ApiResponse(true,"User logged in successfully! "+"Bearer "+jwt));
     }
 
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse> registerUser(@Valid @RequestBody SignUpRequest request) {
-        if (userRepository.existsByNickname(request.getUsername())) {
+        if(userRepository.existsByNickname(request.getUsername())) {
             return ResponseEntity
-                .badRequest()
-                .body(new ApiResponse(false, "Error: Username is already taken!"));
+                    .badRequest()
+                    .body(new ApiResponse(false,"Error: Username is already taken!"));
         }
-        if (userRepository.existsByEmail(request.getEmail())) {
+        if(userRepository.existsByEmail(request.getEmail())) {
             return ResponseEntity
-                .badRequest()
-                .body(new ApiResponse(false, "Error: Email is already taken!"));
+                    .badRequest()
+                    .body(new ApiResponse(false,"Error: Email is already taken!"));
         }
 
         userService.signUp(request);
         return ResponseEntity.ok(
-            new ApiResponse(true, "User registered successfully!"));
+                new ApiResponse(true,"User registered successfully!"));
     }
 
     @GetMapping("/userData")

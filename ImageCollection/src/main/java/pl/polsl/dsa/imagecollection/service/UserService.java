@@ -49,7 +49,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public JwtResponse login(LoginRequest loginRequest){
+    public String login(LoginRequest loginRequest){
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -60,7 +60,8 @@ public class UserService {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
-        return new JwtResponse(jwt);
+        JwtResponse token = new JwtResponse(jwt);
+        return token.getAccessToken();
     }
 
 
