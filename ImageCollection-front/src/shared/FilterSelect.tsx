@@ -2,7 +2,7 @@ import Chip from "@material-ui/core/Chip";
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import React from "react";
 import {createStyles, fade, makeStyles, Theme} from "@material-ui/core/styles";
-import {FormControl, TextField} from "@material-ui/core";
+import {TextField} from "@material-ui/core";
 
 
 type Props ={
@@ -16,11 +16,11 @@ type Props ={
 export const FilterSelect = (props: Props) => {
   const classes = useStyles();
   return (
-    <FormControl variant="outlined" className={classes.filterActions}>
+    <div className={classes.search}>
       <Autocomplete
         multiple
         limitTags={2}
-        className={classes.selected}
+        classes={{root: classes.inputRoot, input: classes.inputInput}}
         options={props.options}
         freeSolo={props.freeSolo ?? true}
         renderTags={(value: string[], getTagProps) =>
@@ -44,22 +44,20 @@ export const FilterSelect = (props: Props) => {
           props.onChange(value);
         }}
       />
-    </FormControl>
+    </div>
   );
 }
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    filterActions: {
+    search: {
+      borderRadius: theme.shape.borderRadius,
       backgroundColor: fade(theme.palette.common.white, 0.15),
       '&:hover': {
         backgroundColor: fade(theme.palette.common.white, 0.25),
       },
-      borderRadius: theme.shape.borderRadius,
-      width: 300,
-      fontWeight: 100,
-      color: "white",
       marginLeft: 10,
+      width: 300,
     },
     input: {
       color: '#ffffff',
@@ -67,6 +65,14 @@ const useStyles = makeStyles((theme: Theme) =>
     selected: {
       color: fade(theme.palette.common.white, 0.85),
       fontWeight: 100,
+    },
+    inputRoot: {
+      color: 'inherit',
+    },
+    inputInput: {
+      padding: theme.spacing(1, 1, 1, 0),
+      paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+      width: '100%',
     },
   }),
 );

@@ -1,6 +1,15 @@
 import ScrollContainer from "react-indiana-drag-scroll";
 import React from "react";
-import {createStyles, Divider, Grid, IconButton, makeStyles, Theme, Typography, withStyles} from "@material-ui/core";
+import {
+  createStyles,
+  Divider,
+  Grid,
+  IconButton,
+  makeStyles,
+  Theme,
+  Typography,
+  withStyles
+} from "@material-ui/core";
 import {ImageResponse2} from "../../model/dto";
 import CloseIcon from '@material-ui/icons/Close';
 
@@ -44,17 +53,18 @@ export const ImageDetails = (props: Props) => {
   const classes = useStyles();
   return (
     <>
-      <IconButton
-        aria-label="close"
-        onClick={props.onClose}
-        style={{
-          position: 'absolute',
-          right: 0,
-          top: 0,
-        }}
-      >
-        <CloseIcon />
-      </IconButton>
+      <Grid container
+            style={{padding: 2}}
+            direction="row"
+            alignItems="center"
+            justify="flex-end">
+        <IconButton
+          aria-label="close"
+          onClick={props.onClose}
+        >
+          <CloseIcon />
+        </IconButton>
+      </Grid>
       <ScrollContainer
         className="scroll-container"
         hideScrollbars={false}
@@ -64,129 +74,129 @@ export const ImageDetails = (props: Props) => {
           backgroundColor: '#fff',
           borderRadius: 5,
         }}>
-          <div className={classes.section1}>
-            <Grid container alignItems="center" spacing={2}>
-              <Grid item>
-                <WhiteTextTypography gutterBottom variant="h5">
-                  Title:
-                </WhiteTextTypography>
-              </Grid>
-              <Grid item>
-                <WhiteTextTypography gutterBottom variant="h5">
-                  {props.image.title}
-                </WhiteTextTypography>
-              </Grid>
+        <div className={classes.section1}>
+          <Grid container alignItems="center" spacing={2}>
+            <Grid item>
+              <WhiteTextTypography gutterBottom variant="h5">
+                Title:
+              </WhiteTextTypography>
             </Grid>
-          </div>
-          <Divider variant="middle" />
-          <div className={classes.section1}>
-            <Grid container alignItems="center" spacing={2}>
-              <Grid item>
-                <WhiteTextTypography gutterBottom variant="h5">
-                  Author:
-                </WhiteTextTypography>
-              </Grid>
-              <Grid item>
-                <WhiteTextTypography gutterBottom variant="h5">
-                  {props.image.author}
-                </WhiteTextTypography>
-              </Grid>
+            <Grid item>
+              <WhiteTextTypography gutterBottom variant="h5">
+                {props.image.title}
+              </WhiteTextTypography>
             </Grid>
-          </div>
-          <Divider variant="middle" />
-          <div className={classes.section1}>
-            <Grid container alignItems="center" spacing={2}>
-              <Grid item>
-                <WhiteTextTypography gutterBottom variant="h5">
-                  Creation date:
-                </WhiteTextTypography>
-              </Grid>
-              <Grid item>
-                <WhiteTextTypography gutterBottom variant="h5">
-                  {props.image.creationDate}
-                </WhiteTextTypography>
-              </Grid>
+          </Grid>
+        </div>
+        <Divider variant="middle" />
+        <div className={classes.section1}>
+          <Grid container alignItems="center" spacing={2}>
+            <Grid item>
+              <WhiteTextTypography gutterBottom variant="h5">
+                Author:
+              </WhiteTextTypography>
             </Grid>
-          </div>
-          <Divider variant="middle" />
-          <div className={classes.section1}>
-            <Grid container alignItems="center" spacing={2}>
-              <Grid item>
-                <WhiteTextTypography gutterBottom variant="h5">
-                  Size:
-                </WhiteTextTypography>
-              </Grid>
-              <Grid item>
-                <WhiteTextTypography gutterBottom variant="h5">
-                  {getImageSize(props.image.size)}
-                </WhiteTextTypography>
-              </Grid>
+            <Grid item>
+              <WhiteTextTypography gutterBottom variant="h5">
+                {props.image.author}
+              </WhiteTextTypography>
             </Grid>
-          </div>
-          <Divider variant="middle" />
-          <div className={classes.section1}>
-            <Grid container alignItems="center" spacing={2}>
-              <Grid item>
-                <WhiteTextTypography gutterBottom variant="h5">
-                  Resolution:
-                </WhiteTextTypography>
-              </Grid>
-              <Grid item>
-                <WhiteTextTypography gutterBottom variant="h5">
-                  {props.image.resolutionX}x{props.image.resolutionY}
-                </WhiteTextTypography>
-              </Grid>
+          </Grid>
+        </div>
+        <Divider variant="middle" />
+        <div className={classes.section1}>
+          <Grid container alignItems="center" spacing={2}>
+            <Grid item>
+              <WhiteTextTypography gutterBottom variant="h5">
+                Creation date:
+              </WhiteTextTypography>
             </Grid>
-          </div>
-          <Divider variant="middle" />
-          <div className={classes.section1}>
-            <Grid container alignItems="center" spacing={2}>
-              <Grid item>
-                <WhiteTextTypography gutterBottom variant="h5">
-                  Format:
-                </WhiteTextTypography>
-              </Grid>
-              <Grid item>
-                <WhiteTextTypography gutterBottom variant="h5">
-                  {props.image.format}
-                </WhiteTextTypography>
-              </Grid>
+            <Grid item>
+              <WhiteTextTypography gutterBottom variant="h5">
+                {props.image.creationDate}
+              </WhiteTextTypography>
             </Grid>
-          </div>
-          <Divider variant="middle" />
-          <div className={classes.section1}>
-            <Grid container alignItems="center" spacing={2}>
-              <Grid item>
-                <WhiteTextTypography gutterBottom variant="h5">
-                  Tags:
-                </WhiteTextTypography>
-              </Grid>
-              <Grid item>
-                <WhiteTextTypography gutterBottom variant="h5">
-                  {props.tags.map(tag => (
-                    <>
-                      <a target="_blank" href="https://www.youtube.com/watch?v=qrxv0JNVtgY">{tag}</a>{' '}
-                    </>
-                  ))}
-                </WhiteTextTypography>
-              </Grid>
+          </Grid>
+        </div>
+        <Divider variant="middle" />
+        <div className={classes.section1}>
+          <Grid container alignItems="center" spacing={2}>
+            <Grid item>
+              <WhiteTextTypography gutterBottom variant="h5">
+                Size:
+              </WhiteTextTypography>
             </Grid>
-          </div>
-          <Divider variant="middle" />
-          <div className={classes.section1}>
-            <Grid container alignItems="center" spacing={2}>
-              <Grid item>
-                <WhiteTextTypography gutterBottom variant="h5">
-                  Categories:
-                </WhiteTextTypography>
-              </Grid>
-              <Grid item>
-                <WhiteTextTypography gutterBottom variant="h5">
-                  {props.categories.join(' ')}
-                </WhiteTextTypography>
-              </Grid>
+            <Grid item>
+              <WhiteTextTypography gutterBottom variant="h5">
+                {getImageSize(props.image.size)}
+              </WhiteTextTypography>
             </Grid>
-          </div>
+          </Grid>
+        </div>
+        <Divider variant="middle" />
+        <div className={classes.section1}>
+          <Grid container alignItems="center" spacing={2}>
+            <Grid item>
+              <WhiteTextTypography gutterBottom variant="h5">
+                Resolution:
+              </WhiteTextTypography>
+            </Grid>
+            <Grid item>
+              <WhiteTextTypography gutterBottom variant="h5">
+                {props.image.resolutionX}x{props.image.resolutionY}
+              </WhiteTextTypography>
+            </Grid>
+          </Grid>
+        </div>
+        <Divider variant="middle" />
+        <div className={classes.section1}>
+          <Grid container alignItems="center" spacing={2}>
+            <Grid item>
+              <WhiteTextTypography gutterBottom variant="h5">
+                Format:
+              </WhiteTextTypography>
+            </Grid>
+            <Grid item>
+              <WhiteTextTypography gutterBottom variant="h5">
+                {props.image.format}
+              </WhiteTextTypography>
+            </Grid>
+          </Grid>
+        </div>
+        <Divider variant="middle" />
+        <div className={classes.section1}>
+          <Grid container alignItems="center" spacing={2}>
+            <Grid item>
+              <WhiteTextTypography gutterBottom variant="h5">
+                Tags:
+              </WhiteTextTypography>
+            </Grid>
+            <Grid item>
+              <WhiteTextTypography gutterBottom variant="h5">
+                {props.tags.map(tag => (
+                  <>
+                    <a target="_blank" href="https://www.youtube.com/watch?v=qrxv0JNVtgY">{tag}</a>{' '}
+                  </>
+                ))}
+              </WhiteTextTypography>
+            </Grid>
+          </Grid>
+        </div>
+        <Divider variant="middle" />
+        <div className={classes.section1}>
+          <Grid container alignItems="center" spacing={2}>
+            <Grid item>
+              <WhiteTextTypography gutterBottom variant="h5">
+                Categories:
+              </WhiteTextTypography>
+            </Grid>
+            <Grid item>
+              <WhiteTextTypography gutterBottom variant="h5">
+                {props.categories.join(' ')}
+              </WhiteTextTypography>
+            </Grid>
+          </Grid>
+        </div>
       </ScrollContainer>
     </>
   )

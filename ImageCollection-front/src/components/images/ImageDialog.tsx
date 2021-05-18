@@ -1,16 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import {
-  Avatar,
-  IconButton,
-  Modal,
+  Avatar, createStyles, Grid,
+  IconButton, makeStyles,
+  Modal, Theme,
   Typography
 } from "@material-ui/core";
 import {photos} from "./photos";
 import {ImageResponse2, TagResponse, UserResponse} from "../../model/dto";
 import useWindowDimensions from "../../shared/WindowDimensions";
 import ScrollContainer from "react-indiana-drag-scroll";
-import AddIcon from '@material-ui/icons/Add';
-import RemoveIcon from '@material-ui/icons/Remove';
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import {blobToSource} from "../../shared/FileEdition";
 import ImageDetails from "./ImageDetails";
@@ -20,18 +18,36 @@ type Props = {
   dialogOpened: boolean;
   onClose: () => void;
 }
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      display: 'flex',
+      '& > *': {
+        margin: theme.spacing(1),
+      },
+    },
+    small: {
+      width: theme.spacing(3),
+      height: theme.spacing(3),
+    },
+    large: {
+      width: 50,
+      height: 50,
+    },
+  }),
+);
 
 const getImage = async (id: number) => {
   let a = [
     {id: 1, image: new Blob(), title: 'Zdjęcie xD', author: 'me', authorId: 1, description: 'just a photo', size: 21100, format: 'jpeg', creationDate: '2021-05-19', resolutionX: 800, resolutionY: 6000},
-    {id: 2, image: new Blob(), title: 'Zdjęcie xD', author: 'me', authorId: 1, description: 'just a photo', size: 453100, format: 'png', creationDate: '2021-05-18', resolutionX: 600, resolutionY: 600},
-    {id: 3, image: new Blob(), title: 'Zdjęcie xD', author: 'me', authorId: 1, description: 'just a photo', size: 12100, format: 'webp', creationDate: '2021-05-17', resolutionX: 326.25, resolutionY: 435},
-    {id: 4, image: new Blob(), title: 'Zdjęcie xD', author: 'me', authorId: 1, description: 'just a photo', size: 65100, format: 'jpeg', creationDate: '2021-05-16', resolutionX: 300, resolutionY: 400},
-    {id: 5, image: new Blob(), title: 'Zdjęcie xD', author: 'me', authorId: 1, description: 'just a photo', size: 13100, format: 'png', creationDate: '2021-05-15', resolutionX: 300, resolutionY: 400},
-    {id: 6, image: new Blob(), title: 'Zdjęcie xD', author: 'me', authorId: 1, description: 'just a photo', size: 54100, format: 'webp', creationDate: '2021-05-14', resolutionX: 400, resolutionY: 300},
-    {id: 7, image: new Blob(), title: 'Zdjęcie xD', author: 'me', authorId: 1, description: 'just a photo', size: 13100, format: 'jpeg', creationDate: '2021-05-13', resolutionX: 300, resolutionY: 400},
-    {id: 8, image: new Blob(), title: 'Zdjęcie xD', author: 'me', authorId: 1, description: 'just a photo', size: 656100, format: 'png', creationDate: '2021-05-12', resolutionX: 400, resolutionY: 300},
-    {id: 9, image: new Blob(), title: 'Zdjęcie xD', author: 'me', authorId: 1, description: 'just a photo', size: 2100, format: 'webp', creationDate: '2021-05-11', resolutionX: 400, resolutionY: 300},
+    {id: 2, image: new Blob(), title: 'Gziby', author: 'me', authorId: 1, description: 'just a photo', size: 453100, format: 'png', creationDate: '2021-05-18', resolutionX: 600, resolutionY: 600},
+    {id: 3, image: new Blob(), title: 'Klaster', author: 'me', authorId: 1, description: 'just a photo', size: 12100, format: 'webp', creationDate: '2021-05-17', resolutionX: 326.25, resolutionY: 435},
+    {id: 4, image: new Blob(), title: 'Kapelnica', author: 'me', authorId: 1, description: 'just a photo', size: 65100, format: 'jpeg', creationDate: '2021-05-16', resolutionX: 300, resolutionY: 400},
+    {id: 5, image: new Blob(), title: 'Meh', author: 'me', authorId: 1, description: 'just a photo', size: 13100, format: 'png', creationDate: '2021-05-15', resolutionX: 300, resolutionY: 400},
+    {id: 6, image: new Blob(), title: 'I like trains', author: 'me', authorId: 1, description: 'just a photo', size: 54100, format: 'webp', creationDate: '2021-05-14', resolutionX: 400, resolutionY: 300},
+    {id: 7, image: new Blob(), title: 'Lakers', author: 'me', authorId: 1, description: 'just a photo', size: 13100, format: 'jpeg', creationDate: '2021-05-13', resolutionX: 300, resolutionY: 400},
+    {id: 8, image: new Blob(), title: 'Rzołendź', author: 'me', authorId: 1, description: 'just a photo', size: 656100, format: 'png', creationDate: '2021-05-12', resolutionX: 400, resolutionY: 300},
+    {id: 9, image: new Blob(), title: 'Phnagn', author: 'me', authorId: 1, description: 'just a photo', size: 2100, format: 'webp', creationDate: '2021-05-11', resolutionX: 400, resolutionY: 300},
   ];
   return a[id];
 }
@@ -58,8 +74,9 @@ export const ImageDialog = (props: Props) => {
   const { height, width } = useWindowDimensions();
   const [modalHeight, setModalHeight] = useState<number>(900);
   const [modalWidth, setModalWidth] = useState<number>(1000);
-  const [coefficient, setCoefficient] = useState<number>(1);
   const [renderDetails, setRenderDetails] = useState<boolean>(false);
+
+  const classes = useStyles();
 
   useEffect(() => {
     if(props.imageId !== null) {
@@ -141,78 +158,41 @@ export const ImageDialog = (props: Props) => {
               </>
             ) : (
               <>
-                <div style={{
-                  height: 0.06 * modalHeight,
-                  paddingTop: 0.00667 * modalHeight
-                }}>
-                  <div style={{
-                    display: 'flex',
-                    width: '100%'
-                  }}>
-                    <div style={{
-                      flex: 1.5,
-                      display: 'flex',
-                      justifyContent: 'center',
-                    }}>
-                      <Avatar
-                        aria-label="recipe"
-                        src={author!.icon}
-                        onClick={() => {}}/>
-                    </div>
-                    <div style={{
-                      flex: 17,
-                      flexDirection: 'column'
-                    }}>
-                      <Typography
-                        variant="body1"
-                        style={{flex: 5}}
-                      >
-                        {image.title}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        color="textSecondary"
-                        style={{flex: 5}}
-                      >
-                        {'Wakacyjne'}
-                      </Typography>
-                    </div>
-                    <div style={{flex: 1.5}}>
-                      <IconButton
-                        aria-label="settings"
-                        onClick={() => setRenderDetails(true)}
-                      >
-                        <MoreVertIcon />
-                      </IconButton>
-                    </div>
-                  </div>
-                </div>
-                <div style={{
+                <Grid container alignItems="center" style={{padding: 2}}>
+                  <Grid item xs={10}>
+                    <Grid container direction="row" alignItems="center">
+                      <Grid item>
+                        <Avatar
+                          aria-label="recipe"
+                          src={author!.icon}
+                          onClick={() => {}}
+                          className={classes.large}/>
+                      </Grid>
+                      <div style={{width: 20}} />
+                      <Grid item>
+                        <Typography variant="h4">
+                          {image.title}
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                  <Grid item xs={2}>
+                    <Grid container direction="row" alignItems="center" justify="flex-end">
+                      <Grid item>
+                        <IconButton
+                          aria-label="settings"
+                          onClick={() => setRenderDetails(true)}
+                        >
+                          <MoreVertIcon />
+                        </IconButton>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </Grid>
+                <Grid container style={{
                   width: '100%',
                   height: 0.667 * modalHeight,
-                  paddingTop: 0.01333 * modalHeight
                 }}>
-                  <IconButton style={{
-                    position: 'absolute',
-                    width: 20,
-                    height: 20
-                  }}>
-                    <AddIcon
-                      aria-label="Magnify"
-                      onClick={() => setCoefficient(coefficient >= 3 ? coefficient : coefficient + 0.1)}
-                    />
-                  </IconButton>
-                  <IconButton style={{
-                    position: 'absolute',
-                    top: 0.12 * modalHeight,
-                    width: 20,
-                    height: 20
-                  }}>
-                    <RemoveIcon
-                      aria-label="Decrease"
-                      onClick={() => setCoefficient(coefficient <= 0.1 ? coefficient : coefficient - 0.1)}
-                    />
-                  </IconButton>
                   <ScrollContainer
                     className="scroll-container"
                     style={{
@@ -226,11 +206,11 @@ export const ImageDialog = (props: Props) => {
                       src={imageSource}
                       alt={image.title}
                       style={{
-                        //width: image.resolutionX * coefficient,
-                        //height: image.resolutionY * coefficient
+                        //width: window.innerWidth * coefficient,
+                        //height: window.innerHeight * coefficient
                       }}/>
                   </ScrollContainer>
-                </div>
+                </Grid>
                 <div
                   style={{
                     paddingLeft: 15,
@@ -245,7 +225,7 @@ export const ImageDialog = (props: Props) => {
                     component="p"
                     style={{fontSize: 0.015 * modalHeight}}
                   >
-                    Tylko jedno w głowie mam
+                    {image.description}
                   </Typography>
                 </div>
                 <div style={{
