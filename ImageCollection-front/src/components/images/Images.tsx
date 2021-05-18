@@ -6,7 +6,7 @@ import GridListTileBar from '@material-ui/core/GridListTileBar';
 import IconButton from '@material-ui/core/IconButton';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
 import {CategoryResponse, TagResponse, TileImageResponse} from "../../model/dto";
-import {RouteComponentProps, withRouter} from "react-router";
+import {withRouter} from "react-router";
 import {
   AppBar,
   Container,
@@ -20,8 +20,6 @@ import SearchIcon from '@material-ui/icons/Search';
 import FilterSelect from "../../shared/FilterSelect";
 import {photos} from "./photos";
 
-
-type Props = RouteComponentProps & {}
 
 const getImages = async (): Promise<TileImageResponse[]> => {
   return [
@@ -45,7 +43,7 @@ const getTags = async (): Promise<TagResponse[]> => {
   ];
 };
 
-const Images = (props: Props) => {
+const Images = () => {
   const [searchedImages, setSearchedImages] = useState<TileImageResponse[]>([]);
   const [categorySearchCriteria, setCategorySearchCriteria] = useState<string>("");
   const [categories, setCategories] = useState<CategoryResponse[]>([]);
@@ -163,7 +161,10 @@ const Images = (props: Props) => {
       <ImageDialog
         imageId={imageId}
         dialogOpened={imageDialogOpened}
-        onClose={() => setImageDialogOpened(false)} />
+        onClose={() => {
+          setImageId(null);
+          setImageDialogOpened(false);
+        }} />
       <AddImage
         dialogOpened={addImageDialogOpened}
         onClose={() => setAddImageDialogOpened(false)}

@@ -6,12 +6,14 @@ import {
   Typography
 } from "@material-ui/core";
 import {photos} from "./photos";
-import {ImageResponse, TagResponse, UserResponse} from "../../model/dto";
+import {ImageResponse2, TagResponse, UserResponse} from "../../model/dto";
 import useWindowDimensions from "../../shared/WindowDimensions";
 import ScrollContainer from "react-indiana-drag-scroll";
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
 import MoreVertIcon from "@material-ui/icons/MoreVert";
+import {blobToSource} from "../../shared/FileEdition";
+import ImageDetails from "./ImageDetails";
 
 type Props = {
   imageId: number | null;
@@ -20,7 +22,18 @@ type Props = {
 }
 
 const getImage = async (id: number) => {
-  return {id: id, image: 'sdasa', title: 'Zdjęcie xD', author: 'me', authorId: 1, description: 'just a photo'};
+  let a = [
+    {id: 1, image: new Blob(), title: 'Zdjęcie xD', author: 'me', authorId: 1, description: 'just a photo', size: 21100, format: 'jpeg', creationDate: '2021-05-19', resolutionX: 800, resolutionY: 6000},
+    {id: 2, image: new Blob(), title: 'Zdjęcie xD', author: 'me', authorId: 1, description: 'just a photo', size: 453100, format: 'png', creationDate: '2021-05-18', resolutionX: 600, resolutionY: 600},
+    {id: 3, image: new Blob(), title: 'Zdjęcie xD', author: 'me', authorId: 1, description: 'just a photo', size: 12100, format: 'webp', creationDate: '2021-05-17', resolutionX: 326.25, resolutionY: 435},
+    {id: 4, image: new Blob(), title: 'Zdjęcie xD', author: 'me', authorId: 1, description: 'just a photo', size: 65100, format: 'jpeg', creationDate: '2021-05-16', resolutionX: 300, resolutionY: 400},
+    {id: 5, image: new Blob(), title: 'Zdjęcie xD', author: 'me', authorId: 1, description: 'just a photo', size: 13100, format: 'png', creationDate: '2021-05-15', resolutionX: 300, resolutionY: 400},
+    {id: 6, image: new Blob(), title: 'Zdjęcie xD', author: 'me', authorId: 1, description: 'just a photo', size: 54100, format: 'webp', creationDate: '2021-05-14', resolutionX: 400, resolutionY: 300},
+    {id: 7, image: new Blob(), title: 'Zdjęcie xD', author: 'me', authorId: 1, description: 'just a photo', size: 13100, format: 'jpeg', creationDate: '2021-05-13', resolutionX: 300, resolutionY: 400},
+    {id: 8, image: new Blob(), title: 'Zdjęcie xD', author: 'me', authorId: 1, description: 'just a photo', size: 656100, format: 'png', creationDate: '2021-05-12', resolutionX: 400, resolutionY: 300},
+    {id: 9, image: new Blob(), title: 'Zdjęcie xD', author: 'me', authorId: 1, description: 'just a photo', size: 2100, format: 'webp', creationDate: '2021-05-11', resolutionX: 400, resolutionY: 300},
+  ];
+  return a[id];
 }
 
 const getUserData = async (id: number): Promise<UserResponse> => {
@@ -37,28 +50,37 @@ const getTags = async (id: number) => {
 }
 
 export const ImageDialog = (props: Props) => {
-  const { height, width } = useWindowDimensions();
-  const [image, setImage] = useState<ImageResponse | null>(null);
-  const [displayImage, setDisplayImage] = useState<string>('');
+  const [image, setImage] = useState<ImageResponse2 | null>(null);
   const [author, setAuthor] = useState<UserResponse | null>(null);
-  const [coefficient, setCoefficient] = useState<number>(1);
   const [tags, setTags] = useState<TagResponse[]>([]);
+  const [imageSource, setImageSource] = useState<string>('');
+
+  const { height, width } = useWindowDimensions();
   const [modalHeight, setModalHeight] = useState<number>(900);
   const [modalWidth, setModalWidth] = useState<number>(1000);
-  const [photo, setPhoto] = useState<{src: string, width: number, height: number}>(photos[0]);
+  const [coefficient, setCoefficient] = useState<number>(1);
+  const [renderDetails, setRenderDetails] = useState<boolean>(false);
 
   useEffect(() => {
-    getImage(1).then(response => {
-      setImage(response);
-      //const reader = new FileReader();
-      //reader.onloadend = () => {
-      //  setDisplayImage(reader.result as string);
-      //}
-      //reader.readAsDataURL(image!.image);
-      setDisplayImage(photos[props.imageId ?? 1].src);
-      setPhoto(photos[props.imageId ?? 1]);
-    });
+    if(props.imageId !== null) {
+      getImage(props.imageId).then(response => {
+        setImage(response);
+        blobToSource({
+          image: response.image,
+          onLoadEnd: result => setImageSource(result === 'data:' ? photos[props.imageId!].src : result),
+        });
+        console.log(response);
+        console.log(imageSource);
+      });
+    } else {
+      setImage(null);
+      setImageSource('');
+    }
   }, [props.imageId]);
+
+  useEffect(() => {
+    console.log(imageSource);
+  }, [imageSource])
 
   useEffect(() => {
     if(image !== null) {
@@ -82,10 +104,18 @@ export const ImageDialog = (props: Props) => {
     setModalWidth(width - 250);
   }, [height, width]);
 
+  if (renderDetails) {
+
+  } else {
+
+  }
   return (
     <Modal
       open={props.dialogOpened}
-      onClose={props.onClose}
+      onClose={() => {
+        setRenderDetails(false);
+        props.onClose();
+      }}
       style={{
         left: (width - modalWidth) * 0.5,
         width: modalWidth,
@@ -99,134 +129,150 @@ export const ImageDialog = (props: Props) => {
       }}>
         {image && author && (
           <>
-            <div style={{
-              height: 0.06 * modalHeight,
-              paddingTop: 0.00667 * modalHeight
-            }}>
-              <div style={{
-                display: 'flex',
-                width: '100%'
-              }}>
+            {renderDetails ? (
+              <>
+                <ImageDetails
+                  width={modalWidth}
+                  height={modalHeight}
+                  tags={tags.map(tag => tag.name)}
+                  categories={['']}
+                  image={image}
+                  onClose={() => setRenderDetails(false)}/>
+              </>
+            ) : (
+              <>
                 <div style={{
-                  flex: 1.5,
-                  display: 'flex',
-                  justifyContent: 'center',
+                  height: 0.06 * modalHeight,
+                  paddingTop: 0.00667 * modalHeight
                 }}>
-                  <Avatar
-                    aria-label="recipe"
-                    src={author!.icon}
-                    onClick={() => {}}/>
+                  <div style={{
+                    display: 'flex',
+                    width: '100%'
+                  }}>
+                    <div style={{
+                      flex: 1.5,
+                      display: 'flex',
+                      justifyContent: 'center',
+                    }}>
+                      <Avatar
+                        aria-label="recipe"
+                        src={author!.icon}
+                        onClick={() => {}}/>
+                    </div>
+                    <div style={{
+                      flex: 17,
+                      flexDirection: 'column'
+                    }}>
+                      <Typography
+                        variant="body1"
+                        style={{flex: 5}}
+                      >
+                        {image.title}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        color="textSecondary"
+                        style={{flex: 5}}
+                      >
+                        {'Wakacyjne'}
+                      </Typography>
+                    </div>
+                    <div style={{flex: 1.5}}>
+                      <IconButton
+                        aria-label="settings"
+                        onClick={() => setRenderDetails(true)}
+                      >
+                        <MoreVertIcon />
+                      </IconButton>
+                    </div>
+                  </div>
                 </div>
                 <div style={{
-                  flex: 17,
-                  flexDirection: 'column'
+                  width: '100%',
+                  height: 0.667 * modalHeight,
+                  paddingTop: 0.01333 * modalHeight
                 }}>
-                  <Typography
-                    variant="body1"
-                    style={{flex: 5}}
-                  >
-                    {image.title}
-                  </Typography>
+                  <IconButton style={{
+                    position: 'absolute',
+                    width: 20,
+                    height: 20
+                  }}>
+                    <AddIcon
+                      aria-label="Magnify"
+                      onClick={() => setCoefficient(coefficient >= 3 ? coefficient : coefficient + 0.1)}
+                    />
+                  </IconButton>
+                  <IconButton style={{
+                    position: 'absolute',
+                    top: 0.12 * modalHeight,
+                    width: 20,
+                    height: 20
+                  }}>
+                    <RemoveIcon
+                      aria-label="Decrease"
+                      onClick={() => setCoefficient(coefficient <= 0.1 ? coefficient : coefficient - 0.1)}
+                    />
+                  </IconButton>
+                  <ScrollContainer
+                    className="scroll-container"
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      width: modalWidth,
+                      height: 0.667 * modalHeight,
+                      backgroundColor: '#000000',
+                    }}>
+                    <img
+                      src={imageSource}
+                      alt={image.title}
+                      style={{
+                        //width: image.resolutionX * coefficient,
+                        //height: image.resolutionY * coefficient
+                      }}/>
+                  </ScrollContainer>
+                </div>
+                <div
+                  style={{
+                    paddingLeft: 15,
+                    paddingRight: 15,
+                    height: 0.14667 * modalHeight,
+                    paddingTop: 0.02 * modalHeight,
+                    textOverflow: 'ellipsis'
+                  }}>
                   <Typography
                     variant="body2"
                     color="textSecondary"
-                    style={{flex: 5}}
+                    component="p"
+                    style={{fontSize: 0.015 * modalHeight}}
                   >
-                    {'Wakacyjne'}
+                    Tylko jedno w głowie mam
                   </Typography>
                 </div>
-                <div style={{flex: 1.5}}>
-                  <IconButton
-                    aria-label="settings"
-                    onClick={() => {}}
-                  >
-                    <MoreVertIcon />
-                  </IconButton>
-                </div>
-              </div>
-            </div>
-            <div style={{
-              width: '100%',
-              height: 0.667 * modalHeight,
-              paddingTop: 0.01333 * modalHeight
-            }}>
-              <IconButton style={{
-                position: 'absolute',
-                width: 20,
-                height: 20
-              }}>
-                <AddIcon
-                  aria-label="Magnify"
-                  onClick={() => setCoefficient(coefficient >= 3 ? coefficient : coefficient + 0.1)}
-                />
-              </IconButton>
-              <IconButton style={{
-                position: 'absolute',
-                top: 0.12 * modalHeight,
-                width: 20,
-                height: 20
-              }}>
-                <RemoveIcon
-                  aria-label="Decrease"
-                  onClick={() => setCoefficient(coefficient <= 0.1 ? coefficient : coefficient - 0.1)}
-                />
-              </IconButton>
-              <ScrollContainer
-                className="scroll-container"
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  width: modalWidth,
-                  height: 0.667 * modalHeight,
+                <div style={{
+                  paddingLeft: 15,
+                  paddingRight: 15,
+                  height: 0.05333 * modalHeight,
+                  paddingTop: 0.02 * modalHeight,
+                  paddingBottom: 0.01333 * modalHeight
                 }}>
-                <img
-                  src={photo.src}
-                  alt={photo.src}
-                  style={{
-                    width: photo.width * coefficient,
-                    height: photo.height * coefficient
-                  }}/>
-              </ScrollContainer>
-            </div>
-            <div
-              style={{
-                paddingLeft: 15,
-                paddingRight: 15,
-                height: 0.14667 * modalHeight,
-                paddingTop: 0.02 * modalHeight,
-                textOverflow: 'ellipsis'
-              }}>
-              <Typography
-                variant="body2"
-                color="textSecondary"
-                component="p"
-                style={{fontSize: 0.015 * modalHeight}}
-              >
-                Tylko jedno w głowie mam
-              </Typography>
-            </div>
-            <div style={{
-              paddingLeft: 15,
-              paddingRight: 15,
-              height: 0.05333 * modalHeight,
-              paddingTop: 0.02 * modalHeight,
-              paddingBottom: 0.01333 * modalHeight
-            }}>
-              <Typography
-                variant="body2"
-                color="textSecondary"
-                component="p"
-                style={{fontSize: 0.015 * modalHeight}}
-              >
-                {tags.map(tag => (
-                  <>
-                    <a target="_blank" href="https://www.youtube.com/watch?v=qrxv0JNVtgY">{tag.name}</a>{' '}
-                  </>
-                ))}
-              </Typography>
-            </div>
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    component="p"
+                    style={{fontSize: 0.015 * modalHeight}}
+                  >
+                    {tags.map(tag => (
+                      <>
+                        <a target="_blank" href="https://www.youtube.com/watch?v=qrxv0JNVtgY">{tag.name}</a>{' '}
+                      </>
+                    ))}
+                  </Typography>
+                </div>
+              </>
+            )}
           </>
         )}
+
       </div>
     </Modal>
   );
