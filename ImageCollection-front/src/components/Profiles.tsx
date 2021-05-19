@@ -15,6 +15,8 @@ import AccessibilityNewIcon from '@material-ui/icons/AccessibilityNew';
 import {TileImageResponse, UserResponse} from "../model/dto";
 import {withRouter} from "react-router";
 import SearchIcon from "@material-ui/icons/Search";
+import Images from "./images/Images";
+import Account from "./Account";
 
 export const Profiles = () => {
     const classes = useStyles();
@@ -27,6 +29,7 @@ export const Profiles = () => {
     }, []);
 
     return (
+        <Paper>
         <TableContainer component={Paper}>
             <Table className={classes.table} aria-label="customized table">
                 <TableHead>
@@ -63,6 +66,10 @@ export const Profiles = () => {
                 </TableBody>
             </Table>
         </TableContainer>
+            <h1> Profile nickname</h1>
+            <Account></Account>
+            <Images></Images>
+        </Paper>
     );
 }
 
