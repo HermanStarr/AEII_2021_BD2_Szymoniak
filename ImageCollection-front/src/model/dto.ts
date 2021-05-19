@@ -9,7 +9,8 @@ export interface TileImageResponse {
     resolutionY: number;
 }
 
-export interface ApiResponse {
+export interface ApiResponse<T> {
+    data: T;
     success: boolean;
     message: string;
 }
@@ -46,9 +47,13 @@ export interface CategoryResponse {
     name: string;
 }
 
-export interface TagResponse {
-    id: number;
-    name: string;
+export interface TagResponse{
+    id:number;
+    name:string;
+}
+
+export interface TagRequest{
+    name:string;
 }
 
 export interface PaginatedResult<T> {

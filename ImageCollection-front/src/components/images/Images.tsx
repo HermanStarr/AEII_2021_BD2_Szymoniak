@@ -5,13 +5,19 @@ import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
 import IconButton from '@material-ui/core/IconButton';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
-import {CategoryResponse, TileImageResponse} from "../../model/dto";
+import {CategoryResponse, TagResponse, TileImageResponse} from "../../model/dto";
 import {RouteComponentProps, withRouter} from "react-router";
-import {AppBar, Container, FormControl, InputBase, InputLabel, MenuItem, Select, Toolbar} from "@material-ui/core";
+import {
+  AppBar,
+  Container,
+  InputBase,
+  Toolbar
+} from "@material-ui/core";
 import {ImageDialog} from "./ImageDialog";
 import {AddImage} from "./AddImageDialog";
 import Button from "@material-ui/core/Button";
 import SearchIcon from '@material-ui/icons/Search';
+import FilterSelect from "../../shared/FilterSelect";
 
 
 type Props = RouteComponentProps & {}
@@ -24,10 +30,27 @@ const getImages = async (): Promise<TileImageResponse[]> => {
     {id: 3, thumb: '', title: 'Zdjęcie xD', author: 'them', authorId: 3, description: 'just a photo', resolutionY: 450, resolutionX: 800},
   ];
 };
+const getCategories = async (): Promise<CategoryResponse[]> => {
+  return [
+    {id: 1, name: 'category'},
+    {id: 2, name: 'dunno'},
+  ];
+};
+
+const getTags = async (): Promise<TagResponse[]> => {
+  return [
+    {id: 1, name: 'cat'},
+    {id: 2, name: 'dog'},
+    {id: 3, name: 'pigeon'},
+  ];
+};
 
 const Images = (props: Props) => {
   const [searchedImages, setSearchedImages] = useState<TileImageResponse[]>([]);
+  const [categorySearchCriteria, setCategorySearchCriteria] = useState<string>("");
   const [categories, setCategories] = useState<CategoryResponse[]>([]);
+  const [tagSearchCriteria, setTagSearchCriteria] = useState<string>("");
+  const [tags, setTags] = useState<TagResponse[]>([]);
   const [images, setImages] = useState<TileImageResponse[]>([]);
   const [imageId, setImageId] = useState<number | null>(null);
   const [imageDialogOpened, setImageDialogOpened] = useState<boolean>(false);
@@ -37,8 +60,19 @@ const Images = (props: Props) => {
   useEffect( () => {
     getImages().then((response) => {
       setImages(response);
+      setSearchedImages(response);
     })
   }, []);
+  useEffect(() => {
+    getCategories().then(response => {
+      setCategories(response);
+    })
+  }, [])
+  useEffect(() => {
+    getTags().then(response => {
+      setTags(response);
+    })
+  }, [])
 
   return (
     <>
@@ -50,7 +84,7 @@ const Images = (props: Props) => {
                 <SearchIcon/>
               </div>
               <InputBase
-                placeholder="Search…"
+                placeholder="Search by a description"
                 classes={{
                   root: classes.inputRoot,
                   input: classes.inputInput,
@@ -59,30 +93,25 @@ const Images = (props: Props) => {
                 onChange={event => {
                   let newList = images.filter(item => {
                     const filter = event.target.value.toLowerCase();
-                    return item.title.toLowerCase().includes(filter);
+                    return item.description.toLowerCase().includes(filter);
                   })
                   setSearchedImages(newList);
                 }}
                 inputProps={{'aria-label': 'search'}}
               />
             </div>
-            <FormControl variant="outlined" className={classes.filterActions}>
-              <InputLabel className={classes.selected}>Category</InputLabel>
-              <Select
-                className={classes.selected}
-                label="Category"
-                placeholder="Choose a category"
-                onChange={(e) => {
-                  console.log(e.target.value);
-                }}>
-                <MenuItem key={0} value={0}>
-                  <em>All</em>
-                </MenuItem>
-                {categories.map(value => (
-                  <MenuItem key={value.id} value={value.id}>{value.name}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            <FilterSelect
+              options={categories.map(category => category.name)}
+              placeholder="Category"
+              freeSolo={false}
+              onChange={(value: string[]) => setCategorySearchCriteria(value.join())}
+            />
+            <FilterSelect
+              options={tags.map(tag => tag.name)}
+              placeholder="Tags"
+              freeSolo={false}
+              onChange={(value: string[]) => setTagSearchCriteria(value.join())}
+            />
             <Button
               variant="contained"
               color="primary"
@@ -93,7 +122,7 @@ const Images = (props: Props) => {
           </Toolbar>
         </AppBar>
         <GridList spacing={20} className={classes.gridList}>
-          {images.map((tile) => (
+          {searchedImages.map((tile) => (
             <GridListTile
               key={tile.thumb}
               cols={tile.author === 'me' ? 2 : 1}

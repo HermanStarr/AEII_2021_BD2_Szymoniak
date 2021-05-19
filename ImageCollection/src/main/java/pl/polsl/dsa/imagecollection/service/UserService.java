@@ -1,6 +1,7 @@
 package pl.polsl.dsa.imagecollection.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -9,6 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 import pl.polsl.dsa.imagecollection.dao.UserRepository;
 import pl.polsl.dsa.imagecollection.dto.*;
 import pl.polsl.dsa.imagecollection.exception.ResourceNotFoundException;
@@ -47,7 +49,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public JwtResponse login(LoginRequest loginRequest){
+    public String login(LoginRequest loginRequest){
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -58,7 +60,8 @@ public class UserService {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
-        return new JwtResponse(jwt);
+        JwtResponse token = new JwtResponse(jwt);
+        return token.getAccessToken();
     }
 
 
@@ -78,5 +81,11 @@ public class UserService {
             bytes[j++] = b.byteValue();
         String s = new String(bytes);
         return s;
+    }
+
+    @Transactional(readOnly = true)
+    public UserResponse getAllUserDataByUsername(String username){
+    return UserResponse.fromEntity(userRepository.findAllByNickname(username)
+        .orElseThrow(() -> new ResourceNotFoundException("User","id",username)));
     }
 }
