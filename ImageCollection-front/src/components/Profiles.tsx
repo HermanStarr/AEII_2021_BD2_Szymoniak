@@ -16,11 +16,19 @@ import {TileImageResponse, UserResponse} from "../model/dto";
 import {withRouter} from "react-router";
 import SearchIcon from "@material-ui/icons/Search";
 import Images from "./images/Images";
-import Account from "./Account";
+import AccountComponent from "./AccountComponent";
+import {
+    BrowserRouter as Router,
+    Route,
+    Switch,
+    useParams, useRouteMatch, Link
+} from 'react-router-dom'
+
 
 export const Profiles = () => {
     const classes = useStyles();
     const [profiles, setprofiles] = useState<UserResponse[]>();
+    let {url, path} = useRouteMatch();
 
     useEffect(() => {
         getProfiles().then((response: UserResponse[]) => {
@@ -28,6 +36,7 @@ export const Profiles = () => {
         })
     }, []);
 
+    // @ts-ignore
     return (
         <Paper>
         <TableContainer component={Paper}>
@@ -54,20 +63,24 @@ export const Profiles = () => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
+
                     {profiles?.map((row) => (
-                        <StyledTableRow key={row.icon}>
+
+                           <StyledTableRow key={row.icon}>
                             <StyledTableCell component="th" scope="row">
                                 <AccessibilityNewIcon></AccessibilityNewIcon>
                             </StyledTableCell>
-                            <StyledTableCell>{row.nickname}</StyledTableCell>
+                               <StyledTableCell><Link to={url+row.id} >{row.nickname}</Link></StyledTableCell>
                         </StyledTableRow>
+
+
                     ))}
 
                 </TableBody>
             </Table>
         </TableContainer>
             <h1> Profile nickname</h1>
-            <Account></Account>
+            <AccountComponent></AccountComponent>
             <Images></Images>
         </Paper>
     );
@@ -138,3 +151,28 @@ const getProfiles = async (): Promise<UserResponse[]> => {
     }
 
     export default withRouter(Profiles);
+
+/*
+function userGallery()
+{
+    const {url, path} = useRouteMatch();
+    const {userId} = useParams();
+    const [profiles, setprofiles] = useState<UserResponse[]>();
+
+    useEffect(() => {
+        getProfiles().then((response: UserResponse[]) => {
+            setprofiles(response);
+        })
+    }, []);
+
+    const user= profiles?.find(({id}) => id == userId);
+
+    return(
+        <div>
+            <h2>{user.name}</h2>
+        </div>
+    )
+
+}
+ */
+

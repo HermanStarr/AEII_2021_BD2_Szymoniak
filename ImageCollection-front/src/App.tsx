@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import './App.css';
-import {HashRouter} from "react-router-dom";
+import {HashRouter, BrowserRouter} from "react-router-dom";
 import Sidebar from "./shared/Sidebar";
 import {UserResponse} from "./model/dto";
 
@@ -11,9 +11,9 @@ function App() {
 
   return (
     <UserContext.Provider value={{userInfo, setUserInfo}}>
-      <HashRouter>
+      <BrowserRouter>
         <Sidebar/>
-      </HashRouter>
+      </BrowserRouter>
     </UserContext.Provider>
   );
 }
