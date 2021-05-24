@@ -2,12 +2,12 @@ import Chip from "@material-ui/core/Chip";
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import React from "react";
 import {createStyles, fade, makeStyles, Theme} from "@material-ui/core/styles";
-import {FormControl, TextField} from "@material-ui/core";
+import {TextField} from "@material-ui/core";
 
 
 type Props ={
-  options: string[];
-  onChange: (value: string[]) => void;
+  options: {name: string, avatar?: React.ReactElement}[];
+  onChange: (value: string) => void;
   placeholder?: string;
   label?: string;
   freeSolo?: boolean;
@@ -16,19 +16,21 @@ type Props ={
 export const FilterSelect = (props: Props) => {
   const classes = useStyles();
   return (
-    <FormControl variant="outlined" className={classes.filterActions}>
+    <div className={classes.search}>
       <Autocomplete
         multiple
         limitTags={2}
-        className={classes.selected}
-        options={props.options}
+        classes={{root: classes.inputRoot, input: classes.inputInput}}
+        options={props.options.map(option => option.name)}
         freeSolo={props.freeSolo ?? true}
         renderTags={(value: string[], getTagProps) =>
           value.map((option: string, index: number) => (
             <Chip
+              avatar={props.options[index].avatar}
               variant="outlined"
               label={option}
-              style={{color: "white"}}
+              style={{color: '#ffffff'}}
+              className={classes.chip}
               {...getTagProps({ index })} />
           ))
         }
@@ -41,32 +43,39 @@ export const FilterSelect = (props: Props) => {
           />
         )}
         onChange={(event, value) => {
-          props.onChange(value);
+          props.onChange((value as string[]).join('%5Cu007c'));
         }}
       />
-    </FormControl>
+    </div>
   );
 }
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    filterActions: {
-      backgroundColor: fade(theme.palette.common.white, 0.15),
-      '&:hover': {
-        backgroundColor: fade(theme.palette.common.white, 0.25),
-      },
+    search: {
       borderRadius: theme.shape.borderRadius,
-      width: 300,
-      fontWeight: 100,
-      color: "white",
-      marginLeft: 10,
+      backgroundColor: fade(theme.palette.common.white, 0.3),
+      '&:hover': {
+        backgroundColor: fade(theme.palette.common.white, 0.45),
+      },
+      width: '100%',
     },
     input: {
+      color: '#ffffff',
+    },
+    chip: {
       color: '#ffffff',
     },
     selected: {
       color: fade(theme.palette.common.white, 0.85),
       fontWeight: 100,
+    },
+    inputRoot: {
+      color: 'inherit',
+    },
+    inputInput: {
+      width: '100%',
+      color: '#ffffff',
     },
   }),
 );
