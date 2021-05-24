@@ -11,14 +11,12 @@ import clsx from 'clsx';
 import MenuIcon from '@material-ui/icons/Menu';
 import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import Login from "../components/signInUp/Login";
 import Registration from "../components/signInUp/Registration";
 import Images from "../components/images/Images";
 import {Account} from "../components/Account";
 import {Backup} from "../components/Backup";
 import {Profiles} from "../components/Profiles";
 import {UserContext} from "../App";
-import GlobalContainer from "../components/signInUp/LoginContext";
 import LoginContext from "../components/signInUp/LoginContext";
 
 type Props = {
@@ -48,7 +46,7 @@ const Sidebar: FC<Props> = (props) => {
   function logout() {
     if (info.userInfo) {
       info.userInfo = null
-      props.history.replace(`${HOME}`)
+      props.history.replace(`${LOGIN}`)
     }
   }
 
@@ -97,6 +95,13 @@ const Sidebar: FC<Props> = (props) => {
         <Divider/>
         <MenuList>
           {Routes
+            .filter((Routes) => {
+              if (!info.userInfo) {
+                return Routes.notLoggedUser
+              } else {
+                return Routes;
+              }
+            })
             .map((prop: { path: string, sidebarName: string, icon: OverridableComponent<SvgIconTypeMap> }, key: number) => {
               return (
                 <Link to={prop.path} style={{textDecoration: 'none'}} key={key}>
