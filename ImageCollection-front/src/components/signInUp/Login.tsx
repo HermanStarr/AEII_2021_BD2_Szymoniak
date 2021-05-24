@@ -15,7 +15,7 @@ import * as Yup from "yup";
 import {Container} from "@material-ui/core";
 import {FormikProps} from "formik/dist/types";
 import {inputProps} from "../../shared/apiapp";
-import {REGISTER} from "../../shared/Routes";
+import {HOME, REGISTER} from "../../shared/Routes";
 import {getUserData, loginUser} from "../../actions/loginRegister";
 import {LoginRequest, UserResponse} from "../../model/dto";
 import {toast} from "react-toastify";
@@ -60,6 +60,7 @@ const formikEnhancer = withFormik<Props, FormValues>({
         .then((response) => {
         console.log(response);
         props.context.setUserInfo(response)
+        props.history.replace(`${HOME}`)
         toast.success("Login succesfull");
       });
 

@@ -7551,6 +7551,11 @@ map-visit@^1.0.0:
   dependencies:
     object-visit "^1.0.0"
 
+material-ui-toast-redux@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/material-ui-toast-redux/-/material-ui-toast-redux-1.0.4.tgz#a70bad8b5b221f5eb06bc9bc59847d4f4c3c26b6"
+  integrity sha512-Y3QtUXnBr9HJ3ITGoxZVyZ7ysOQXpf8T6fKa3O8JCfJl8uJzIQdoMO5UTzwoDbpcjdb+fQHUUrVe4X7QZ84Bxg==
+
 md5.js@^1.3.4:
   version "1.3.5"
   resolved "https://registry.yarnpkg.com/md5.js/-/md5.js-1.3.5.tgz#b5d07b8e3216e3e27cd728d72f70d1e6a342005f"

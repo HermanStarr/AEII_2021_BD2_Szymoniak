@@ -70,9 +70,9 @@ const Sidebar: FC<Props> = (props) => {
           </Typography>
           {info.userInfo &&
           <Button
-              variant="contained"  color="secondary"
+              variant="contained" color="secondary"
               onClick={logout}
-              startIcon= {<ExitToAppOutlinedIcon />}
+              startIcon={<ExitToAppOutlinedIcon/>}
           >
               Logout
           </Button>
@@ -97,7 +97,14 @@ const Sidebar: FC<Props> = (props) => {
           {Routes
             .filter((Routes) => {
               if (!info.userInfo) {
-                return Routes.notLoggedUser
+                return Routes.notLoggedUser;
+              }
+              if (info.userInfo) {
+                if (!info.userInfo.isAdmin) {
+                  return Routes.loggedUser;
+                } else {
+                  return Routes.admin;
+                }
               } else {
                 return Routes;
               }
@@ -122,10 +129,10 @@ const Sidebar: FC<Props> = (props) => {
         <Container maxWidth="lg" className={classes.container}>
           <Route path={LOGIN} exact component={LoginContext}/>
           <Route path={REGISTER} exact component={Registration}/>
-          <Route path={HOME} exact component={Images} />
-          <Route path={ACCOUNT} exact component={Account} />
-          <Route path={BACKUP} exact component={Backup} />
-          <Route path={PROFILES} exact component={Profiles} />
+          <Route path={HOME} exact component={Images}/>
+          <Route path={ACCOUNT} exact component={Account}/>
+          <Route path={BACKUP} exact component={Backup}/>
+          <Route path={PROFILES} exact component={Profiles}/>
         </Container>
       </main>
     </div>

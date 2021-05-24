@@ -53,7 +53,7 @@ const getImage = async (id: number) => {
 }
 
 const getUserData = async (id: number): Promise<UserResponse> => {
-  return {id: id, email: 'xd@xd.com', icon: photos[1].src, nickname: 'Herman'};
+  return {id: id, email: 'xd@xd.com', icon: photos[1].src, nickname: 'Herman', isAdmin: true};
 }
 
 const getTags = async (id: number) => {

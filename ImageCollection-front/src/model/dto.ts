@@ -54,6 +54,7 @@ export interface UserResponse {
     icon: undefined | string;
     nickname: string;
     email: string;
+    isAdmin: boolean;
 }
 
 export interface CategoryResponse {

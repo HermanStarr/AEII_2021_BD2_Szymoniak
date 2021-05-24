@@ -1,10 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {PaginatedResult, TileImageResponse, UserResponse} from "../model/dto";
 import {Avatar, Container, Grid, TextField, Typography} from "@material-ui/core";
 import {ChangeAccountDialog} from "./ChangeAccountDialog";
 import Button from "@material-ui/core/Button";
 import ImagesGrid from "./images/ImagesGrid";
 import {photos} from "./images/photos";
+import {UserContext} from "../App";
 
 const getImages = async (id: number): Promise<PaginatedResult<TileImageResponse>> => {
   return {items: [
@@ -15,7 +16,7 @@ const getImages = async (id: number): Promise<PaginatedResult<TileImageResponse>
 };
 
 const getUserData = async (): Promise<UserResponse> => {
-  return {id: 1, email: 'xd@xd.com', icon: undefined, nickname: 'Herman'};
+  return {id: 1, email: 'xd@xd.com', icon: undefined, nickname: 'Herman', isAdmin: true};
 }
 
 export const Account = () => {
@@ -23,6 +24,7 @@ export const Account = () => {
   const [userData, setUserData] = useState<UserResponse | null>(null);
   const [isDialogOpen, setDialogOpen] = useState<boolean>(false);
   const [userImages, setUserImages] = useState<PaginatedResult<TileImageResponse>>({items: [], totalElements: 0});
+  const info = useContext(UserContext);
 
   useEffect(() => {
     setIsLoading(true);
@@ -47,7 +49,7 @@ export const Account = () => {
       ) : (
         <div>
           <Typography component='h1' variant='h5'>
-            User {userData!.nickname}
+              {"User nickname: " + info.userInfo?.nickname}
           </Typography>
           <Grid container spacing={2} style={{marginTop: 10}}>
             <Grid item xs={12} sm={1}>
