@@ -4,7 +4,7 @@ import {
   MenuItem, Drawer, AppBar, IconButton,
   Toolbar, Divider, Container, SvgIconTypeMap, Button, CssBaseline, makeStyles, Typography
 } from '@material-ui/core';
-import {Link, Redirect, Route, RouteComponentProps, Switch, withRouter} from "react-router-dom";
+import {Link, Route, RouteComponentProps, withRouter} from "react-router-dom";
 import Routes, {ACCOUNT, BACKUP, HOME, LOGIN, PROFILES, REGISTER} from "./Routes";
 import {OverridableComponent} from "@material-ui/core/OverridableComponent";
 import clsx from 'clsx';
@@ -114,7 +114,7 @@ const Sidebar: FC<Props> = (props) => {
       </Drawer>
       <main className={classes.content}>
         <div className={classes.appBarSpacer}/>
-        <Container maxWidth="lg" className={classes.container}>
+        <Container maxWidth="xl" className={classes.container}>
           <Route path={LOGIN} exact component={Login}/>
           <Route path={REGISTER} exact component={Registration}/>
           <Route path={HOME} exact component={Images} />

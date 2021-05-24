@@ -1,16 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import {createStyles, Theme, makeStyles, fade} from '@material-ui/core/styles';
-import {CategoryResponse, TagResponse, TileImageResponse} from "../../model/dto";
+import {CategoryResponse, PaginatedResult, TagResponse, TileImageResponse} from "../../model/dto";
 import {withRouter} from "react-router";
 import {
   AppBar,
-  Container,
+  Container, Grid,
   InputBase,
   Toolbar
 } from "@material-ui/core";
 import {AddImage} from "./AddImageDialog";
 import Button from "@material-ui/core/Button";
-import SearchIcon from '@material-ui/icons/Search';
 import FilterSelect from "../../shared/FilterSelect";
 import {photos} from "./photos";
 import ImagesGrid from "./ImagesGrid";
@@ -39,22 +38,26 @@ const getTags = async (): Promise<TagResponse[]> => {
 };
 
 const Images = () => {
-  const [searchedImages, setSearchedImages] = useState<TileImageResponse[]>([]);
   const [categorySearchCriteria, setCategorySearchCriteria] = useState<string>("");
   const [categories, setCategories] = useState<CategoryResponse[]>([]);
   const [tagSearchCriteria, setTagSearchCriteria] = useState<string>("");
   const [tags, setTags] = useState<TagResponse[]>([]);
-  const [images, setImages] = useState<TileImageResponse[]>([]);
+  const [images, setImages] = useState<PaginatedResult<TileImageResponse>>({items: [], totalElements: 0});
   const [addImageDialogOpened, setAddImageDialogOpened] = useState<boolean>(false);
+  const [paging, setPaging] = useState<string>('');
+  const [searchName, setSearchName] = useState<string>('');
   const classes = useStyles();
 
   const onSearch = () => {
-    let criteria = categorySearchCriteria !== '' ? 'categories=' : '' + categorySearchCriteria;
-    criteria += categorySearchCriteria !== '' && tagSearchCriteria !== '' ? '&' : '';
-    criteria += tagSearchCriteria !== '' ? 'tags=' : '' + tagSearchCriteria;
-    getImagesWithCriteria(criteria).then(response => {
-      setImages(response.items);
-    })
+    let query = 'sortOrder=DESC&sortBy=creationDate&'
+      + paging
+      + 'search='
+      + tagSearchCriteria
+      + categorySearchCriteria
+      + searchName;
+    getImagesWithCriteria(query).then(response => {
+      setImages(response);
+    });
   }
 
   useEffect( () => {
@@ -69,8 +72,7 @@ const Images = () => {
         resolutionX: photo.width,
         resolutionY: photo.height,
       }))
-      setImages(images1);
-      setSearchedImages(images1);
+      setImages({items: images1, totalElements: images1.length});
     })
   }, []);
   useEffect(() => {
@@ -90,49 +92,58 @@ const Images = () => {
         <Button
           variant="contained"
           color="primary"
-          style={{width: '100%', borderBottomLeftRadius: 0, borderBottomRightRadius: 0}}
+          className={classes.addImageButton}
           onClick={() => setAddImageDialogOpened(true)}
         >
           Add image
         </Button>
-        <AppBar position="static" style={{borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+        <AppBar position="static" className={classes.appBar}>
           <Toolbar>
-            <div className={classes.search}>
-              <div className={classes.searchIcon}>
-                <SearchIcon/>
-              </div>
-              <InputBase
-                placeholder="Search by a description"
-                classes={{root: classes.inputRoot, input: classes.inputInput,}}
-                onChange={event => {
-                  let value = event.target.value.toLowerCase();
-                  setSearchedImages(images.filter(item =>
-                    item.description.toLowerCase().includes(value)
-                    || item.title.toLowerCase().includes(value)
-                  ));
-                }}
-                inputProps={{'aria-label': 'search'}}
-              />
-            </div>
-            <FilterSelect
-              options={categories.map(category => category.name)}
-              placeholder="Category"
-              freeSolo={false}
-              onChange={(value: string[]) => setCategorySearchCriteria(value.join('&categories='))}
-            />
-            <FilterSelect
-              options={tags.map(tag => tag.name)}
-              placeholder="Tags"
-              freeSolo={false}
-              onChange={(value: string[]) => setTagSearchCriteria(value.join('&tags='))}
-            />
-            <Button
-              onClick={() => onSearch()}>
-              Search
-            </Button>
+            <Grid container xs={12} spacing={2}>
+              <Grid item xs={12} sm={3}>
+                <div className={classes.search}>
+                  <InputBase
+                    placeholder="Search for an image"
+                    classes={{root: classes.inputRoot, input: classes.inputInput}}
+                    onChange={event => {
+                      let phrase = event.target.value;
+                        setSearchName(phrase !== '' ? 'name%3A' + phrase.toLowerCase() + ',' : '');
+                    }}
+                    inputProps={{'aria-label': 'search'}}
+                  />
+                </div>
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <FilterSelect
+                  options={categories.map(category => ({name: category.name}))}
+                  placeholder="Category"
+                  freeSolo={false}
+                  onChange={(value: string) =>
+                    setCategorySearchCriteria(value !== '' ? 'categories~' + value + ',' : '')
+                  }
+                />
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <FilterSelect
+                  options={tags.map(tag => ({name: tag.name}))}
+                  placeholder="Tags"
+                  freeSolo={false}
+                  onChange={(value: string) =>
+                    setTagSearchCriteria(value !== '' ? 'tags~' + value + ',' : '')
+                  }
+                />
+              </Grid>
+              <Grid item xs={12} sm={1}>
+                <Button
+                  className={classes.searchButton}
+                  onClick={() => onSearch()}>
+                  Search
+                </Button>
+              </Grid>
+            </Grid>
           </Toolbar>
         </AppBar>
-        <ImagesGrid tiles={searchedImages}/>
+        <ImagesGrid tiles={images} onPageChange={(value) => setPaging(value)}/>
       </Container>
       <AddImage
         dialogOpened={addImageDialogOpened}
@@ -151,34 +162,32 @@ const useStyles = makeStyles((theme: Theme) =>
       overflow: 'wrap',
       backgroundColor: theme.palette.background.paper,
     },
-    search: {
-      position: 'relative',
-      borderRadius: theme.shape.borderRadius,
-      backgroundColor: fade(theme.palette.common.white, 0.15),
-      '&:hover': {
-        backgroundColor: fade(theme.palette.common.white, 0.25),
-      },
-      marginLeft: -15,
-      width: 200,
-      [theme.breakpoints.up('sm')]: {
-        width: 'auto',
-      },
+    addImageButton: {
+      width: '100%',
+      borderBottomLeftRadius: 0,
+      borderBottomRightRadius: 0,
     },
-    searchIcon: {
-      padding: theme.spacing(0, 1),
-      height: '100%',
-      position: 'absolute',
-      pointerEvents: 'none',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
+    appBar: {
+      borderBottomLeftRadius: 5,
+      borderBottomRightRadius: 5,
+    },
+    search: {
+      borderRadius: theme.shape.borderRadius,
+      backgroundColor: fade(theme.palette.common.white, 0.3),
+      '&:hover': {
+        backgroundColor: fade(theme.palette.common.white, 0.45),
+      },
+      width: '100%',
     },
     inputRoot: {
       color: 'inherit',
     },
     inputInput: {
-      padding: theme.spacing(1, 1, 1, 0),
-      paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+      width: '100%',
+      color: '#ffffff',
+    },
+    searchButton: {
+      color: '#ffffff',
       width: '100%',
     },
   }),

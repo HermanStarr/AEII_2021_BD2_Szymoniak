@@ -86,8 +86,6 @@ export const ImageDialog = (props: Props) => {
           image: response.image,
           onLoadEnd: result => setImageSource(result === 'data:' ? photos[props.imageId!].src : result),
         });
-        console.log(response);
-        console.log(imageSource);
       });
     } else {
       setImage(null);
@@ -120,12 +118,6 @@ export const ImageDialog = (props: Props) => {
     setModalHeight(height - 10);
     setModalWidth(width - 250);
   }, [height, width]);
-
-  if (renderDetails) {
-
-  } else {
-
-  }
   return (
     <Modal
       open={props.dialogOpened}
@@ -243,6 +235,7 @@ export const ImageDialog = (props: Props) => {
                   >
                     {tags.map(tag => (
                       <>
+                        {/* eslint-disable-next-line react/jsx-no-target-blank */}
                         <a target="_blank" href="https://www.youtube.com/watch?v=qrxv0JNVtgY">{tag.name}</a>{' '}
                       </>
                     ))}
@@ -257,5 +250,3 @@ export const ImageDialog = (props: Props) => {
     </Modal>
   );
 }
-
-export default ImageDialog;

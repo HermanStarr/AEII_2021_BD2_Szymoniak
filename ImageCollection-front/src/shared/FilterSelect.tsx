@@ -6,8 +6,8 @@ import {TextField} from "@material-ui/core";
 
 
 type Props ={
-  options: string[];
-  onChange: (value: string[]) => void;
+  options: {name: string, avatar?: React.ReactElement}[];
+  onChange: (value: string) => void;
   placeholder?: string;
   label?: string;
   freeSolo?: boolean;
@@ -21,14 +21,16 @@ export const FilterSelect = (props: Props) => {
         multiple
         limitTags={2}
         classes={{root: classes.inputRoot, input: classes.inputInput}}
-        options={props.options}
+        options={props.options.map(option => option.name)}
         freeSolo={props.freeSolo ?? true}
         renderTags={(value: string[], getTagProps) =>
           value.map((option: string, index: number) => (
             <Chip
+              avatar={props.options[index].avatar}
               variant="outlined"
               label={option}
-              style={{color: "white"}}
+              style={{color: '#ffffff'}}
+              className={classes.chip}
               {...getTagProps({ index })} />
           ))
         }
@@ -41,7 +43,7 @@ export const FilterSelect = (props: Props) => {
           />
         )}
         onChange={(event, value) => {
-          props.onChange(value);
+          props.onChange((value as string[]).join('%5Cu007c'));
         }}
       />
     </div>
@@ -52,14 +54,16 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     search: {
       borderRadius: theme.shape.borderRadius,
-      backgroundColor: fade(theme.palette.common.white, 0.15),
+      backgroundColor: fade(theme.palette.common.white, 0.3),
       '&:hover': {
-        backgroundColor: fade(theme.palette.common.white, 0.25),
+        backgroundColor: fade(theme.palette.common.white, 0.45),
       },
-      marginLeft: 10,
-      width: 300,
+      width: '100%',
     },
     input: {
+      color: '#ffffff',
+    },
+    chip: {
       color: '#ffffff',
     },
     selected: {
@@ -70,9 +74,8 @@ const useStyles = makeStyles((theme: Theme) =>
       color: 'inherit',
     },
     inputInput: {
-      padding: theme.spacing(1, 1, 1, 0),
-      paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
       width: '100%',
+      color: '#ffffff',
     },
   }),
 );

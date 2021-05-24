@@ -4,12 +4,14 @@ import GridListTileBar from "@material-ui/core/GridListTileBar";
 import IconButton from "@material-ui/core/IconButton";
 import StarBorderIcon from "@material-ui/icons/StarBorder";
 import React, {useState} from "react";
-import {TileImageResponse} from "../../model/dto";
+import {PaginatedResult, TileImageResponse} from "../../model/dto";
 import {createStyles, makeStyles} from "@material-ui/core/styles";
 import {ImageDialog} from "./ImageDialog";
+import {Pagination} from "@material-ui/lab";
 
 type Props = {
-  tiles: TileImageResponse[];
+  tiles: PaginatedResult<TileImageResponse>;
+  onPageChange: (value: string) => void;
 }
 
 export const ImagesGrid = (props: Props) => {
@@ -20,7 +22,7 @@ export const ImagesGrid = (props: Props) => {
   return (
     <>
       <GridList spacing={10} className={classes.gridList} cols={3}>
-        {props.tiles.map((tile) => (
+        {props.tiles.items.map((tile) => (
           <GridListTile
             key={tile.thumb}
             cols={1}
@@ -44,6 +46,15 @@ export const ImagesGrid = (props: Props) => {
           </GridListTile>
         ))}
       </GridList>
+      <Pagination
+        count={Math.ceil(props.tiles.totalElements / 9)}
+        shape="rounded"
+        showFirstButton
+        showLastButton
+        className={classes.pagination}
+        onChange={(event: React.ChangeEvent<unknown>, value: number) => {
+          props.onPageChange(`pageSize=9&pageNumber=${value - 1}&`);
+        }}/>
       <ImageDialog
         imageId={imageId}
         dialogOpened={dialogOpen}
@@ -67,6 +78,9 @@ const useStyles = makeStyles(() =>
     },
     icon: {
       color: 'white',
+    },
+    pagination: {
+      paddingTop: 10,
     },
   }),
 );
