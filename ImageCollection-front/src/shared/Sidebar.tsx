@@ -1,4 +1,4 @@
-import React, {FC} from "react";
+import React, {FC, useContext} from "react";
 import {
   ListItemIcon, ListItemText, MenuList,
   MenuItem, Drawer, AppBar, IconButton,
@@ -11,16 +11,16 @@ import clsx from 'clsx';
 import MenuIcon from '@material-ui/icons/Menu';
 import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import Login from "../components/signInUp/Login";
 import Registration from "../components/signInUp/Registration";
 import Images from "../components/images/Images";
 import {Account} from "../components/Account";
 import {Backup} from "../components/Backup";
 import {Profiles} from "../components/Profiles";
+import {UserContext} from "../App";
+import LoginContext from "../components/signInUp/LoginContext";
 
 type Props = {
   location: { pathname: string },
-  //isLoggedIn: boolean,
 } & RouteComponentProps
 
 const drawerWidth = 240;
@@ -41,14 +41,14 @@ const Sidebar: FC<Props> = (props) => {
     return props.location.pathname.indexOf(routeName) > -1;
   }
 
-  // const info = useContext(UserContext);
+  const info = useContext(UserContext);
 
-  // function logout() {
-  //   if (info.userInfo) {
-  //     info.userInfo = null
-  //     props.history.replace(`${HOME}`)
-  //   }
-  // }
+  function logout() {
+    if (info.userInfo) {
+      info.userInfo = null
+      props.history.replace(`${LOGIN}`)
+    }
+  }
 
   return (
     <div className={classes.root}>
@@ -65,20 +65,18 @@ const Sidebar: FC<Props> = (props) => {
             <MenuIcon/>
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-          {/*  {info.userInfo ? 'User: ' : 'Image Collection '}*/}
-          {/*  {info.userInfo ? info.userInfo?.firstName + ' ' : ''}*/}
-          {/*  {info.userInfo ? info.userInfo.lastName : ''}*/}
-            IMIE NAZWISKO
+            {info.userInfo ? 'Username: ' : 'Image Collection '}
+            {info.userInfo ? info.userInfo?.nickname + ' ' : ''}
           </Typography>
-          {/*{info.userInfo &&*/}
+          {info.userInfo &&
           <Button
               variant="contained"  color="secondary"
-              // onClick={logout}
+              onClick={logout}
               startIcon= {<ExitToAppOutlinedIcon />}
           >
               Logout
           </Button>
-          {/*}*/}
+          }
 
         </Toolbar>
       </AppBar>
@@ -97,6 +95,13 @@ const Sidebar: FC<Props> = (props) => {
         <Divider/>
         <MenuList>
           {Routes
+            .filter((Routes) => {
+              if (!info.userInfo) {
+                return Routes.notLoggedUser
+              } else {
+                return Routes;
+              }
+            })
             .map((prop: { path: string, sidebarName: string, icon: OverridableComponent<SvgIconTypeMap> }, key: number) => {
               return (
                 <Link to={prop.path} style={{textDecoration: 'none'}} key={key}>
@@ -114,8 +119,8 @@ const Sidebar: FC<Props> = (props) => {
       </Drawer>
       <main className={classes.content}>
         <div className={classes.appBarSpacer}/>
-        <Container maxWidth="xl" className={classes.container}>
-          <Route path={LOGIN} exact component={Login}/>
+        <Container maxWidth="lg" className={classes.container}>
+          <Route path={LOGIN} exact component={LoginContext}/>
           <Route path={REGISTER} exact component={Registration}/>
           <Route path={HOME} exact component={Images} />
           <Route path={ACCOUNT} exact component={Account} />

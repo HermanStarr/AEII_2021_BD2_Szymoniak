@@ -18,12 +18,14 @@ export const PROFILES = '/profiles';
 
 export const Routes = [
   {
+    notLoggedUser: true,
     path: LOGIN,
     sidebarName: 'Login',
     icon: LockOpenIcon,
     component: Login,
   },
   {
+    notLoggedUser: true,
     path: REGISTER,
     sidebarName: 'Register',
     icon: VpnKeyIcon,
