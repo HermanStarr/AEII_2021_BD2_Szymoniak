@@ -11,14 +11,12 @@ import clsx from 'clsx';
 import MenuIcon from '@material-ui/icons/Menu';
 import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import Login from "../components/signInUp/Login";
 import Registration from "../components/signInUp/Registration";
 import Images from "../components/images/Images";
 import {Account} from "../components/Account";
 import {Backup} from "../components/Backup";
 import {Profiles} from "../components/Profiles";
 import {UserContext} from "../App";
-import GlobalContainer from "../components/signInUp/LoginContext";
 import LoginContext from "../components/signInUp/LoginContext";
 
 type Props = {
@@ -48,7 +46,7 @@ const Sidebar: FC<Props> = (props) => {
   function logout() {
     if (info.userInfo) {
       info.userInfo = null
-      props.history.replace(`${HOME}`)
+      props.history.replace(`${LOGIN}`)
     }
   }
 
@@ -72,9 +70,9 @@ const Sidebar: FC<Props> = (props) => {
           </Typography>
           {info.userInfo &&
           <Button
-              variant="contained"  color="secondary"
+              variant="contained" color="secondary"
               onClick={logout}
-              startIcon= {<ExitToAppOutlinedIcon />}
+              startIcon={<ExitToAppOutlinedIcon/>}
           >
               Logout
           </Button>
@@ -97,6 +95,20 @@ const Sidebar: FC<Props> = (props) => {
         <Divider/>
         <MenuList>
           {Routes
+            .filter((Routes) => {
+              if (!info.userInfo) {
+                return Routes.notLoggedUser;
+              }
+              if (info.userInfo) {
+                if (!info.userInfo.isAdmin) {
+                  return Routes.loggedUser;
+                } else {
+                  return Routes.admin;
+                }
+              } else {
+                return Routes;
+              }
+            })
             .map((prop: { path: string, sidebarName: string, icon: OverridableComponent<SvgIconTypeMap> }, key: number) => {
               return (
                 <Link to={prop.path} style={{textDecoration: 'none'}} key={key}>
@@ -117,10 +129,10 @@ const Sidebar: FC<Props> = (props) => {
         <Container maxWidth="lg" className={classes.container}>
           <Route path={LOGIN} exact component={LoginContext}/>
           <Route path={REGISTER} exact component={Registration}/>
-          <Route path={HOME} exact component={Images} />
-          <Route path={ACCOUNT} exact component={Account} />
-          <Route path={BACKUP} exact component={Backup} />
-          <Route path={PROFILES} exact component={Profiles} />
+          <Route path={HOME} exact component={Images}/>
+          <Route path={ACCOUNT} exact component={Account}/>
+          <Route path={BACKUP} exact component={Backup}/>
+          <Route path={PROFILES} exact component={Profiles}/>
         </Container>
       </main>
     </div>

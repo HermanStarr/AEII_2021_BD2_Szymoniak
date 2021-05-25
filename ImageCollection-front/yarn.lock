@@ -7551,6 +7551,11 @@ map-visit@^1.0.0:
   dependencies:
     object-visit "^1.0.0"
 
+material-ui-toast-redux@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/material-ui-toast-redux/-/material-ui-toast-redux-1.0.4.tgz#a70bad8b5b221f5eb06bc9bc59847d4f4c3c26b6"
+  integrity sha512-Y3QtUXnBr9HJ3ITGoxZVyZ7ysOQXpf8T6fKa3O8JCfJl8uJzIQdoMO5UTzwoDbpcjdb+fQHUUrVe4X7QZ84Bxg==
+
 md5.js@^1.3.4:
   version "1.3.5"
   resolved "https://registry.yarnpkg.com/md5.js/-/md5.js-1.3.5.tgz#b5d07b8e3216e3e27cd728d72f70d1e6a342005f"
@@ -9628,6 +9633,11 @@ react-full-screen@^1.0.1:
   integrity sha512-3K1vC+HNt7355T5xI8ExkWC2o8mJohRoIk2BAWVJGv7aLyXNjBv8+a0v3Q4GwigU8AEG/FibSNEGDzwGUflMsA==
   dependencies:
     fscreen "^1.0.2"
+
+react-image-file-resizer@^0.4.4:
+  version "0.4.4"
+  resolved "https://registry.yarnpkg.com/react-image-file-resizer/-/react-image-file-resizer-0.4.4.tgz#07d47d795e07a8a9850d480765c618686a4af4dd"
+  integrity sha512-qSZ5VJwWDkFan8IKCxDZqkAlQ6OW+mIDQLA9Y8T6/mLNUbHfnl3kjTpUWACeuh7cyPDXr1i6/GjlinyI75rBmQ==
 
 react-image-resizer@^1.3.0:
   version "1.3.0"

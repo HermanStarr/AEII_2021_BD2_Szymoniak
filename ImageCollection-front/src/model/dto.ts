@@ -15,6 +15,20 @@ export interface ApiResponse<T> {
     message: string;
 }
 
+export interface ImageResponse2 {
+    id: number,
+    image: Blob | null,
+    title: string;
+    author: string;
+    authorId: number;
+    description: string;
+    resolutionX: number;
+    resolutionY: number;
+    format: string;
+    size: number;
+    creationDate: string;
+}
+
 export interface ImageResponse {
     id: number;
     image: string;
@@ -40,6 +54,7 @@ export interface UserResponse {
     icon: undefined | string;
     nickname: string;
     email: string;
+    isAdmin: boolean;
 }
 
 export interface CategoryResponse {
