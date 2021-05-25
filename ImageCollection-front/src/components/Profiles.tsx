@@ -33,6 +33,8 @@ export const Profiles = () => {
     useEffect(() => {
         getProfiles().then((response: UserResponse[]) => {
             setprofiles(response);
+            console.log("url", url);
+            console.log('path', path);
         })
     }, []);
 
@@ -79,9 +81,12 @@ export const Profiles = () => {
                 </TableBody>
             </Table>
         </TableContainer>
-            <h1> Profile nickname</h1>
-            <AccountComponent></AccountComponent>
-            <Images></Images>
+            <Route path={'/profiles/1'}>
+                <h1> Profile nickname</h1>
+                <AccountComponent></AccountComponent>
+                <Images></Images>
+            </Route>
+
         </Paper>
     );
 }

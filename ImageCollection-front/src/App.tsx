@@ -11,9 +11,9 @@ function App() {
 
   return (
     <UserContext.Provider value={{userInfo, setUserInfo}}>
-      <BrowserRouter>
+      <HashRouter>
         <Sidebar/>
-      </BrowserRouter>
+      </HashRouter>
     </UserContext.Provider>
   );
 }

@@ -18,6 +18,10 @@ import pl.polsl.dsa.imagecollection.model.UserEntity;
 import pl.polsl.dsa.imagecollection.security.JwtUtils;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class UserService {
@@ -48,6 +52,7 @@ public class UserService {
 
         userRepository.save(user);
     }
+
 
     public String login(LoginRequest loginRequest){
 
@@ -84,8 +89,16 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserResponse getAllUserDataByUsername(String username){
+    public UserResponse getUserByUsername(String username){
     return UserResponse.fromEntity(userRepository.findAllByNickname(username)
         .orElseThrow(() -> new ResourceNotFoundException("User","id",username)));
+    }
+    public List<UserResponse> getUsersList ()
+    {
+        List<UserEntity> userList= new ArrayList<>();
+
+        userList= StreamSupport.stream(userRepository.findAll().spliterator(), false)
+                .collect(Collectors.toList());
+        return (List<UserResponse>)userList;
     }
 }
