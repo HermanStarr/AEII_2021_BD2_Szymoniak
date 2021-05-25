@@ -97,7 +97,7 @@ public class AuthController {
         return ResponseEntity.ok(userService.getUsersList());
     }
     @GetMapping("/userListExludeCurrent")
-    public ResponseEntity<List<UserResponse>>getUserListExludeCurrent() {
-        return ResponseEntity.ok(userService.getUsersListExludeCurrent());
+    public ResponseEntity<List<UserResponse>>getUserListExcludeCurrent() {
+        return ResponseEntity.ok(userService.getUsersListExcludeCurrent());
     }
 }

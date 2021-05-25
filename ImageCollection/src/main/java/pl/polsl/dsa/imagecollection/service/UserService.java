@@ -101,7 +101,7 @@ public class UserService {
 
     /*TODO*/
 
-    public List<UserResponse> getUsersListExludeCurrent() {
+    public List<UserResponse> getUsersListExcludeCurrent() {
         return StreamSupport
                 .stream(userRepository.findAll().spliterator(), false)
                 .map(UserResponse::fromEntity)
