@@ -1,10 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {PaginatedResult, TileImageResponse, UserResponse} from "../model/dto";
-import {Avatar, Container, Grid, TextField, Typography} from "@material-ui/core";
-import React, {useEffect, useState} from 'react';
+import {Avatar, Container, Grid, TextField, Typography, Paper} from "@material-ui/core";
 import {RouteComponentProps, withRouter} from "react-router";
-import {UserResponse} from "../model/dto";
-import {Avatar, Container, Grid, Paper, TextField, Typography} from "@material-ui/core";
 import {ChangeAccountDialog} from "./ChangeAccountDialog";
 import Button from "@material-ui/core/Button";
 import ImagesGrid from "./images/ImagesGrid";

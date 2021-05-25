@@ -93,6 +93,7 @@ public class UserService {
     return UserResponse.fromEntity(userRepository.findAllByNickname(username)
         .orElseThrow(() -> new ResourceNotFoundException("User","id",username)));
     }
+    /*
     public List<UserResponse> getUsersList ()
     {
         List<UserEntity> userList= new ArrayList<>();
@@ -101,4 +102,6 @@ public class UserService {
                 .collect(Collectors.toList());
         return (List<UserResponse>)userList;
     }
+
+     */
 }
