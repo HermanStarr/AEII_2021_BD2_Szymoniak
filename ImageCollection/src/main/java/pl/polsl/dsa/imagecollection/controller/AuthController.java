@@ -10,10 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import pl.polsl.dsa.imagecollection.dao.UserRepository;
-import pl.polsl.dsa.imagecollection.dto.ApiResponse;
-import pl.polsl.dsa.imagecollection.dto.LoginRequest;
-import pl.polsl.dsa.imagecollection.dto.SignUpRequest;
-import pl.polsl.dsa.imagecollection.dto.UserResponse;
+import pl.polsl.dsa.imagecollection.dto.*;
 import pl.polsl.dsa.imagecollection.exception.ResourceNotFoundException;
 import pl.polsl.dsa.imagecollection.model.UserEntity;
 import pl.polsl.dsa.imagecollection.security.JwtUtils;
@@ -22,6 +19,7 @@ import pl.polsl.dsa.imagecollection.service.UserDetailsServiceImpl;
 import pl.polsl.dsa.imagecollection.service.UserService;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/auth")
@@ -94,4 +92,12 @@ public class AuthController {
         return UserResponse.fromEntity(user);
     }
 
+    @GetMapping("/userList")
+    public ResponseEntity<List<UserResponse>>getUsersList() {
+        return ResponseEntity.ok(userService.getUsersList());
+    }
+    @GetMapping("/userListExludeCurrent")
+    public ResponseEntity<List<UserResponse>>getUserListExludeCurrent() {
+        return ResponseEntity.ok(userService.getUsersListExludeCurrent());
+    }
 }
