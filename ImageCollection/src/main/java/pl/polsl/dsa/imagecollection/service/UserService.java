@@ -18,7 +18,6 @@ import pl.polsl.dsa.imagecollection.model.UserEntity;
 import pl.polsl.dsa.imagecollection.security.JwtUtils;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -52,7 +51,6 @@ public class UserService {
 
         userRepository.save(user);
     }
-
 
     public String login(LoginRequest loginRequest){
 
@@ -89,19 +87,24 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserResponse getUserByUsername(String username){
+    public UserResponse getAllUserDataByUsername(String username){
     return UserResponse.fromEntity(userRepository.findAllByNickname(username)
         .orElseThrow(() -> new ResourceNotFoundException("User","id",username)));
     }
-    /*
-    public List<UserResponse> getUsersList ()
-    {
-        List<UserEntity> userList= new ArrayList<>();
 
-        userList= StreamSupport.stream(userRepository.findAll().spliterator(), false)
+    public List<UserResponse> getUsersList() {
+        return StreamSupport
+                .stream(userRepository.findAll().spliterator(), false)
+                .map(UserResponse::fromEntity)
                 .collect(Collectors.toList());
-        return (List<UserResponse>)userList;
     }
 
-     */
+    /*TODO*/
+
+    public List<UserResponse> getUsersListExcludeCurrent() {
+        return StreamSupport
+                .stream(userRepository.findAll().spliterator(), false)
+                .map(UserResponse::fromEntity)
+                .collect(Collectors.toList());
+    }
 }
