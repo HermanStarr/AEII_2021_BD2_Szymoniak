@@ -94,10 +94,4 @@ public class AuthController {
         return UserResponse.fromEntity(user);
     }
 
-    @GetMapping("/getAll")
-            public List<>
-    {
-
-    }
-
 }
