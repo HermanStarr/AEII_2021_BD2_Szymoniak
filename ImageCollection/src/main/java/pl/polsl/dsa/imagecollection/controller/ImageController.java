@@ -1,7 +1,9 @@
 package pl.polsl.dsa.imagecollection.controller;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import pl.polsl.dsa.imagecollection.PaginatedResult;
 import pl.polsl.dsa.imagecollection.SearchCriteria;
 import pl.polsl.dsa.imagecollection.dto.ApiResponse;
@@ -22,8 +24,8 @@ public class ImageController {
         this.imageService = imageService;
     }
 
-    @PostMapping
-    public ResponseEntity<ApiResponse> addImage(@Valid @RequestBody ImageRequest request) {
+    @PostMapping(consumes = {"multipart/form-data", MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<ApiResponse> addImage(@RequestPart("input") ImageRequest request, @RequestPart("image") MultipartFile image) {
         //TODO Add user authorization
         imageService.createImage(request, "Some name");
         return ResponseEntity.ok(

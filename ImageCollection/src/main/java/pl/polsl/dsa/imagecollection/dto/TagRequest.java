@@ -1,7 +1,5 @@
 package pl.polsl.dsa.imagecollection.dto;
 
-import pl.polsl.dsa.imagecollection.model.TagEntity;
-
 public class TagRequest {
     private String name;
 

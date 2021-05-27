@@ -12,10 +12,13 @@ import pl.polsl.dsa.imagecollection.dto.ImageResponse;
 import pl.polsl.dsa.imagecollection.dto.ImageThumbResponse;
 import pl.polsl.dsa.imagecollection.exception.UnauthorizedException;
 import pl.polsl.dsa.imagecollection.exception.ResourceNotFoundException;
+import pl.polsl.dsa.imagecollection.model.CategoryEntity;
 import pl.polsl.dsa.imagecollection.model.ImageEntity;
+import pl.polsl.dsa.imagecollection.model.TagEntity;
 import pl.polsl.dsa.imagecollection.model.UserEntity;
 
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 @Service
 public class ImageService {
@@ -35,12 +38,30 @@ public class ImageService {
         ImageEntity image = new ImageEntity();
         image.setName(imageRequest.getName());
         image.setCreationDate(LocalDateTime.now());
-        image.setOriginalImage(imageRequest.getImage());
-        image.setSize(imageRequest.getImage().length);
+//        image.setOriginalImage(imageRequest.getImage());
+//        image.setSize(imageRequest.getImage().length);
         image.setFormat(imageRequest.getFormat());
         image.setResolutionX(imageRequest.getResolutionX());
         image.setResolutionY(imageRequest.getResolutionY());
         image.setDescription(imageRequest.getDescription());
+//        image.setCategories(imageRequest.getCategories()
+//                .stream()
+//                .map(category -> {
+//                    CategoryEntity categoryEntity =  new CategoryEntity();
+//                    categoryEntity.setId(category.getId());
+//                    categoryEntity.setName(category.getName());
+//                    return categoryEntity;
+//                }).collect(Collectors.toSet()));
+//
+//        image.setTags(imageRequest.getTags()
+//            .stream()
+//            .map(tags -> {
+//                TagEntity tagEntity =  new TagEntity();
+//                tagEntity.setId(tags.getId());
+//                tagEntity.setName(tags.getName());
+//                return tagEntity;
+//            }).collect(Collectors.toSet()));
+
         image.setOwner(user);
 
         //TODO Add thumbnail processing, set categories and tags

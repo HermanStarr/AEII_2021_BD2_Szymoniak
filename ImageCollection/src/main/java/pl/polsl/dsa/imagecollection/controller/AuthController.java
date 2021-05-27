@@ -65,7 +65,7 @@ public class AuthController {
         }
 
         String jwt = userService.login(request);
-        return ResponseEntity.ok(new ApiResponse(true,"Bearer "+jwt));
+        return ResponseEntity.ok(new ApiResponse(true,"Bearer " + jwt));
     }
 
     @PostMapping("/signup")
