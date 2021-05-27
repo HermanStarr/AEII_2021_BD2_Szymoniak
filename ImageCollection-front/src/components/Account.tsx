@@ -90,7 +90,7 @@ export const Account = () => {
       )}
     </Container>
   );
-}
+};/*
     return (
         <Container>
             {isLoading ? (
@@ -124,4 +124,5 @@ export const Account = () => {
         </Container>
     );
 };
+*/
 export default withRouter(Account);

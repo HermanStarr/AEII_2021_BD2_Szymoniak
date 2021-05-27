@@ -148,9 +148,9 @@ inputInput: {
 const getProfiles = async (): Promise<UserResponse[]> => {
     {
         return [
-            {id:1, icon:undefined, nickname:"Nick_1", email:"some@mail.com"},
-            {id:2, icon:undefined, nickname:"Nick_2", email:"some2@mail.com"},
-            {id:3, icon:undefined, nickname:"Nick_3", email:"some3@mail.com"},
+            {id:1, icon:undefined, nickname:"Nick_1", email:"some@mail.com", isAdmin:false},
+            {id:2, icon:undefined, nickname:"Nick_2", email:"some2@mail.com", isAdmin: false},
+            {id:3, icon:undefined, nickname:"Nick_3", email:"some3@mail.com", isAdmin:false},
         ];
     };
     }

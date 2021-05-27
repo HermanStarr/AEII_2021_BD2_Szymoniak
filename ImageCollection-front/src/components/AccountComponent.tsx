@@ -10,7 +10,7 @@ import {Profiles} from "./Profiles";
 type Props = RouteComponentProps & {}
 
 const getUserData = async (): Promise<UserResponse> => {
-    return {id: 1, email: 'xd@xd.com', icon: undefined, nickname: 'Herman'};
+    return {id: 1, email: 'xd@xd.com', icon: undefined, nickname: 'Herman', isAdmin:false};
 }
 
 export const AccountComponent = () => {
