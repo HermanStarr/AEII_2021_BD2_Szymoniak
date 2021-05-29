@@ -100,4 +100,16 @@ public class AuthController {
     public ResponseEntity<List<UserResponse>>getUserListExcludeCurrent() {
         return ResponseEntity.ok(userService.getUsersListExcludeCurrent());
     }
+
+    public @GetMapping("/userById") ResponseEntity<UserResponse>getUserById(@PathVariable Long userId)
+    {
+        return ResponseEntity.ok(userService.getUserById(userId));
+    }
+    public @GetMapping("/userByNickname") ResponseEntity<UserResponse>getUserByNickname(@PathVariable String nickname)
+    {
+        return ResponseEntity.ok(userService.getAllUserDataByUsername(nickname));
+    }
+
+
+
 }

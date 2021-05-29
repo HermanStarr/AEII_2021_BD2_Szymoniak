@@ -10,12 +10,15 @@ import pl.polsl.dsa.imagecollection.dao.UserRepository;
 import pl.polsl.dsa.imagecollection.dto.ImageRequest;
 import pl.polsl.dsa.imagecollection.dto.ImageResponse;
 import pl.polsl.dsa.imagecollection.dto.ImageThumbResponse;
+import pl.polsl.dsa.imagecollection.dto.UserResponse;
 import pl.polsl.dsa.imagecollection.exception.UnauthorizedException;
 import pl.polsl.dsa.imagecollection.exception.ResourceNotFoundException;
 import pl.polsl.dsa.imagecollection.model.ImageEntity;
 import pl.polsl.dsa.imagecollection.model.UserEntity;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ImageService {
@@ -73,22 +76,12 @@ public class ImageService {
     }
 
     @Transactional(readOnly = true)
-    public PaginatedResult<ImageThumbResponse> getImageThumbnails(Long userId, Boolean mode, SearchCriteria<ImageEntity> criteria) {
+    public List<ImageThumbResponse> getImageThumbnails(Long userId) {
 
-        Specification<ImageEntity> specification;
-        if (mode) {
-            specification = criteria.getSpecification();
-            //TODO Search with OR
-        } else {
-            specification = criteria.getSpecification();
-        }
-        if (userId != null) {
-            specification = specification.and((Specification<ImageEntity>) (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("owner").get("nickname"), userId));
-        }
-        return new PaginatedResult<>(imageRepository
-                .findAll(specification, criteria.getPaging())
-                .map(ImageThumbResponse::fromEntity)
-        );
+        return imageRepository
+                .findAll((Specification<ImageEntity>) (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("owner").get("nickname"), userId))
+                .stream().map(ImageThumbResponse::fromEntity).collect(Collectors.toList());
+
     }
 
     @Transactional

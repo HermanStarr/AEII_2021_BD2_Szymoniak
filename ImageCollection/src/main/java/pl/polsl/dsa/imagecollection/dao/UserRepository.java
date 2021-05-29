@@ -10,10 +10,11 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends CrudRepository<UserEntity, Long>, JpaSpecificationExecutor<UserEntity> {
-    Optional<UserEntity> findByNickname(String nickname);
     Boolean existsByNickname(String nickname);
     Boolean existsByEmail(String email);
-    Optional<UserEntity> findAllByNickname(String nickname);
+    Optional<UserEntity> findByNickname(String nickname);
+    Optional<UserEntity> findFirstById(Long id);
+
 
 
 }

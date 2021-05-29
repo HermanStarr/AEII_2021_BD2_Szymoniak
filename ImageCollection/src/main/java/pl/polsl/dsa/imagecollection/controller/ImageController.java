@@ -12,6 +12,8 @@ import pl.polsl.dsa.imagecollection.model.ImageEntity;
 import pl.polsl.dsa.imagecollection.service.ImageService;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/images")
@@ -48,20 +50,16 @@ public class ImageController {
     }
 
     @GetMapping("/{isOr}")
-    public ResponseEntity<PaginatedResult<ImageThumbResponse>> getImageThumbs(
-            @PathVariable Boolean isOr,
-            SearchCriteria<ImageEntity> searchCriteria ) {
+    public ResponseEntity<PaginatedResult<ImageThumbResponse>> getImageThumbs() {
         //TODO Add user authentication
-        return ResponseEntity.ok(imageService.getImageThumbnails(null, isOr, searchCriteria));
+        //return ResponseEntity.ok(imageService.getImageThumbnails(null));
+        return ResponseEntity.ok(new PaginatedResult<>(new ArrayList<>()));
     }
 
-    @GetMapping("/{userId}/{isOr}")
-    public ResponseEntity<PaginatedResult<ImageThumbResponse>> getUserImageThumbs(
-            @PathVariable Long userId,
-            @PathVariable Boolean isOr,
-            SearchCriteria<ImageEntity> searchCriteria) {
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<ImageThumbResponse>> getUserImageThumbs(@PathVariable Long userId) {
         //TODO Add user authentication
-        return ResponseEntity.ok(imageService.getImageThumbnails(userId, isOr, searchCriteria));
+        return ResponseEntity.ok(imageService.getImageThumbnails(userId));
     }
 
     @DeleteMapping("/{imageId}")
