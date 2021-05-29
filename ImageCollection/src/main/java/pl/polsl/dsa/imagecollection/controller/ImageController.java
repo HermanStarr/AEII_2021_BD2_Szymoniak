@@ -1,6 +1,8 @@
 package pl.polsl.dsa.imagecollection.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import pl.polsl.dsa.imagecollection.PaginatedResult;
 import pl.polsl.dsa.imagecollection.SearchCriteria;
@@ -10,6 +12,7 @@ import pl.polsl.dsa.imagecollection.dto.ImageResponse;
 import pl.polsl.dsa.imagecollection.dto.ImageThumbResponse;
 import pl.polsl.dsa.imagecollection.model.ImageEntity;
 import pl.polsl.dsa.imagecollection.service.ImageService;
+import pl.polsl.dsa.imagecollection.service.UserDetailsImpl;
 
 import javax.validation.Valid;
 
@@ -24,8 +27,7 @@ public class ImageController {
 
     @PostMapping
     public ResponseEntity<ApiResponse> addImage(@Valid @RequestBody ImageRequest request) {
-        //TODO Add user authorization
-        imageService.createImage(request, "Some name");
+        imageService.createImage(request, getAuthorizedUser());
         return ResponseEntity.ok(
                 new ApiResponse(true, "Added image")
         );
@@ -35,8 +37,7 @@ public class ImageController {
     public ResponseEntity<ApiResponse> editImage(
             @PathVariable Long imageId,
             @Valid @RequestBody ImageRequest request) {
-        //TODO Add user authorization
-        imageService.editImage(request, imageId, "Some name");
+        imageService.editImage(request, imageId, getAuthorizedUser());
         return ResponseEntity.ok(
                 new ApiResponse(true, "Edited image")
         );
@@ -66,10 +67,14 @@ public class ImageController {
 
     @DeleteMapping("/{imageId}")
     public ResponseEntity<ApiResponse> deleteImage(@PathVariable Long imageId) {
-        //TODO Add user authentication
-        imageService.deleteImage(imageId, "Some name");
+        imageService.deleteImage(imageId, getAuthorizedUser());
         return ResponseEntity.ok(
                 new ApiResponse(true, "Deleted image")
         );
+    }
+
+    String getAuthorizedUser() {
+        UserDetails u = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return u.getUsername();
     }
 }
