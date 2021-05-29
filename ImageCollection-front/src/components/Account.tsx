@@ -38,59 +38,68 @@ export const Account = () => {
   }, []);
 
   useEffect(() => {
+    setIsLoading(true);
+    getUserData().then(response => {
+      setUserData(response);
+      setIsLoading(false);
+    })
+  }, []);
+
+
+  useEffect(() => {
     if (userData !== null) {
-      getImages(userData.id).then(response => {//getImagesWithCriteria("userId=" + userData.id).then(response => {
+        getImages(userData.id).then(response => {//getImagesWithCriteria("userId=" + userData.id).then(response => {
         setUserImages(response);
       })
     }
   }, [userData])
 
-  return (
-    <Container>
-      {isLoading ? (
-        <></>
-      ) : (
-        <div>
-          <Typography component='h1' variant='h5'>
-              {"User nickname: " + info.userInfo?.nickname}
-          </Typography>
-          <Grid container spacing={2} style={{marginTop: 10}}>
-            <Grid item xs={12} sm={1}>
-              <Avatar alt="User" src=''/>
+    return (
+      <Container>
+        {isLoading ? (
+          <></>
+        ) : (
+          <div>
+            <Typography component='h1' variant='h5'>
+                {"User nickname: " + info.userInfo?.nickname}
+            </Typography>
+            <Grid container spacing={2} style={{marginTop: 10}}>
+              <Grid item xs={12} sm={1}>
+                <Avatar alt="User" src=''/>
+              </Grid>
+              <Grid item xs={12} sm={11}>
+                <TextField
+                  variant="outlined"
+                  fullWidth
+                  label="Email"
+                  disabled
+                  value={userData!.email}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  onClick={() => setDialogOpen(true)}
+                >
+                  Edit
+                </Button>
+              </Grid>
+              <Grid item xs={12}>
+                <ImagesGrid tiles={userImages} onPageChange={(value) => {}}/>
+              </Grid>
             </Grid>
-            <Grid item xs={12} sm={11}>
-              <TextField
-                variant="outlined"
-                fullWidth
-                label="Email"
-                disabled
-                value={userData!.email}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Button
-                fullWidth
-                variant="contained"
-                color="primary"
-                onClick={() => setDialogOpen(true)}
-              >
-                Edit
-              </Button>
-            </Grid>
-            <Grid item xs={12}>
-              <ImagesGrid tiles={userImages} onPageChange={(value) => {}}/>
-            </Grid>
-          </Grid>
-          <ChangeAccountDialog
-            user={userData}
-            open={isDialogOpen}
-            handleClose={ () => setDialogOpen(false) }
-          />
-        </div>
-      )}
-    </Container>
-  );
-};/*
+            <ChangeAccountDialog
+              user={userData}
+              open={isDialogOpen}
+              handleClose={ () => setDialogOpen(false) }
+            />
+          </div>
+        )}
+      </Container>
+    );
+  };/*
     return (
         <Container>
             {isLoading ? (

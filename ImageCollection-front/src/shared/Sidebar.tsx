@@ -18,7 +18,7 @@ import {Backup} from "../components/Backup";
 import {Profiles} from "../components/Profiles";
 import {UserContext} from "../App";
 import LoginContext from "../components/signInUp/LoginContext";
-
+import {Accounts} from "./../components/Accounts";
 type Props = {
   location: { pathname: string },
 } & RouteComponentProps
@@ -132,6 +132,7 @@ const Sidebar: FC<Props> = (props) => {
           <Route path={HOME} exact component={Images}/>
           <Route path={ACCOUNT} exact component={Account}/>
           <Route path={BACKUP} exact component={Backup}/>
+          <Route path={'/profiles/:userNickname'} exact component={Accounts}/>
           <Route path={PROFILES} exact component={Profiles}/>
         </Container>
       </main>

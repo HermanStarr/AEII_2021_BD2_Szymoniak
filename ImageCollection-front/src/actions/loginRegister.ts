@@ -26,3 +26,31 @@ export const getUserData = async (token: String): Promise<UserResponse> => {
   );
   return response.data;
 };
+
+export const getUsersList = async() : Promise<UserResponse[]> => {
+  const response = await axios.get("http://localhost:8080/api/auth/userList", {
+    headers: {
+      'Authorization': `Bearer  eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHJpbmciLCJpYXQiOjE2MjIzMDM5MjgsImV4cCI6MTYyMjM5MDMyOH0.BYSVMocPPilBhiVNnJbWD2OslEtuBf6fooen_-MDV_9Hyreos2Tc4SJ4ja3yPn6xgNvqt0UoRdWRJghA6JzqRA`
+    }
+  });
+  return response.data;
+}
+
+  export const getUserById = async(id: number) : Promise<UserResponse> => {
+    const response = await axios.get("http://localhost:8080/api/auth/userById", {
+      params: id,
+      headers: {
+        'Authorization': `Bearer  eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHJpbmciLCJpYXQiOjE2MjIzMDM5MjgsImV4cCI6MTYyMjM5MDMyOH0.BYSVMocPPilBhiVNnJbWD2OslEtuBf6fooen_-MDV_9Hyreos2Tc4SJ4ja3yPn6xgNvqt0UoRdWRJghA6JzqRA`
+      }
+    });
+    return response.data;
+  }
+export const getUserByNickname = async(nickname: string) : Promise<UserResponse> => {
+  const response = await axios.get("http://localhost:8080/api/auth/userByNickname", {
+    params: nickname,
+    headers: {
+      'Authorization': `Bearer  eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHJpbmciLCJpYXQiOjE2MjIzMDM5MjgsImV4cCI6MTYyMjM5MDMyOH0.BYSVMocPPilBhiVNnJbWD2OslEtuBf6fooen_-MDV_9Hyreos2Tc4SJ4ja3yPn6xgNvqt0UoRdWRJghA6JzqRA`
+    }
+  });
+  return response.data;
+}

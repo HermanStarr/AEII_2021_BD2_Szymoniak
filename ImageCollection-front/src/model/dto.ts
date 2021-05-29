@@ -75,3 +75,11 @@ export interface PaginatedResult<T> {
     items: T[];
     totalElements: number;
 }
+
+export interface ImageThumbRespone{
+    id: number;
+    name: string;
+    ownerId: number;
+    ownerNickname: string;
+    thumb: number[];
+}

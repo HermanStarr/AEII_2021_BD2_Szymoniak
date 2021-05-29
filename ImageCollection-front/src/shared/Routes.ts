@@ -17,6 +17,7 @@ export const LOGIN = '/login';
 export const ACCOUNT = '/account';
 export const BACKUP = '/backup';
 export const PROFILES = '/profiles/';
+export const ACCOUNTS = '/profiles/:usernickname'
 
 export const Routes = [
   {
@@ -65,7 +66,9 @@ export const Routes = [
     sidebarName: 'Profiles',
     icon: SupervisorAccountIcon,
     component: Profiles,
-  }
+  },
+
+
 ];
 
 export default Routes;

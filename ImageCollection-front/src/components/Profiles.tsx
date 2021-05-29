@@ -8,12 +8,12 @@ import {
     TableHead,
     Theme,
     TableRow,
-    withStyles
+    withStyles, Tooltip, Fab,MenuItem
 } from "@material-ui/core";
 import React, {useEffect, useState} from "react";
 import AccessibilityNewIcon from '@material-ui/icons/AccessibilityNew';
 import {TileImageResponse, UserResponse} from "../model/dto";
-import {withRouter} from "react-router";
+import {RouteComponentProps, withRouter} from "react-router";
 import SearchIcon from "@material-ui/icons/Search";
 import Images from "./images/Images";
 import AccountComponent from "./AccountComponent";
@@ -22,21 +22,25 @@ import {
     Route,
     Switch,
     useParams, useRouteMatch, Link
-} from 'react-router-dom'
+} from 'react-router-dom';
+import {getUsersList } from "./../actions/loginRegister";
 
-
-export const Profiles = () => {
+type Props = RouteComponentProps & {}
+export const Profiles = (props: Props) => {
     const classes = useStyles();
     const [profiles, setprofiles] = useState<UserResponse[]>();
     let {url, path} = useRouteMatch();
 
     useEffect(() => {
-        getProfiles().then((response: UserResponse[]) => {
+        getUsersList().then((response: UserResponse[]) => {
+            console.log(url);
             setprofiles(response);
-            console.log("url", url);
-            console.log('path', path);
         })
     }, []);
+    const handleOpenProfile = (rowData: UserResponse) => {
+        props.history.push(url+rowData.id);
+    };
+
 
     // @ts-ignore
     return (
@@ -72,10 +76,10 @@ export const Profiles = () => {
                             <StyledTableCell component="th" scope="row">
                                 <AccessibilityNewIcon></AccessibilityNewIcon>
                             </StyledTableCell>
-                               <StyledTableCell><Link to={url+row.id} >{row.nickname}</Link></StyledTableCell>
-                        </StyledTableRow>
-
-
+                               <StyledTableCell><Link to={url+row.nickname}  style={{ textDecoration: 'none' }} >
+                                   <MenuItem style={{ paddingLeft: 13 }}>{row.nickname} </MenuItem></Link>
+                               </StyledTableCell>
+                           </StyledTableRow>
                     ))}
 
                 </TableBody>
@@ -157,27 +161,4 @@ const getProfiles = async (): Promise<UserResponse[]> => {
 
     export default withRouter(Profiles);
 
-/*
-function userGallery()
-{
-    const {url, path} = useRouteMatch();
-    const {userId} = useParams();
-    const [profiles, setprofiles] = useState<UserResponse[]>();
-
-    useEffect(() => {
-        getProfiles().then((response: UserResponse[]) => {
-            setprofiles(response);
-        })
-    }, []);
-
-    const user= profiles?.find(({id}) => id == userId);
-
-    return(
-        <div>
-            <h2>{user.name}</h2>
-        </div>
-    )
-
-}
- */
 
