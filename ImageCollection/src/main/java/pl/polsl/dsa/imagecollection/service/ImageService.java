@@ -18,7 +18,13 @@ import pl.polsl.dsa.imagecollection.model.ImageEntity;
 import pl.polsl.dsa.imagecollection.model.TagEntity;
 import pl.polsl.dsa.imagecollection.model.UserEntity;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
@@ -40,13 +46,15 @@ public class ImageService {
         //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         ImageEntity image = new ImageEntity();
         image.setName(imageRequest.getName());
-        image.setCreationDate(LocalDateTime.now());
+        image.setCreationDate(LocalDateTime.now().withNano(0));
         image.setOriginalImage(imageFile.getBytes());
         image.setSize(imageFile.getBytes().length);
         image.setFormat(imageRequest.getFormat());
         image.setResolutionX(imageRequest.getResolutionX());
         image.setResolutionY(imageRequest.getResolutionY());
         image.setDescription(imageRequest.getDescription());
+        //set proper width and height
+        image.setThumbnail(resizeImage(imageFile.getBytes(),100,100));
 //        image.setCategories(imageRequest.getCategories()
 //                .stream()
 //                .map(category -> {
@@ -125,5 +133,19 @@ public class ImageService {
             throw new UnauthorizedException("User is not authorized to delete this image");
         }
         imageRepository.deleteById(id);
+    }
+
+    public byte[] resizeImage(byte[] image, int targetWidth, int targetHeight) throws IOException {
+        InputStream is = new ByteArrayInputStream(image);
+        BufferedImage originalImage = ImageIO.read(is);
+
+        BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
+        Graphics2D graphics2D = resizedImage.createGraphics();
+        graphics2D.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
+        graphics2D.dispose();
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(resizedImage, "jpg", baos);
+        return baos.toByteArray();
     }
 }
