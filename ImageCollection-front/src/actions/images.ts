@@ -1,5 +1,4 @@
-import {ApiResponse, ImageRequest, PaginatedResult, TileImageResponse} from "../model/dto";
-import {PaginatedResult, TileImageResponse, ImageThumbRespone} from "../model/dto";
+import {ApiResponse, ImageRequest, PaginatedResult, TileImageResponse,ImageThumbRespone} from "../model/dto";
 import axios from "axios";
 
 export const getImagesWithCriteria = async (criteria: string): Promise<PaginatedResult<TileImageResponse>> => {

@@ -6,6 +6,7 @@ import {
     TableCell,
     TableContainer,
     TableHead,
+    TablePagination,
     Theme,
     TableRow,
     withStyles, Tooltip, Fab,MenuItem
@@ -29,16 +30,34 @@ type Props = RouteComponentProps & {}
 export const Profiles = (props: Props) => {
     const classes = useStyles();
     const [profiles, setprofiles] = useState<UserResponse[]>();
+    const [searchedProfiles, setSearchedProfiles] = useState<UserResponse[]>();
+    const [page, setPage] = React.useState(0);
+    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
     let {url, path} = useRouteMatch();
 
     useEffect(() => {
         getUsersList().then((response: UserResponse[]) => {
             console.log(url);
             setprofiles(response);
+            setSearchedProfiles(response);
+            console.log(searchedProfiles);
         })
     }, []);
     const handleOpenProfile = (rowData: UserResponse) => {
         props.history.push(url+rowData.id);
+    };
+
+    const handleChangeRowsPerPage = (
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    ) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+    };
+
+
+    const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
+        setPage(newPage);
     };
 
 
@@ -48,43 +67,60 @@ export const Profiles = (props: Props) => {
         <TableContainer component={Paper}>
             <Table className={classes.table} aria-label="customized table">
                 <TableHead>
-                    <TableRow >
+                    <TableRow>
                         <StyledTableCell colSpan={2} >
                         <div>
                                 <SearchIcon/>
                             <InputBase
                                 placeholder="Search…"
-                                onChange={event => {}}
                                 inputProps={{'aria-label': 'search'}}
                                 classes ={{
                                    root: classes.inputRoot,
                                     input: classes.inputInput
                                 }}
+                                onChange={event => {
+                                    let newList = profiles?.filter(item => {
+                                        return item.nickname.toLowerCase().includes(event.target.value.toLowerCase());
+                                    })
+                                    setSearchedProfiles(newList);
+                                }}
                             />
                         </div></StyledTableCell>
                     </TableRow>
                 <TableRow >
-                        <StyledTableCell>Icon</StyledTableCell>
-                        <StyledTableCell >Nick</StyledTableCell>
+                        <StyledTableCell colSpan={2} align={'center'}>Users profiles</StyledTableCell>
+
                     </TableRow>
                 </TableHead>
                 <TableBody>
+                    {searchedProfiles?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
 
-                    {profiles?.map((row) => (
 
                            <StyledTableRow key={row.icon}>
-                            <StyledTableCell component="th" scope="row">
-                                <AccessibilityNewIcon></AccessibilityNewIcon>
-                            </StyledTableCell>
-                               <StyledTableCell><Link to={url+row.nickname}  style={{ textDecoration: 'none' }} >
-                                   <MenuItem style={{ paddingLeft: 13 }}>{row.nickname} </MenuItem></Link>
-                               </StyledTableCell>
-                           </StyledTableRow>
-                    ))}
 
+
+                               <Tooltip aria-setsize={23} title="Enter profile">
+                               <StyledTableCell align={'center'}><Link to={url+row.nickname}  style={{ textDecoration: 'none' }} >
+
+                                   <MenuItem  style={{ paddingLeft:13, marginLeft: "200", color: "black"}}>  <AccessibilityNewIcon  style={{marginRight:20, marginLeft:10}}></AccessibilityNewIcon>{row.nickname} </MenuItem></Link>
+
+                               </StyledTableCell>
+                               </Tooltip>
+                           </StyledTableRow>
+
+                    ))}
                 </TableBody>
             </Table>
         </TableContainer>
+            <TablePagination
+                rowsPerPageOptions={[10, 25, 100]}
+                component="div"
+                count={searchedProfiles?.length ?? 0}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onChangePage={handleChangePage}
+                onChangeRowsPerPage={handleChangeRowsPerPage}
+            />
             <Route path={'/profiles/1'}>
                 <h1> Profile nickname</h1>
                 <AccountComponent></AccountComponent>
@@ -99,11 +135,15 @@ const StyledTableCell = withStyles((theme) => ({
     head: {
         backgroundColor: theme.palette.common.black,
         color: theme.palette.common.white,
+        fontSize:20,
+
     },
     body: {
         fontSize: 14,
     },
+
 }))(TableCell);
+
 
 const StyledTableRow = withStyles((theme) => ({
     root: {
