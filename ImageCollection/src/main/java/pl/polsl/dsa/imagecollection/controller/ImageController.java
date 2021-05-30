@@ -32,7 +32,6 @@ public class ImageController {
             @Valid @RequestPart("input") ImageRequest request,
             @Valid @RequestPart("image") MultipartFile image,
             Authentication auth) throws IOException {
-        //TODO Add user authorization
         var principal = (UserDetailsImpl) auth.getPrincipal();
         imageService.createImage(request, image, principal.getUsername());
         return ResponseEntity.ok(

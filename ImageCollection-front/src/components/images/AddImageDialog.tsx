@@ -1,5 +1,5 @@
-import React, {FC, FunctionComponent, useEffect, useState} from 'react';
-import {ErrorMessage, FormikProps, useField, useFormik, withFormik} from "formik";
+import React, {FC, useEffect, useState} from 'react';
+import {FormikProps, withFormik} from "formik";
 import * as Yup from "yup";
 import {
     Button,
@@ -10,7 +10,7 @@ import {
     Grid,
     TextField, Theme,
 } from "@material-ui/core";
-import {CategoryResponse, ImageRequest, TagResponse} from "../../model/dto";
+import {CategoryResponse, TagResponse} from "../../model/dto";
 import FilterSelect from "../../shared/FilterSelect";
 import { makeStyles } from '@material-ui/core/styles';
 import {toast} from "react-toastify";
