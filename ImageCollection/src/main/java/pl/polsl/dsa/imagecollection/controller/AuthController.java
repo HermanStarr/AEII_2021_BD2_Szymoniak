@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import pl.polsl.dsa.imagecollection.dao.UserRepository;
 import pl.polsl.dsa.imagecollection.dto.ApiResponse;
 import pl.polsl.dsa.imagecollection.dto.LoginRequest;
@@ -20,6 +21,7 @@ import pl.polsl.dsa.imagecollection.service.UserDetailsImpl;
 import pl.polsl.dsa.imagecollection.service.UserService;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/auth")
@@ -112,9 +114,10 @@ public class AuthController {
     }
 
     @PutMapping("/changeIcon")
-    public ResponseEntity<ApiResponse> changeIcon(Byte[] newIcon, String password) {
+    public ResponseEntity<ApiResponse> changeIcon(@Valid @RequestPart("icon") MultipartFile icon,
+                                                  String password) throws IOException {
 
-        userService.changeIcon(newIcon,password);
+        userService.changeIcon(icon, password);
         return ResponseEntity.ok(new ApiResponse(true,"Icon changed"));
 
     }

@@ -10,12 +10,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import pl.polsl.dsa.imagecollection.dao.UserRepository;
 import pl.polsl.dsa.imagecollection.dto.*;
 import pl.polsl.dsa.imagecollection.exception.ResourceNotFoundException;
 import pl.polsl.dsa.imagecollection.model.UserEntity;
 import pl.polsl.dsa.imagecollection.security.JwtUtils;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 @Service
@@ -77,11 +79,11 @@ public class UserService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
-    public void changeIcon (Byte[] newIcon,String password){
+    public void changeIcon (MultipartFile imageFile, String password) throws IOException {
         UserDetails u = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserEntity user = userRepository.findByNickname(u.getUsername())
                 .orElseThrow(() -> new ResourceNotFoundException("User", "nickname", u.getUsername()));
-        user.setIcon(newIcon);
+        user.setIcon(imageFile.getBytes());
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -107,9 +109,8 @@ public class UserService {
         int j=0;
         byte[] bytes = new byte[byteObject.length];
         for(Byte b: byteObject)
-            bytes[j++] = b.byteValue();
-        String s = new String(bytes);
-        return s;
+            bytes[j++] = b;
+        return new String(bytes);
     }
 
     @Transactional(readOnly = true)

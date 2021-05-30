@@ -8,7 +8,7 @@ public class UserResponse {
     private String nickname;
     private String email;
     private Byte[] passwordHash;
-    private Byte[] icon;
+    private byte[] icon;
     private Boolean isAdmin;
 
     public Long getId() {
@@ -43,11 +43,11 @@ public class UserResponse {
         this.passwordHash = passwordHash;
     }
 
-    public Byte[] getIcon() {
+    public byte[] getIcon() {
         return icon;
     }
 
-    public void setIcon(Byte[] icon) {
+    public void setIcon(byte[] icon) {
         this.icon = icon;
     }
 
