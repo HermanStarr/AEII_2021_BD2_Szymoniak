@@ -2,11 +2,12 @@ package pl.polsl.dsa.imagecollection.dto;
 
 import com.sun.istack.NotNull;
 
+import java.util.Set;
+
 public class ImageRequest {
     @NotNull
     private String name;
 
-    private Byte[] image;
     @NotNull
     private String format;
     @NotNull
@@ -14,6 +15,9 @@ public class ImageRequest {
     @NotNull
     private Integer resolutionY;
     private String description;
+    private Integer size;
+//    private Set<CategoryResponse> categories;
+//    private Set<TagResponse> tags;
 
     public String getName() {
         return name;
@@ -21,14 +25,6 @@ public class ImageRequest {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Byte[] getImage() {
-        return image;
-    }
-
-    public void setImage(Byte[] image) {
-        this.image = image;
     }
 
     public String getFormat() {
@@ -62,4 +58,16 @@ public class ImageRequest {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public Integer getSize() { return size; }
+
+    public void setSize(Integer size) { this.size = size; }
+
+//    public Set<CategoryResponse> getCategories() { return categories; }
+//
+//    public void setCategories(Set<CategoryResponse> categories) { this.categories = categories; }
+//
+//    public Set<TagResponse> getTags() { return tags; }
+//
+//    public void setTags(Set<TagResponse> tags) { this.tags = tags; }
 }

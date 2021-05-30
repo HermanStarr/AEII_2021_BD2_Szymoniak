@@ -9,7 +9,7 @@ public class ImageResponse {
     private String name;
     private Long ownerId;
     private String ownerNickname;
-    private Byte[] image;
+    private byte[] image;
     private LocalDateTime creationDate;
     private Integer size;
     private String resolution;
@@ -64,11 +64,11 @@ public class ImageResponse {
         this.ownerNickname = ownerNickname;
     }
 
-    public Byte[] getImage() {
+    public byte[] getImage() {
         return image;
     }
 
-    public void setImage(Byte[] image) {
+    public void setImage(byte[] image) {
         this.image = image;
     }
 
