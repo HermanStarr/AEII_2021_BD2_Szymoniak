@@ -76,6 +76,16 @@ export interface PaginatedResult<T> {
     totalElements: number;
 }
 
+export interface ImageRequest {
+    name: string | null;
+    format:string;
+    resolutionX: number;
+    resolutionY: number;
+    description: string;
+    categories: CategoryResponse[] | null;
+    tags: TagResponse[] | null;
+}
+
 export interface ImageThumbRespone{
     id: number;
     name: string;

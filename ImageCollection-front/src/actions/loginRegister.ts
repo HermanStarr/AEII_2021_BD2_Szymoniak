@@ -16,14 +16,9 @@ export const registerUser = async (data: SignUpRequest): Promise<ApiResponse<str
   return response.data;
 };
 
-export const getUserData = async (token: String): Promise<UserResponse> => {
+export const getUserData = async (): Promise<UserResponse> => {
   const response = await axios.get(
-    "http://localhost:8080/api/auth/userData", {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    }
-  );
+    "http://localhost:8080/api/auth/userData");
   return response.data;
 };
 
