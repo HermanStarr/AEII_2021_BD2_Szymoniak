@@ -2,11 +2,15 @@ package pl.polsl.dsa.imagecollection.dto;
 
 import pl.polsl.dsa.imagecollection.model.ImageEntity;
 
+import java.time.LocalDateTime;
+
 public class ImageThumbResponse {
     private Long id;
     private String name;
     private Long ownerId;
     private String ownerNickname;
+    private LocalDateTime creationDate;
+
     private Byte[] thumb;
 
     public static ImageThumbResponse fromEntity(ImageEntity entity) {
@@ -60,5 +64,13 @@ public class ImageThumbResponse {
 
     public void setThumb(Byte[] thumb) {
         this.thumb = thumb;
+    }
+
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
     }
 }

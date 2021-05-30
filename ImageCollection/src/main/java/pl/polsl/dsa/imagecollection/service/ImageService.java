@@ -1,16 +1,15 @@
 package pl.polsl.dsa.imagecollection.service;
 
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.polsl.dsa.imagecollection.PaginatedResult;
-import pl.polsl.dsa.imagecollection.SearchCriteria;
+import pl.polsl.dsa.imagecollection.specification.SearchCriteria;
 import pl.polsl.dsa.imagecollection.dao.ImageRepository;
 import pl.polsl.dsa.imagecollection.dao.UserRepository;
 import pl.polsl.dsa.imagecollection.dto.ImageRequest;
 import pl.polsl.dsa.imagecollection.dto.ImageResponse;
 import pl.polsl.dsa.imagecollection.dto.ImageThumbResponse;
-import pl.polsl.dsa.imagecollection.exception.UnauthorizedException;
+import pl.polsl.dsa.imagecollection.exception.ForbiddenException;
 import pl.polsl.dsa.imagecollection.exception.ResourceNotFoundException;
 import pl.polsl.dsa.imagecollection.model.ImageEntity;
 import pl.polsl.dsa.imagecollection.model.UserEntity;
@@ -55,7 +54,7 @@ public class ImageService {
         ImageEntity image = imageRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Image", "id", id));
         if (!image.getOwner().equals(user)) {
-            throw new UnauthorizedException("User is not authorized to edit this image");
+            throw new ForbiddenException("User is not authorized to edit this image");
         }
         image.setName(imageRequest.getName());
         image.setDescription(imageRequest.getDescription());
@@ -73,20 +72,9 @@ public class ImageService {
     }
 
     @Transactional(readOnly = true)
-    public PaginatedResult<ImageThumbResponse> getImageThumbnails(Long userId, Boolean mode, SearchCriteria<ImageEntity> criteria) {
-
-        Specification<ImageEntity> specification;
-        if (mode) {
-            specification = criteria.getSpecification();
-            //TODO Search with OR
-        } else {
-            specification = criteria.getSpecification();
-        }
-        if (userId != null) {
-            specification = specification.and((Specification<ImageEntity>) (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("owner").get("nickname"), userId));
-        }
+    public PaginatedResult<ImageThumbResponse> getImageThumbnails(SearchCriteria<ImageEntity> criteria) {
         return new PaginatedResult<>(imageRepository
-                .findAll(specification, criteria.getPaging())
+                .findAll(criteria.getSpecification(), criteria.getPaging())
                 .map(ImageThumbResponse::fromEntity)
         );
     }
@@ -98,7 +86,7 @@ public class ImageService {
         ImageEntity image = imageRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Image", "id", id));
         if (!image.getOwner().equals(user)) {
-            throw new UnauthorizedException("User is not authorized to delete this image");
+            throw new ForbiddenException("User is not authorized to delete this image");
         }
         imageRepository.deleteById(id);
     }

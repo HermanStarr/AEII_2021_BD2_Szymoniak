@@ -1,4 +1,4 @@
-package pl.polsl.dsa.imagecollection;
+package pl.polsl.dsa.imagecollection.specification;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;

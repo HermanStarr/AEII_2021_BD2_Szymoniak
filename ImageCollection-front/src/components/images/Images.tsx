@@ -3,7 +3,7 @@ import {createStyles, Theme, makeStyles, fade} from '@material-ui/core/styles';
 import {CategoryResponse, PaginatedResult, TagResponse, TileImageResponse} from "../../model/dto";
 import {withRouter} from "react-router";
 import {
-  AppBar,
+  AppBar, Avatar,
   Container, Grid,
   InputBase,
   Toolbar
@@ -26,6 +26,8 @@ const getCategories = async (): Promise<CategoryResponse[]> => {
   return [
     {id: 1, name: 'category'},
     {id: 2, name: 'dunno'},
+    {id: 3, name: 'neutron'},
+    {id: 4, name: 'proton'},
   ];
 };
 
@@ -69,8 +71,8 @@ const Images = () => {
         author: "Me",
         authorId: 1,
         description: "2 Kartka papieru",
-        resolutionX: photo.width,
-        resolutionY: photo.height,
+        resolutionX: 0,//photo.width,
+        resolutionY: 0,//photo.height,
       }))
       setImages({items: images1, totalElements: images1.length});
     })
@@ -115,7 +117,7 @@ const Images = () => {
               </Grid>
               <Grid item xs={12} sm={4}>
                 <FilterSelect
-                  options={categories.map(category => ({name: category.name}))}
+                  options={categories.map(category => ({name: category.name, avatar: <Avatar>Au</Avatar>}))}
                   placeholder="Category"
                   freeSolo={false}
                   onChange={(value: string) =>
