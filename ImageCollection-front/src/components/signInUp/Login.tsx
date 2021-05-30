@@ -15,13 +15,16 @@ import * as Yup from "yup";
 import {Container} from "@material-ui/core";
 import {FormikProps} from "formik/dist/types";
 import {inputProps} from "../../shared/apiapp";
-import {REGISTER} from "../../shared/Routes";
+import {HOME, REGISTER} from "../../shared/Routes";
 import {getUserData, loginUser} from "../../actions/loginRegister";
 import {LoginRequest, UserResponse} from "../../model/dto";
+import {toast} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import axios from "axios";
 
 type Props = {
   loginData?: LoginRequest;
-  Context: { userInfo: UserResponse | null, setUserInfo: (val: (UserResponse | null)) => void };
+  context: { userInfo: UserResponse | null, setUserInfo: (val: (UserResponse | null)) => void };
 } & RouteComponentProps
 
 
@@ -49,16 +52,22 @@ const formikEnhancer = withFormik<Props, FormValues>({
   }),
 
   handleSubmit: (values, {props}) => {
-    loginUser(values).then((response) => {
+    toast.configure();
+    loginUser(values)
+      .then((response) => {
       console.log("Poprawnie zalogowano! " + response.message)
-
-      getUserData(response.message).then((response) => {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${response.message}`
+      getUserData()
+        .then((response) => {
         console.log(response);
-        console.log(response.nickname)
-      })
+        props.context.setUserInfo(response)
+        props.history.replace(`${HOME}`)
+        toast.success("Login succesfull");
+      });
 
     }).catch((error) => {
-      console.log("error podczas logowania: " + error.message)
+      toast.error("blad podczas logowania");
+      console.log("blad podczas logowania" + error)
     })
 
   },

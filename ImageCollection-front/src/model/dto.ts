@@ -15,6 +15,20 @@ export interface ApiResponse<T> {
     message: string;
 }
 
+export interface ImageResponse2 {
+    id: number,
+    image: Blob | null,
+    title: string;
+    author: string;
+    authorId: number;
+    description: string;
+    resolutionX: number;
+    resolutionY: number;
+    format: string;
+    size: number;
+    creationDate: string;
+}
+
 export interface ImageResponse {
     id: number;
     image: string;
@@ -40,6 +54,7 @@ export interface UserResponse {
     icon: undefined | string;
     nickname: string;
     email: string;
+    isAdmin: boolean;
 }
 
 export interface CategoryResponse {
@@ -59,4 +74,14 @@ export interface TagRequest{
 export interface PaginatedResult<T> {
     items: T[];
     totalElements: number;
+}
+
+export interface ImageRequest {
+    name: string | null;
+    format:string;
+    resolutionX: number;
+    resolutionY: number;
+    description: string;
+    categories: CategoryResponse[] | null;
+    tags: TagResponse[] | null;
 }
