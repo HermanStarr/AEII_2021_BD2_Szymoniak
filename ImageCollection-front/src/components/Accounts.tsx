@@ -59,14 +59,14 @@ type Props = RouteComponentProps & {}
 export const Accounts = (props: Props) => {
 
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [userData, setUserData] = useState<UserResponse | null>(null);
+    const [userDataLog, setUserDataLog] = useState<UserResponse | null>(null);
     const [isDialogOpen, setDialogOpen] = useState<boolean>(false);
     const [userImages, setUserImages] = useState<PaginatedResult<TileImageResponse>>({items: [], totalElements: 0});
     const info = useContext(UserContext);
     const userNickName = useParams();
 
-
-    /*useEffect(() => {
+/*
+    useEffect(() => {
         setIsLoading(true);
         getUserById(userId as number).then(response => {
             setUserData(response);
@@ -74,7 +74,7 @@ export const Accounts = (props: Props) => {
             setIsLoading(false);
         })
     }, []);
-     */
+  /*
     /*
     useEffect(() => {
         setIsLoading(true);
@@ -91,20 +91,31 @@ export const Accounts = (props: Props) => {
     useEffect(() => {
         setIsLoading(true);
         getUserData().then(response => {
-            setUserData(response);
+            setUserDataLog(response);
             setIsLoading(false);
         })
     }, []);
 
-
+    const editButton =()=> (
+        <Grid item xs={12}>
+            <Button
+                fullWidth
+                variant="contained"
+                color="primary"
+                onClick={() => setDialogOpen(true)}
+            >
+                Edit
+            </Button>
+        </Grid>
+)
     useEffect(() => {
-        if (userData !== null) {
+        if (userDataLog !== null) {
             // getUserImageThumbs(userId as number).then(response => {
-            getImages(userData.id).then(response => {//getImagesWithCriteria("userId=" + userData.id).then(respo
+            getImages(userDataLog.id).then(response => {//getImagesWithCriteria("userId=" + userData.id).then(respo
             setUserImages(response);
             })
         }
-    }, [userData]);
+    }, [userDataLog]);
 
     const handleReturn=()=>
     {
@@ -136,32 +147,25 @@ export const Accounts = (props: Props) => {
                                     fullWidth
                                     label="Email"
                                     disabled
-                                    value={userData!.email}
+                                    value={userDataLog!.email}
                                 />
                             </Grid>
-                            <Grid item xs={12}>
-                                <Button
-                                    fullWidth
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={() => setDialogOpen(true)}
-                                >
-                                    Edit
-                                </Button>
-                            </Grid>
-                            <Grid item xs={12}>
-                            </Grid>
+
                         </Grid>
                         <ChangeAccountDialog
-                            user={userData}
+                            user={userDataLog}
                             open={isDialogOpen}
                             handleClose={ () => setDialogOpen(false) }
                         />
+
                     </div>
                 )}
+
             </Container>
         );
 
 
-};
+}
+
+
 export default withRouter(Accounts);

@@ -27,7 +27,7 @@ public class ImageController {
     @PostMapping
     public ResponseEntity<ApiResponse> addImage(@Valid @RequestBody ImageRequest request) {
         //TODO Add user authorization
-        imageService.createImage(request, "Some name");
+        imageService.createImage(request);
         return ResponseEntity.ok(
                 new ApiResponse(true, "Added image")
         );
@@ -49,7 +49,7 @@ public class ImageController {
         return ResponseEntity.ok(imageService.getImage(imageId));
     }
 
-    @GetMapping("/{isOr}")
+    @GetMapping()
     public ResponseEntity<PaginatedResult<ImageThumbResponse>> getImageThumbs() {
         //TODO Add user authentication
         //return ResponseEntity.ok(imageService.getImageThumbnails(null));
