@@ -128,10 +128,14 @@ const AddImage: FC<Props & FormikProps<FormValues>> = (props) => {
                                     <input
                                       type="file"
                                       accept="image/*"
-                                      // value= {props.values.file}
+                                      id="file"
                                       name= "file"
                                       onBlur= {props.handleBlur}
-                                      onChange= {props.handleChange}
+                                      onChange= {(e) => {
+                                         const id = e.target.id;
+                                         const file = e.target.files?.[0];
+                                         props.setFieldValue(id, file);
+                                      }}
                                     />
                                     <Button
                                       className={classes.root}

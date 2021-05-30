@@ -3,6 +3,7 @@ package pl.polsl.dsa.imagecollection.service;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import pl.polsl.dsa.imagecollection.PaginatedResult;
 import pl.polsl.dsa.imagecollection.SearchCriteria;
 import pl.polsl.dsa.imagecollection.dao.ImageRepository;
@@ -17,6 +18,7 @@ import pl.polsl.dsa.imagecollection.model.ImageEntity;
 import pl.polsl.dsa.imagecollection.model.TagEntity;
 import pl.polsl.dsa.imagecollection.model.UserEntity;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
@@ -31,15 +33,15 @@ public class ImageService {
     }
 
     @Transactional
-    public void createImage(ImageRequest imageRequest, String nickname) {
+    public void createImage(ImageRequest imageRequest, MultipartFile imageFile, String nickname) throws IOException {
         UserEntity user = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "nickname", nickname));
 
         ImageEntity image = new ImageEntity();
         image.setName(imageRequest.getName());
         image.setCreationDate(LocalDateTime.now());
-//        image.setOriginalImage(imageRequest.getImage());
-//        image.setSize(imageRequest.getImage().length);
+        image.setOriginalImage(imageFile.getBytes());
+        image.setSize(imageFile.getBytes().length);
         image.setFormat(imageRequest.getFormat());
         image.setResolutionX(imageRequest.getResolutionX());
         image.setResolutionY(imageRequest.getResolutionY());

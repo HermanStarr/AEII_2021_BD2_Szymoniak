@@ -1,5 +1,7 @@
 package pl.polsl.dsa.imagecollection.model;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -24,12 +26,14 @@ public class ImageEntity {
     private String name;
 
     @Lob
+    @Type(type = "org.hibernate.type.BinaryType")
     @Column(name = "thumb")
-    private Byte[] thumbnail;
+    private byte[] thumbnail;
 
     @Lob
+    @Type(type = "org.hibernate.type.BinaryType")
     @Column(name = "image_proper")
-    private Byte[] originalImage;
+    private byte[] originalImage;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name="many_category_has_many_image",
@@ -85,19 +89,19 @@ public class ImageEntity {
         this.name = name;
     }
 
-    public Byte[] getThumbnail() {
+    public byte[] getThumbnail() {
         return thumbnail;
     }
 
-    public void setThumbnail(Byte[] thumbnail) {
+    public void setThumbnail(byte[] thumbnail) {
         this.thumbnail = thumbnail;
     }
 
-    public Byte[] getOriginalImage() {
+    public byte[] getOriginalImage() {
         return originalImage;
     }
 
-    public void setOriginalImage(Byte[] originalImage) {
+    public void setOriginalImage(byte[] originalImage) {
         this.originalImage = originalImage;
     }
 

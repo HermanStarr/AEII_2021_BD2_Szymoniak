@@ -19,12 +19,8 @@ export const addImage = async (data: ImageRequest, image: File): Promise<ApiResp
     type: "application/json"
   }));
   formData.append('image', image);
-  console.log(image)
-  const response = await fetch(
-    "http://localhost:8080/api/images", {body: formData, method: 'post'}
-  );
-
-  return response as any;
+  const response = await axios.post("http://localhost:8080/api/images", formData);
+  return response.data;
 };
 
 export const editImage = async (imageId: number, data: ImageRequest): Promise<ApiResponse<string>> => {

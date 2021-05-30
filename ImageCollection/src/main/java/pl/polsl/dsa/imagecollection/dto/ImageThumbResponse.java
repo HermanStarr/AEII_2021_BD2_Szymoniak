@@ -7,7 +7,7 @@ public class ImageThumbResponse {
     private String name;
     private Long ownerId;
     private String ownerNickname;
-    private Byte[] thumb;
+    private byte[] thumb;
 
     public static ImageThumbResponse fromEntity(ImageEntity entity) {
         ImageThumbResponse dto = new ImageThumbResponse();
@@ -54,11 +54,11 @@ public class ImageThumbResponse {
         this.ownerNickname = ownerNickname;
     }
 
-    public Byte[] getThumb() {
+    public byte[] getThumb() {
         return thumb;
     }
 
-    public void setThumb(Byte[] thumb) {
+    public void setThumb(byte[] thumb) {
         this.thumb = thumb;
     }
 }

@@ -20,6 +20,7 @@ import {getUserData, loginUser} from "../../actions/loginRegister";
 import {LoginRequest, UserResponse} from "../../model/dto";
 import {toast} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import axios from "axios";
 
 type Props = {
   loginData?: LoginRequest;
@@ -55,8 +56,8 @@ const formikEnhancer = withFormik<Props, FormValues>({
     loginUser(values)
       .then((response) => {
       console.log("Poprawnie zalogowano! " + response.message)
-
-      getUserData(response.message)
+      axios.defaults.headers.common['Authorization'] = `Bearer ${response.message}`
+      getUserData()
         .then((response) => {
         console.log(response);
         props.context.setUserInfo(response)
