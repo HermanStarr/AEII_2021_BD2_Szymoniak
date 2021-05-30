@@ -12,9 +12,8 @@ export const getImages = async (): Promise<PaginatedResult<TileImageResponse>> =
 };
 
 export const addImage = async (data: ImageRequest, image: File): Promise<ApiResponse<string>> => {
-  const formData = new FormData();
 
-  // formData.append("input", JSON.stringify(data));
+  const formData = new FormData();
   formData.append('input', new Blob([JSON.stringify(data)], {
     type: "application/json"
   }));
