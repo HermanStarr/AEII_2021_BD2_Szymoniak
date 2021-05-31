@@ -85,3 +85,8 @@ export interface ImageRequest {
     categories: CategoryResponse[] | null;
     tags: TagResponse[] | null;
 }
+
+export interface UserRequest {
+    email: string;
+    password: string;
+}

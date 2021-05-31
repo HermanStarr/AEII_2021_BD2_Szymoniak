@@ -1,114 +1,195 @@
-import React from 'react';
-import {FormikProps, useFormik} from "formik";
+/* eslint-disable no-template-curly-in-string */
+import React, {FC} from 'react';
+import {FormikProps, withFormik} from "formik";
 import * as Yup from "yup";
 import {
-    Box, Button,
-    Dialog, DialogActions,
-    DialogContent,
-    DialogTitle,
-    FormControl,
-    Grid,
-    TextField,
+  Button,
+  Dialog, DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  Grid, IconButton,
+  TextField, Theme,
 } from "@material-ui/core";
-import Dropzone from 'react-dropzone';
-import HighlightOffOutlinedIcon from "@material-ui/icons/HighlightOffOutlined";
-import {inputProps} from "../shared/apiapp";
 import {UserResponse} from "../model/dto";
+import CloseIcon from "@material-ui/icons/Close";
+import {RouteComponentProps, withRouter} from "react-router";
+import {toast} from "react-toastify";
+import {makeStyles} from "@material-ui/core/styles";
+import {editUserPassword} from "../actions/user";
+import {inputProps} from "../shared/apiapp";
 
 type Props = {
-    user: UserResponse | null;
-    open: boolean;
-    handleClose: () => void;
-}
+  user: UserResponse | null;
+  dialogOpened: boolean;
+  onClose: () => void;
+} & RouteComponentProps
 
 type FormValues = {
-    email: string;
-    icon: File | null;
+  oldPassword: string;
+  newPassword: string;
+  passwordConfirmation: string;
 };
 
-export const ChangeAccountDialog = (props: Props) => {
+const formikEnhancer = withFormik<Props, FormValues>({
+  enableReinitialize: true,
+  validationSchema: Yup.object()
+    .shape({
+      oldPassword: Yup.string()
+        .required()
+        .max(20, 'Password should have maximum ${max} characters')
+        .min(2, 'Password should have at least ${min} characters '),
+      newPassword: Yup.string()
+        .required()
+        .max(20, 'Password should have maximum ${max} characters')
+        .min(2, 'Password should have at least ${min} characters '),
+      passwordConfirmation: Yup.string()
+        .required()
+        .max(20, 'Password should have maximum ${max} characters')
+        .min(2, 'Password should have at least ${min} characters ')
+        .oneOf([Yup.ref('newPassword')], 'Passwords must match')
+    }),
 
-    const changeAccountForm = useFormik<FormValues>({
-        validationSchema: Yup.object().shape({
-            email: Yup.string()
-                .required('This field is required')
-                .email('The content must be an email address')
-                .test('notTheSameEmail', 'E-mail cannot be the same as before', email => {
-                    return true;//props.user!.email.toLowerCase() === email!.toLowerCase();
-                }),
-            icon: Yup.mixed().nullable()
-        }),
-        initialValues: {
-            email: '',
-            icon: null,
-        },
-        onSubmit: () => {
+  mapPropsToValues: (props) => ({
+    oldPassword: "",
+    newPassword: "",
+    passwordConfirmation: "",
+  }),
 
-        }
-    });
+  handleSubmit: ({...values}, {props, setSubmitting}) => {
+    setSubmitting(true);
+    editUserPassword(values.newPassword, values.oldPassword)
+      .then(() => toast.success("Poprawnie edytowano hasło użytkownika"))
+      .then(() => setSubmitting(false))
+      .catch((error) => {
+        toast.error("wystąpił error: " + error.message)
+      })
+  },
 
-    const handleDrop = (file: File[]) => {
-      changeAccountForm.setFieldValue('file', file[0]);
-    };
+  displayName: 'AddImageDialog',
+});
 
-    const deleteFile = () => {
-        changeAccountForm.setFieldValue('file', null);
+const ChangeAccountDialog: FC<Props & FormikProps<FormValues>> = (props) => {
+
+  const useStyles = makeStyles((theme: Theme) => ({
+    root: {
+      flexGrow: 1,
+    },
+    closeButton: {
+      position: 'absolute',
+      right: theme.spacing(1),
+      top: theme.spacing(1),
+      color: theme.palette.grey[500],
+    },
+    textFieldMargin: {
+      marginTop: '10px',
     }
+  }));
+  const classes = useStyles();
 
-    return (
-        <Dialog
-            open={props.open}
-            onClose={props.handleClose}
-            aria-labelledby="responsive-dialog-title"
-            fullWidth={true}
-            maxWidth = {'md'}
-        >
-            <DialogTitle id="responsive-dialog-title">{"Edit account"}</DialogTitle>
-            <DialogContent>
-                <form onSubmit={changeAccountForm.handleSubmit}>
-                    <Grid container spacing={2} alignItems="center">
-                        <Grid item xs={6} sm={6}>
-                            <FormControl variant="outlined">
-                                <TextField
-                                    variant="outlined"
-                                    label="Email"
-                                    placeholder="Enter new email"
-                                    {...inputProps(changeAccountForm as FormikProps<FormValues>, 'email')}
-                                />
-                            </FormControl>
-                        </Grid>
-                        <FormControl variant="outlined">
-                            <Dropzone onDrop={handleDrop} accept=".jpg, .png">
-                                {({getRootProps, getInputProps}) => (
-                                    <div
-                                        {...getRootProps()}
-                                        style={{height: 125, border: "2px dashed  #3f51b5"}}
-                                        data-testid="dropzoneDiv"
-                                    >
-                                        <input {...getInputProps()} />
-                                        <p>{"Upload an icon"}</p>
-                                    </div>
-                                )}
-                            </Dropzone>
-                            <Box mt={2}>
-                                <strong>{"Files"}</strong>
-                                <Box display="flex" justifyContent="space-around">
-                                    {changeAccountForm.values.icon?.name}
-                                    <HighlightOffOutlinedIcon onClick={deleteFile}/>
-                                </Box>
-                            </Box>
-                        </FormControl>
-                    </Grid>
-                </form>
-            </DialogContent>
-            <DialogActions>
-                <Button type="submit" color="primary" autoFocus>
-                    Add
-                </Button>
-                <Button autoFocus onClick={props.handleClose} color="primary">
-                    Cancel
-                </Button>
-            </DialogActions>
-        </Dialog>
-    );
+  return (
+    <div className={classes.root}>
+      <Dialog open={props.dialogOpened} onClose={props.onClose}>
+        <DialogTitle id="responsive-dialog-title">{"Change password"}
+          <IconButton aria-label="close" className={classes.closeButton}
+                      onClick={() => {
+                        props.onClose();
+                        props.handleReset();
+                      }}>
+            <CloseIcon/>
+          </IconButton>
+        </DialogTitle>
+        <DialogContent dividers>
+          <Grid container item xs={12} spacing={2}>
+            {/*<Grid item xs={6}>*/}
+            {/*  /!*<FormControl variant="outlined" fullWidth>*!/*/}
+            {/*  /!*  <Button*!/*/}
+            {/*  /!*    className={classes.root}*!/*/}
+            {/*  /!*    fullWidth*!/*/}
+            {/*  /!*    color="secondary"*!/*/}
+            {/*  /!*    variant="outlined"*!/*/}
+            {/*  /!*    component="span">*!/*/}
+            {/*  /!*    <input*!/*/}
+            {/*  /!*      hidden*!/*/}
+            {/*  /!*      type="file"*!/*/}
+            {/*  /!*      accept="image/*"*!/*/}
+            {/*  /!*      color="primary"*!/*/}
+            {/*  /!*      id="icon"*!/*/}
+            {/*  /!*      name="icon"*!/*/}
+            {/*  /!*      onBlur={props.handleBlur}*!/*/}
+            {/*  /!*      onChange={(e) => {*!/*/}
+            {/*  /!*        const id = e.target.id;*!/*/}
+            {/*  /!*        const file = e.target.files?.[0];*!/*/}
+            {/*  /!*        setIconName(e.target.files?.[0].name)*!/*/}
+            {/*  /!*        console.log(iconName);*!/*/}
+            {/*  /!*        props.setFieldValue(id, file);*!/*/}
+            {/*  /!*      }}*!/*/}
+            {/*  /!*    />*!/*/}
+            {/*  /!*    Choose Icon*!/*/}
+            {/*  /!*  </Button>*!/*/}
+            {/*  /!*  {iconName !== "" ? (<span>{iconName}</span>) : ""}*!/*/}
+            {/*  /!*</FormControl>*!/*/}
+            {/*  /!*<Grid style={{textAlign: 'center', marginTop: '20px'}}>*!/*/}
+            {/*  /!*  <Button color="primary" variant="contained">*!/*/}
+            {/*  /!*    Change icon*!/*/}
+            {/*  /!*  </Button>*!/*/}
+            {/*  /!*</Grid>*!/*/}
+            {/*</Grid>*/}
+            <Grid item xs={12}>
+              <FormControl variant="outlined" fullWidth>
+                <TextField
+                  variant="outlined"
+                  label="Old password"
+                  placeholder="Enter old password"
+                  {...inputProps(props, 'oldPassword')}
+                />
+              </FormControl>
+              <TextField
+                className={classes.textFieldMargin}
+                variant="outlined"
+                fullWidth
+                label="New password"
+                type="password"
+                {...inputProps(props, 'newPassword')}
+              />
+              <TextField
+                className={classes.textFieldMargin}
+                variant="outlined"
+                fullWidth
+                label="Repeat new password"
+                type="password"
+                {...inputProps(props, 'passwordConfirmation')}
+              />
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            color="primary"
+            autoFocus
+            type="button"
+            disabled={props.isSubmitting}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                props.handleSubmit()
+              }
+            }}
+            onMouseDown={() => {
+              props.handleSubmit()
+            }}
+          >
+            Change password
+          </Button>
+          <Button autoFocus color="primary"
+                  onClick={() => {
+                    props.onClose();
+                    props.handleReset();
+                  }}>
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
 }
+export default withRouter(formikEnhancer(ChangeAccountDialog));

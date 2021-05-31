@@ -37,6 +37,7 @@ public class ImageService {
         UserEntity user = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "nickname", nickname));
 
+        //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         ImageEntity image = new ImageEntity();
         image.setName(imageRequest.getName());
         image.setCreationDate(LocalDateTime.now());
