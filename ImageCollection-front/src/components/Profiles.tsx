@@ -58,7 +58,7 @@ export const Profiles = (props: Props) => {
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
         setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
+      //  setPage(0);
     };
 
     return (
@@ -92,8 +92,8 @@ export const Profiles = (props: Props) => {
                 </TableHead>
                 <TableBody>
                     {(rowsPerPage > 0
-                            ? profiles.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                            : profiles
+                            ? searchedProfiles.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                            : searchedProfiles
                     ).map(row => (
                         <StyledTableRow key={row.icon}>
                             <Tooltip aria-setsize={23} title="Enter profile">
@@ -120,14 +120,21 @@ export const Profiles = (props: Props) => {
             </Table>
         </TableContainer>
             <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
-                component="div"
+                rowsPerPageOptions={[5, 10, 15, {label: 'All', value: -1}]}
+                colSpan={12}
                 count={searchedProfiles.length}
+                width={1000}
                 rowsPerPage={rowsPerPage}
                 page={page}
+                SelectProps={{
+                    inputProps: {'aria-label': 'rows per page'},
+                    native: true,
+                }}
                 onChangePage={handleChangePage}
                 onChangeRowsPerPage={handleChangeRowsPerPage}
+                ActionsComponent={TablePaginationComponent}
             />
+
         </Paper>
     );
 }
