@@ -99,39 +99,5 @@ export const Account = () => {
         )}
       </Container>
     );
-  };/*
-    return (
-        <Container>
-            {isLoading ? (
-                <></>
-            ) : (
-                <div>
-
-                    <AccountComponent></AccountComponent>
-
-                    <Button
-                        fullWidth
-                        variant="contained"
-                        color="primary"
-                        onClick={() => setDialogOpen(true)}
-                    >
-                        Edit
-                    </Button>
-                    <div>
-                    <Grid item xs={12} >
-                        <Images/>
-                    </Grid>
-                    </div>
-
-                    <ChangeAccountDialog
-                        user={userData}
-                        open={isDialogOpen}
-                        handleClose={() => setDialogOpen(false)}
-                    />
-                </div>
-            )}
-        </Container>
-    );
-};
-*/
+  };
 export default withRouter(Account);

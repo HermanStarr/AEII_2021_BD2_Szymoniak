@@ -84,7 +84,7 @@ public class UserService {
         return s;
     }
 
-    @Transactional(readOnly = true)
+
     public UserResponse getAllUserDataByUsername(String username){
     return UserResponse.fromEntity(userRepository.findByNickname(username)
         .orElseThrow(() -> new ResourceNotFoundException("User","id",username)));
@@ -108,7 +108,7 @@ public class UserService {
 
     public UserResponse getUserById(Long userId)
     {
-        return UserResponse.fromEntity(userRepository.findFirstById(userId)
+        return UserResponse.fromEntity(userRepository.findById(userId)
             .orElseThrow(() -> new ResourceNotFoundException("User","id",userId)));
     }
 

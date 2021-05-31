@@ -25,6 +25,7 @@ import {
     useParams, useRouteMatch, Link
 } from 'react-router-dom';
 import {getUsersList } from "./../actions/loginRegister";
+import TablePaginationComponent from "./PagintionComponent";
 
 type Props = RouteComponentProps & {}
 export const Profiles = (props: Props) => {
@@ -54,12 +55,9 @@ export const Profiles = (props: Props) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
-
-
     const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
         setPage(newPage);
     };
-
 
     // @ts-ignore
     return (
@@ -93,40 +91,34 @@ export const Profiles = (props: Props) => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {searchedProfiles?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
-
-
-                           <StyledTableRow key={row.icon}>
-
-
+                    {searchedProfiles?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map(row => (
+                        <StyledTableRow key={row.icon}>
                                <Tooltip aria-setsize={23} title="Enter profile">
                                <StyledTableCell align={'center'}><Link to={url+row.nickname}  style={{ textDecoration: 'none' }} >
-
                                    <MenuItem  style={{ paddingLeft:13, marginLeft: "200", color: "black"}}>  <AccessibilityNewIcon  style={{marginRight:20, marginLeft:10}}></AccessibilityNewIcon>{row.nickname} </MenuItem></Link>
-
                                </StyledTableCell>
                                </Tooltip>
                            </StyledTableRow>
-
                     ))}
                 </TableBody>
             </Table>
         </TableContainer>
             <TablePagination
-                rowsPerPageOptions={[10, 25, 100]}
-                component="div"
+                rowsPerPageOptions={[5, 10, 15, {label: 'All', value: -1}]}
+                colSpan={12}
                 count={searchedProfiles?.length ?? 0}
+                width={1000}
                 rowsPerPage={rowsPerPage}
                 page={page}
+                SelectProps={{
+                    inputProps: {'aria-label': 'rows per page'},
+                    native: true,
+                }}
                 onChangePage={handleChangePage}
                 onChangeRowsPerPage={handleChangeRowsPerPage}
+                ActionsComponent={TablePaginationComponent}
             />
-            <Route path={'/profiles/1'}>
-                <h1> Profile nickname</h1>
-                <AccountComponent></AccountComponent>
-                <Images></Images>
-            </Route>
-
         </Paper>
     );
 }

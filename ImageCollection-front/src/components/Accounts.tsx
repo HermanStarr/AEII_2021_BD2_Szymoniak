@@ -61,32 +61,25 @@ export const Accounts = (props: Props) => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [userDataLog, setUserDataLog] = useState<UserResponse | null>(null);
     const [isDialogOpen, setDialogOpen] = useState<boolean>(false);
+    const [userName, setUserName] = useState<string|undefined>();
     const [userImages, setUserImages] = useState<PaginatedResult<TileImageResponse>>({items: [], totalElements: 0});
     const info = useContext(UserContext);
-    const userNickName = useParams();
+    let userNickname = useParams();
 
-/*
+
+    const usernameFunc=() => {
+        for (let [key, value] of Object.entries(userNickname)) {
+           userNickname=value as string;
+        }
+    }
     useEffect(() => {
+        usernameFunc();
         setIsLoading(true);
-        getUserById(userId as number).then(response => {
-            setUserData(response);
-            console.log("userData", userData);
+            getUserByNickname(userNickname.valueOf() as string).then(response => {
+            setUserDataLog(response);
             setIsLoading(false);
         })
     }, []);
-  /*
-    /*
-    useEffect(() => {
-        setIsLoading(true);
-        console.log("user nickname", userNickName)
-        getUserByNickname(userNickName as string).then(response => {
-            setUserData(response);
-            console.log("userData", userData);
-            setIsLoading(false);
-        })
-    }, []);
-    /*
-     */
 
     useEffect(() => {
         setIsLoading(true);
@@ -96,18 +89,6 @@ export const Accounts = (props: Props) => {
         })
     }, []);
 
-    const editButton =()=> (
-        <Grid item xs={12}>
-            <Button
-                fullWidth
-                variant="contained"
-                color="primary"
-                onClick={() => setDialogOpen(true)}
-            >
-                Edit
-            </Button>
-        </Grid>
-)
     useEffect(() => {
         if (userDataLog !== null) {
             // getUserImageThumbs(userId as number).then(response => {
@@ -121,7 +102,6 @@ export const Accounts = (props: Props) => {
     {
         props.history.push('/profiles/');
     };
-
         return (
             <Container>
                 {isLoading ? (
@@ -130,13 +110,10 @@ export const Accounts = (props: Props) => {
                     <div>
                         <Grid   style={{ display: "flex", justifyContent: "flex-end" }}>
                             <Button  variant="contained" color="primary" style={{marginLeft:1 , marginRight:0, }} onClick={()=> handleReturn()}> Return to list  <KeyboardReturnIcon></KeyboardReturnIcon></Button>
-
                         </Grid>
                         <Typography component='h1' variant='h5'>
-                            {"User nickname: " + userNickName}
-
+                            {"User nickname: " + userDataLog?.nickname}
                         </Typography>
-
                         <Grid container spacing={2} style={{marginTop: 10}}>
                             <Grid item xs={12} sm={1}>
                                 <Avatar alt="User" src=''/>
@@ -150,14 +127,25 @@ export const Accounts = (props: Props) => {
                                     value={userDataLog!.email}
                                 />
                             </Grid>
-
+                            {
+                                userDataLog?.nickname == info.userInfo?.nickname &&
+                                <Grid item xs={12}>
+                                    <Button
+                                        fullWidth
+                                        variant="contained"
+                                        color="primary"
+                                        onClick={() => setDialogOpen(true)}
+                                    >
+                                        Edit
+                                    </Button>
+                                </Grid>
+                            }
                         </Grid>
                         <ChangeAccountDialog
                             user={userDataLog}
                             open={isDialogOpen}
                             handleClose={ () => setDialogOpen(false) }
                         />
-
                     </div>
                 )}
 
