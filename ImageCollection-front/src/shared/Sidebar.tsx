@@ -96,19 +96,19 @@ const Sidebar: FC<Props> = (props) => {
         <MenuList>
           {Routes
             .filter((Routes) => {
-              // if (!info.userInfo) {
-              //   return Routes.notLoggedUser;
-              // }
-              // if (info.userInfo) {
-              //   if (!info.userInfo.isAdmin) {
-              //     return Routes.loggedUser;
-              //   } else {
-              //     return Routes.admin;
-              //   }
-              // } else {
-              //   return Routes;
-              // }
-              return Routes
+              if (!info.userInfo) {
+                return Routes.notLoggedUser;
+              }
+              if (info.userInfo) {
+                if (!info.userInfo.isAdmin) {
+                  return Routes.loggedUser;
+                } else {
+                  return Routes.admin;
+                }
+              } else {
+                return Routes;
+              }
+              //return Routes
             })
             .map((prop: { path: string, sidebarName: string, icon: OverridableComponent<SvgIconTypeMap> }, key: number) => {
               return (

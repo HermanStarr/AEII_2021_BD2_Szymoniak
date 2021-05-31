@@ -6,6 +6,8 @@ import Button from "@material-ui/core/Button";
 import ImagesGrid from "./images/ImagesGrid";
 import {photos} from "./images/photos";
 import {UserContext} from "../App";
+import AddImage from "./images/AddImageDialog";
+import ChangeIconDialog from "./ChangeIconDialog";
 
 const getImages = async (id: number): Promise<PaginatedResult<TileImageResponse>> => {
   return {items: [
@@ -23,6 +25,7 @@ export const Account = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [userData, setUserData] = useState<UserResponse | null>(null);
   const [isDialogOpen, setDialogOpen] = useState<boolean>(false);
+  const [isChangeDialogDialogOpen, setIsChangeDialogDialogOpen] = useState<boolean>(false);
   const [userImages, setUserImages] = useState<PaginatedResult<TileImageResponse>>({items: [], totalElements: 0});
   const info = useContext(UserContext);
 
@@ -49,11 +52,13 @@ export const Account = () => {
       ) : (
         <div>
           <Typography component='h1' variant='h5'>
-              {"User nickname: " + info.userInfo?.nickname}
+              {info.userInfo ? ("User nickname: " + info.userInfo?.nickname) : ''}
           </Typography>
           <Grid container spacing={2} style={{marginTop: 10}}>
             <Grid item xs={12} sm={1}>
-              <Avatar alt="User" src=''/>
+              <Avatar alt="User"
+                onClick={() => setIsChangeDialogDialogOpen(true)}
+              />
             </Grid>
             <Grid item xs={12} sm={11}>
               <TextField
@@ -71,7 +76,7 @@ export const Account = () => {
                 color="primary"
                 onClick={() => setDialogOpen(true)}
               >
-                Edit
+                Change password
               </Button>
             </Grid>
             <Grid item xs={12}>
@@ -82,6 +87,10 @@ export const Account = () => {
             user={userData}
             dialogOpened={isDialogOpen}
             onClose={() => setDialogOpen(false)}
+          />
+          <ChangeIconDialog
+            dialogOpened={isChangeDialogDialogOpen}
+            onClose={() => setIsChangeDialogDialogOpen(false)}
           />
         </div>
       )}
