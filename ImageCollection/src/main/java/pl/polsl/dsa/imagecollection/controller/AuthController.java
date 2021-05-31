@@ -95,7 +95,7 @@ public class AuthController {
     }
 
     @PutMapping("/changePassword")
-    public ResponseEntity<ApiResponse> changePassword(String newPassword, String password) {
+    public ResponseEntity<ApiResponse> changePassword(String newPassword, String oldPassword) {
 
         UserDetails u = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserEntity user = userRepository.findByNickname(u.getUsername())
@@ -103,7 +103,7 @@ public class AuthController {
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-        if ( !encoder.matches(password, userService.byteToString(user.getPasswordHash())) ) {
+        if ( !encoder.matches(oldPassword, userService.byteToString(user.getPasswordHash())) ) {
             return ResponseEntity
                     .badRequest()
                     .body(new ApiResponse(false,"Error: Wrong password"));

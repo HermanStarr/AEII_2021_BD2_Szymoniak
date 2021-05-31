@@ -141,6 +141,7 @@ const ChangeAccountDialog: FC<Props & FormikProps<FormValues>> = (props) => {
                   variant="outlined"
                   label="Old password"
                   placeholder="Enter old password"
+                  type="password"
                   {...inputProps(props, 'oldPassword')}
                 />
               </FormControl>
