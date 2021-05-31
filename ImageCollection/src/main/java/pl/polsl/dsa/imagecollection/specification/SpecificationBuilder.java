@@ -48,7 +48,7 @@ public class SpecificationBuilder<E, S extends SpecificationWithCriteria<E>> {
                 params.add(new FilterCriteria(
                         matcher.group(1),
                         matcher.group(2),
-                        matcher.group(3)
+                        val
                 ));
             } catch (Exception e) {
                 params.add(new FilterCriteria(

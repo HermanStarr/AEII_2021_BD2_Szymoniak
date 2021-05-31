@@ -79,15 +79,15 @@ public class SearchableAspect {
 
         String search = parameters.getFirst("search");
 
-        Class<?> specificationClass = searchable.specification();
-        Supplier<?> specificationSupplier = getSpecificationSupplier(specificationClass);
+        Class specificationClass = searchable.specification();
+        Supplier specificationSupplier = getSpecificationSupplier(specificationClass);
 
-        SpecificationBuilder<?,?> specificationBuilder = new SpecificationBuilder(specificationSupplier, compositionType);
-        Specification<?> specification = specificationBuilder.buildFromQuery(search);
+        SpecificationBuilder specificationBuilder = new SpecificationBuilder(specificationSupplier, compositionType);
+        Specification specification = specificationBuilder.buildFromQuery(search);
 
         String sortingProperty;
         try {
-            sortingProperty = ((SpecificationWithCriteria<?>) getSpecificationSupplier(specificationClass).get()).getSortingProperty(sortBy);
+            sortingProperty = ((SpecificationWithCriteria) getSpecificationSupplier(specificationClass).get()).getSortingProperty(sortBy);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(new ApiResponse(false, e.getMessage()), HttpStatus.BAD_REQUEST);
         }
@@ -116,7 +116,7 @@ public class SearchableAspect {
         return PageRequest.of(pageNumber, pageSize == -1 ? Integer.MAX_VALUE : pageSize, sorting);
     }
 
-    private Supplier<?> getSpecificationSupplier(Class<?> specificationClass) {
+    private Supplier getSpecificationSupplier(Class specificationClass) {
         return () -> {
             try {
                 return specificationClass.getConstructor().newInstance();

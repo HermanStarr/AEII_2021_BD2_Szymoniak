@@ -6,7 +6,7 @@ public class ImageRequest {
     @NotNull
     private String name;
 
-    private Byte[] image;
+    private byte[] image;
     @NotNull
     private String format;
     @NotNull
@@ -23,11 +23,11 @@ public class ImageRequest {
         this.name = name;
     }
 
-    public Byte[] getImage() {
+    public byte[] getImage() {
         return image;
     }
 
-    public void setImage(Byte[] image) {
+    public void setImage(byte[] image) {
         this.image = image;
     }
 

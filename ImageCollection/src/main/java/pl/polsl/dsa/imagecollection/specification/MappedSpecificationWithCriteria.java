@@ -35,7 +35,7 @@ public abstract class MappedSpecificationWithCriteria<T> implements Specificatio
 
         if (!fieldInfo.isFilterEnabled()) {
             throw new IllegalArgumentException(String.format(
-                    "Nieprawidłowy klucz przekazany w zapytaniu: '%s'. Brak możliwości filtrowania.",
+                    "Invalid key sent: '%s'.",
                     field));
         }
 
@@ -61,7 +61,7 @@ public abstract class MappedSpecificationWithCriteria<T> implements Specificatio
         }
         if (!fieldInfo.isSortEnabled()) {
             throw new IllegalArgumentException(String.format(
-                    "Nieprawidłowy klucz przekazany w zapytaniu: '%s'. Brak możliwości sortowania.",
+                    "Invalid key sent: '%s'.",
                     field));
         }
 
@@ -72,7 +72,7 @@ public abstract class MappedSpecificationWithCriteria<T> implements Specificatio
         FieldInfo fieldInfo = getFieldMap().get(field);
 
         if (fieldInfo == null && shouldThrowException(field)) {
-            throw new IllegalArgumentException(String.format("Nieprawidłowy klucz przekazany w zapytaniu: '%s'.", field));
+            throw new IllegalArgumentException(String.format("Invalid key sent: '%s'.", field));
         }
         return fieldInfo;
     }
@@ -93,25 +93,11 @@ public abstract class MappedSpecificationWithCriteria<T> implements Specificatio
         private boolean sortEnabled = true;
         private boolean filterEnabled = true;
 
-        /**
-         * Tworzy informacje o mapowaniu pola, sortowanie i filtrowanie domyślnie włączone.
-         *
-         * @param field nazwa pola w DTO
-         * @param path  ścieżka dostępu do pola w encjach
-         */
         public FieldInfo(String field, List<String> path) {
             this.field = field;
             this.path = path;
         }
 
-        /**
-         * Tworzy informacje o mapowaniu pola.
-         *
-         * @param field         nazwa pola w DTO
-         * @param path          ścieżka dostępu do pola w encjach
-         * @param sortEnabled   możliwości sortowania
-         * @param filterEnabled możliwość filtrowania
-         */
         public FieldInfo(String field, List<String> path, boolean sortEnabled, boolean filterEnabled) {
             this.field = field;
             this.path = path;

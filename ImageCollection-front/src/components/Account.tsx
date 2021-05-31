@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {PaginatedResult, TileImageResponse, UserResponse} from "../model/dto";
+import {PaginatedResult, ImageThumbResponse, UserResponse} from "../model/dto";
 import {Avatar, Container, Grid, TextField, Typography} from "@material-ui/core";
 import {ChangeAccountDialog} from "./ChangeAccountDialog";
 import Button from "@material-ui/core/Button";
@@ -7,11 +7,11 @@ import ImagesGrid from "./images/ImagesGrid";
 import {photos} from "./images/photos";
 import {UserContext} from "../App";
 
-const getImages = async (id: number): Promise<PaginatedResult<TileImageResponse>> => {
+const getImages = async (id: number): Promise<PaginatedResult<ImageThumbResponse>> => {
   return {items: [
-    {id: 0, thumb: photos[0].src, title: 'Zdjęcie xD', author: 'me', authorId: 1, description: 'just a photo', resolutionY: 450, resolutionX: 800},
-    {id: 1, thumb: photos[1].src, title: 'Zdjęcie xD', author: 'you', authorId: 1, description: 'just a photo', resolutionY: 450, resolutionX: 800},
-    {id: 2, thumb: photos[2].src, title: 'Zdjęcie xD', author: 'them', authorId: 1, description: 'just a photo', resolutionY: 450, resolutionX: 800},
+      {id: 0, thumb: photos[0].src, title: 'Zdjęcie xD', owner: 'me', ownerId: 1, creationDate: '31-12-2022'},
+      {id: 1, thumb: photos[1].src, title: 'Zdjęcie xD', owner: 'you', ownerId: 2, creationDate: '31-12-2022'},
+      {id: 2, thumb: photos[2].src, title: 'Zdjęcie xD', owner: 'them', ownerId: 3, creationDate: '31-12-2022'},
   ], totalElements: 3};
 };
 
@@ -23,7 +23,7 @@ export const Account = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [userData, setUserData] = useState<UserResponse | null>(null);
   const [isDialogOpen, setDialogOpen] = useState<boolean>(false);
-  const [userImages, setUserImages] = useState<PaginatedResult<TileImageResponse>>({items: [], totalElements: 0});
+  const [userImages, setUserImages] = useState<PaginatedResult<ImageThumbResponse>>({items: [], totalElements: 0});
   const info = useContext(UserContext);
 
   useEffect(() => {

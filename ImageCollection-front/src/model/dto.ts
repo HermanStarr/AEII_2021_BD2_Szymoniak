@@ -1,12 +1,11 @@
-export interface TileImageResponse {
+export interface ImageThumbResponse {
     id: number
-    thumb: string;
     title: string;
-    author: string;
-    authorId: number;
-    description: string;
-    resolutionX: number;
-    resolutionY: number;
+    owner: string;
+    ownerId: number;
+    creationDate: string;
+
+    thumb: string;
 }
 
 export interface ApiResponse<T> {

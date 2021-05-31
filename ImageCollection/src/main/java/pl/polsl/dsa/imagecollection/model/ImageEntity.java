@@ -25,11 +25,11 @@ public class ImageEntity {
 
     @Lob
     @Column(name = "thumb")
-    private Byte[] thumbnail;
+    private byte[] thumbnail;
 
     @Lob
     @Column(name = "image_proper")
-    private Byte[] originalImage;
+    private byte[] originalImage;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name="many_category_has_many_image",
@@ -85,19 +85,19 @@ public class ImageEntity {
         this.name = name;
     }
 
-    public Byte[] getThumbnail() {
+    public byte[] getThumbnail() {
         return thumbnail;
     }
 
-    public void setThumbnail(Byte[] thumbnail) {
+    public void setThumbnail(byte[] thumbnail) {
         this.thumbnail = thumbnail;
     }
 
-    public Byte[] getOriginalImage() {
+    public byte[] getOriginalImage() {
         return originalImage;
     }
 
-    public void setOriginalImage(Byte[] originalImage) {
+    public void setOriginalImage(byte[] originalImage) {
         this.originalImage = originalImage;
     }
 
@@ -189,7 +189,7 @@ public class ImageEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, thumbnail, originalImage, creationDate, size, format, resolutionX, resolutionY, description, owner);
+        return Objects.hash(id, name, Arrays.hashCode(thumbnail), Arrays.hashCode(originalImage), creationDate, size, format, resolutionX, resolutionY, description, owner);
     }
 
 

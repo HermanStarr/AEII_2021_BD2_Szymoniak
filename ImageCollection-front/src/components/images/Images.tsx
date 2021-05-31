@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {createStyles, Theme, makeStyles, fade} from '@material-ui/core/styles';
-import {CategoryResponse, PaginatedResult, TagResponse, TileImageResponse} from "../../model/dto";
+import {CategoryResponse, PaginatedResult, TagResponse, ImageThumbResponse} from "../../model/dto";
 import {withRouter} from "react-router";
 import {
   AppBar, Avatar,
@@ -15,11 +15,11 @@ import {photos} from "./photos";
 import ImagesGrid from "./ImagesGrid";
 import {getImagesWithCriteria} from "../../actions/images";
 
-const getImages = async (): Promise<TileImageResponse[]> => {
+const getImages = async (): Promise<ImageThumbResponse[]> => {
   return [
-    {id: 1, thumb: '', title: 'Zdjęcie xD', author: 'me', authorId: 1, description: 'just a photo', resolutionY: 450, resolutionX: 800},
-    {id: 2, thumb: '', title: 'Zdjęcie xD', author: 'you', authorId: 2, description: 'just a photo', resolutionY: 450, resolutionX: 800},
-    {id: 3, thumb: '', title: 'Zdjęcie xD', author: 'them', authorId: 3, description: 'just a photo', resolutionY: 450, resolutionX: 800},
+    {id: 1, thumb: '', title: 'Zdjęcie xD', owner: 'me', ownerId: 1, creationDate: '31-12-2022'},
+    {id: 2, thumb: '', title: 'Zdjęcie xD', owner: 'you', ownerId: 2, creationDate: '31-12-2022'},
+    {id: 3, thumb: '', title: 'Zdjęcie xD', owner: 'them', ownerId: 3, creationDate: '31-12-2022'},
   ];
 };
 const getCategories = async (): Promise<CategoryResponse[]> => {
@@ -44,7 +44,7 @@ const Images = () => {
   const [categories, setCategories] = useState<CategoryResponse[]>([]);
   const [tagSearchCriteria, setTagSearchCriteria] = useState<string>("");
   const [tags, setTags] = useState<TagResponse[]>([]);
-  const [images, setImages] = useState<PaginatedResult<TileImageResponse>>({items: [], totalElements: 0});
+  const [images, setImages] = useState<PaginatedResult<ImageThumbResponse>>({items: [], totalElements: 0});
   const [addImageDialogOpened, setAddImageDialogOpened] = useState<boolean>(false);
   const [paging, setPaging] = useState<string>('');
   const [searchName, setSearchName] = useState<string>('');
@@ -68,11 +68,9 @@ const Images = () => {
         id: index,
         thumb: photo.src,
         title: index + "Zdjęcie xD",
-        author: "Me",
-        authorId: 1,
-        description: "2 Kartka papieru",
-        resolutionX: 0,//photo.width,
-        resolutionY: 0,//photo.height,
+        owner: "Me",
+        ownerId: 1,
+        creationDate: '31-12-2022'
       }))
       setImages({items: images1, totalElements: images1.length});
     })
