@@ -30,10 +30,11 @@ import TablePaginationComponent from "./PagintionComponent";
 type Props = RouteComponentProps & {}
 export const Profiles = (props: Props) => {
     const classes = useStyles();
-    const [profiles, setprofiles] = useState<UserResponse[]>();
-    const [searchedProfiles, setSearchedProfiles] = useState<UserResponse[]>();
+    const [profiles, setprofiles] = useState<UserResponse[]>([]);
+    const [searchedProfiles, setSearchedProfiles] = useState<UserResponse[]>([]);
     const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
 
     let {url, path} = useRouteMatch();
 
@@ -48,18 +49,18 @@ export const Profiles = (props: Props) => {
     const handleOpenProfile = (rowData: UserResponse) => {
         props.history.push(url+rowData.id);
     };
+    const emptyRows = rowsPerPage - Math.min(rowsPerPage, searchedProfiles.length - page * rowsPerPage);
 
+    const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
+        setPage(newPage);
+    };
     const handleChangeRowsPerPage = (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
-    const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
-        setPage(newPage);
-    };
 
-    // @ts-ignore
     return (
         <Paper>
         <TableContainer component={Paper}>
@@ -87,37 +88,45 @@ export const Profiles = (props: Props) => {
                     </TableRow>
                 <TableRow >
                         <StyledTableCell colSpan={2} align={'center'}>Users profiles</StyledTableCell>
-
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {searchedProfiles?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map(row => (
+                    {(rowsPerPage > 0
+                            ? profiles.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                            : profiles
+                    ).map(row => (
                         <StyledTableRow key={row.icon}>
-                               <Tooltip aria-setsize={23} title="Enter profile">
-                               <StyledTableCell align={'center'}><Link to={url+row.nickname}  style={{ textDecoration: 'none' }} >
-                                   <MenuItem  style={{ paddingLeft:13, marginLeft: "200", color: "black"}}>  <AccessibilityNewIcon  style={{marginRight:20, marginLeft:10}}></AccessibilityNewIcon>{row.nickname} </MenuItem></Link>
-                               </StyledTableCell>
-                               </Tooltip>
-                           </StyledTableRow>
+                            <Tooltip aria-setsize={23} title="Enter profile">
+                                <StyledTableCell align={'center'}>
+                                    <Link to={url + row.nickname} style={{textDecoration: 'none'}}>
+                                        <MenuItem style={{paddingLeft: 13, marginLeft: "200", color: "black"}}>
+                                            <AccessibilityNewIcon style={{
+                                                marginRight: 20,
+                                                marginLeft: 10
+                                            }}></AccessibilityNewIcon>{row.nickname}
+                                        </MenuItem>
+                                    </Link>
+                                </StyledTableCell>
+                            </Tooltip>
+                        </StyledTableRow>
                     ))}
+                    {emptyRows > 0 && (
+                        <TableRow style={{height: 53 * emptyRows}}>
+                            <TableCell colSpan={6}/>
+                        </TableRow>
+                    )}
+
                 </TableBody>
             </Table>
         </TableContainer>
             <TablePagination
-                rowsPerPageOptions={[5, 10, 15, {label: 'All', value: -1}]}
-                colSpan={12}
-                count={searchedProfiles?.length ?? 0}
-                width={1000}
+                rowsPerPageOptions={[5, 10, 25]}
+                component="div"
+                count={searchedProfiles.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
-                SelectProps={{
-                    inputProps: {'aria-label': 'rows per page'},
-                    native: true,
-                }}
                 onChangePage={handleChangePage}
                 onChangeRowsPerPage={handleChangeRowsPerPage}
-                ActionsComponent={TablePaginationComponent}
             />
         </Paper>
     );
