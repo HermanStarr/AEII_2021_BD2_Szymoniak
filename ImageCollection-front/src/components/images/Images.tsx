@@ -1,19 +1,19 @@
 import React, {useEffect, useState} from 'react';
 import {createStyles, Theme, makeStyles, fade} from '@material-ui/core/styles';
-import {CategoryResponse, PaginatedResult, TagResponse, ImageThumbResponse} from "../../model/dto";
-import {withRouter} from "react-router";
+import {CategoryResponse, ImageRequest, PaginatedResult, TagResponse, ImageThumbResponse} from "../../model/dto";
+import {RouteComponentProps, withRouter} from "react-router";
 import {
   AppBar, Avatar,
   Container, Grid,
   InputBase,
   Toolbar
 } from "@material-ui/core";
-import {AddImage} from "./AddImageDialog";
 import Button from "@material-ui/core/Button";
 import FilterSelect from "../../shared/FilterSelect";
 import {photos} from "./photos";
 import ImagesGrid from "./ImagesGrid";
 import {getImagesWithCriteria} from "../../actions/images";
+import AddImage from "./AddImageDialog";
 
 const getImages = async (): Promise<ImageThumbResponse[]> => {
   return [
@@ -38,8 +38,11 @@ const getTags = async (): Promise<TagResponse[]> => {
     {id: 3, name: 'pigeon'},
   ];
 };
+type Props = {
+  imageData?: ImageRequest;
+} & RouteComponentProps
 
-const Images = () => {
+const Images = (props:Props) => {
   const [categorySearchCriteria, setCategorySearchCriteria] = useState<string>("");
   const [categories, setCategories] = useState<CategoryResponse[]>([]);
   const [tagSearchCriteria, setTagSearchCriteria] = useState<string>("");
@@ -115,7 +118,7 @@ const Images = () => {
               </Grid>
               <Grid item xs={12} sm={4}>
                 <FilterSelect
-                  options={categories.map(category => ({name: category.name, avatar: <Avatar>Au</Avatar>}))}
+                  options={categories.map(category => ({name: category.name}))}
                   placeholder="Category"
                   freeSolo={false}
                   onChange={(value: string) =>
@@ -166,6 +169,10 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '100%',
       borderBottomLeftRadius: 0,
       borderBottomRightRadius: 0,
+      backgroundColor: '#BF6984',
+      '&:hover': {
+        backgroundColor: fade('#BF6984', 0.85),
+      },
     },
     appBar: {
       borderBottomLeftRadius: 5,
@@ -189,6 +196,10 @@ const useStyles = makeStyles((theme: Theme) =>
     searchButton: {
       color: '#ffffff',
       width: '100%',
+      backgroundColor: '#BF6984',
+      '&:hover': {
+        backgroundColor: fade('#BF6984', 0.85),
+      },
     },
   }),
 );

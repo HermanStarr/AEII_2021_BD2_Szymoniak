@@ -1,7 +1,12 @@
 package pl.polsl.dsa.imagecollection.controller;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import pl.polsl.dsa.imagecollection.PaginatedResult;
 import pl.polsl.dsa.imagecollection.specification.SearchCriteria;
 import pl.polsl.dsa.imagecollection.dto.ApiResponse;
@@ -12,8 +17,10 @@ import pl.polsl.dsa.imagecollection.model.ImageEntity;
 import pl.polsl.dsa.imagecollection.service.ImageService;
 import pl.polsl.dsa.imagecollection.specification.ImageSpecification;
 import pl.polsl.dsa.imagecollection.specification.Searchable;
+import pl.polsl.dsa.imagecollection.service.UserDetailsImpl;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/images")
@@ -24,10 +31,13 @@ public class ImageController {
         this.imageService = imageService;
     }
 
-    @PostMapping
-    public ResponseEntity<ApiResponse> addImage(@Valid @RequestBody ImageRequest request) {
-        //TODO Add user authorization
-        imageService.createImage(request, "Some name");
+    @PostMapping(consumes = {"multipart/form-data", MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<ApiResponse> addImage(
+            @Valid @RequestPart("input") ImageRequest request,
+            @Valid @RequestPart("image") MultipartFile image,
+            Authentication auth) throws IOException {
+        var principal = (UserDetailsImpl) auth.getPrincipal();
+        imageService.createImage(request, image, principal.getUsername());
         return ResponseEntity.ok(
                 new ApiResponse(true, "Added image")
         );
@@ -37,8 +47,7 @@ public class ImageController {
     public ResponseEntity<ApiResponse> editImage(
             @PathVariable Long imageId,
             @Valid @RequestBody ImageRequest request) {
-        //TODO Add user authorization
-        imageService.editImage(request, imageId, "Some name");
+        imageService.editImage(request, imageId, getAuthorizedUser());
         return ResponseEntity.ok(
                 new ApiResponse(true, "Edited image")
         );
@@ -58,10 +67,14 @@ public class ImageController {
 
     @DeleteMapping("/{imageId}")
     public ResponseEntity<ApiResponse> deleteImage(@PathVariable Long imageId) {
-        //TODO Add user authentication
-        imageService.deleteImage(imageId, "Some name");
+        imageService.deleteImage(imageId, getAuthorizedUser());
         return ResponseEntity.ok(
                 new ApiResponse(true, "Deleted image")
         );
+    }
+
+    String getAuthorizedUser() {
+        UserDetails u = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return u.getUsername();
     }
 }

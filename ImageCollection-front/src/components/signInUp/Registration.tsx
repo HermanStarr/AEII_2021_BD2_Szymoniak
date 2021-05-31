@@ -18,7 +18,7 @@ import {inputProps} from "../../shared/apiapp";
 import {LOGIN} from "../../shared/Routes";
 import {SignUpRequest} from "../../model/dto";
 import {registerUser} from "../../actions/loginRegister";
-import {ToastContainer, toast} from "react-toastify";
+import {toast} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
 type Props = {

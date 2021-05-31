@@ -3,12 +3,12 @@ package pl.polsl.dsa.imagecollection.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import pl.polsl.dsa.imagecollection.dao.UserRepository;
 import pl.polsl.dsa.imagecollection.dto.ApiResponse;
 import pl.polsl.dsa.imagecollection.dto.LoginRequest;
@@ -18,10 +18,10 @@ import pl.polsl.dsa.imagecollection.exception.ResourceNotFoundException;
 import pl.polsl.dsa.imagecollection.model.UserEntity;
 import pl.polsl.dsa.imagecollection.security.JwtUtils;
 import pl.polsl.dsa.imagecollection.service.UserDetailsImpl;
-import pl.polsl.dsa.imagecollection.service.UserDetailsServiceImpl;
 import pl.polsl.dsa.imagecollection.service.UserService;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/auth")
@@ -65,7 +65,7 @@ public class AuthController {
         }
 
         String jwt = userService.login(request);
-        return ResponseEntity.ok(new ApiResponse(true,"Bearer "+jwt));
+        return ResponseEntity.ok(new ApiResponse(true,"Bearer " + jwt));
     }
 
     @PostMapping("/signup")
@@ -94,4 +94,31 @@ public class AuthController {
         return UserResponse.fromEntity(user);
     }
 
+    @PutMapping("/changePassword")
+    public ResponseEntity<ApiResponse> changePassword(String newPassword, String oldPassword) {
+
+        UserDetails u = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserEntity user = userRepository.findByNickname(u.getUsername())
+                .orElseThrow(() -> new ResourceNotFoundException("User", "nickname", u.getUsername()));
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+        if ( !encoder.matches(oldPassword, userService.byteToString(user.getPasswordHash())) ) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ApiResponse(false,"Error: Wrong password"));
+        }
+
+        userService.changePassword(newPassword, user);
+        return ResponseEntity.ok(new ApiResponse(true,"password changed"));
+    }
+
+    @PutMapping("/changeIcon")
+    public ResponseEntity<ApiResponse> changeIcon(@Valid @RequestPart("icon") MultipartFile icon,
+                                                  String password) throws IOException {
+
+        userService.changeIcon(icon, password);
+        return ResponseEntity.ok(new ApiResponse(true,"Icon changed"));
+
+    }
 }

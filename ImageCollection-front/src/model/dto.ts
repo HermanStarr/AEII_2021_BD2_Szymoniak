@@ -74,3 +74,18 @@ export interface PaginatedResult<T> {
     items: T[];
     totalElements: number;
 }
+
+export interface ImageRequest {
+    name: string | null;
+    format:string;
+    resolutionX: number;
+    resolutionY: number;
+    description: string;
+    categories: CategoryResponse[] | null;
+    tags: TagResponse[] | null;
+}
+
+export interface UserRequest {
+    email: string;
+    password: string;
+}

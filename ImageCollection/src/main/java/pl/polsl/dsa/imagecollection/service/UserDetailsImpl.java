@@ -2,6 +2,7 @@ package pl.polsl.dsa.imagecollection.service;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import pl.polsl.dsa.imagecollection.model.UserEntity;
 
@@ -12,49 +13,50 @@ import java.util.Objects;
 
 public class UserDetailsImpl implements UserDetails {
 
-    private Long id;
+    private final Long id;
 
-    private String username;
+    private final String username;
 
-    private String email;
+    private final String email;
 
-    private Boolean isAdmin;
+    private final Boolean isAdmin;
 
     @JsonIgnore
-    private String password;
+    private final String password;
 
-    private Collection authorities;
+    private final Collection<?> authorities;
 
-    private Byte[] icon;
+    private final byte[] icon;
 
     public UserDetailsImpl(Long id,
                            String username, String email, String password,
-                           Collection authorities, Byte[] icon) {
+                           Collection<?> authorities, byte[] icon, Boolean isAdmin) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
-        this.isAdmin = false;
+        this.isAdmin = isAdmin;
         this.authorities = authorities;
         this.icon = icon;
     }
 
     public static UserDetailsImpl build(UserEntity user) {
-        List authorities = new ArrayList<>();
+        List<?> authorities = new ArrayList<>();
 
-        int j=0;
+        int j = 0;
         byte[] bytes = new byte[user.getPasswordHash().length];
-        for(Byte b: user.getPasswordHash())
-            bytes[j++] = b.byteValue();
+        for (Byte b : user.getPasswordHash())
+            bytes[j++] = b;
         String psw = new String(bytes);
 
         return new UserDetailsImpl(
-                user.getId(),
-                user.getNickname(),
-                user.getEmail(),
-                psw,
-                authorities,
-                user.getIcon()
+            user.getId(),
+            user.getNickname(),
+            user.getEmail(),
+            psw,
+            authorities,
+            user.getIcon(),
+            user.getAdmin()
         );
     }
 
@@ -109,5 +111,13 @@ public class UserDetailsImpl implements UserDetails {
 
         UserDetailsImpl user = (UserDetailsImpl) o;
         return Objects.equals(id, user.id);
+    }
+
+    public byte[] getIcon() {
+        return icon;
+    }
+
+    public Boolean getAdmin() {
+        return isAdmin;
     }
 }

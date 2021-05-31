@@ -1,31 +1,44 @@
-import React, {useEffect, useState} from 'react';
-import {FormikProps, useFormik} from "formik";
+import React, {FC, useEffect, useState} from 'react';
+import {FormikProps, withFormik} from "formik";
 import * as Yup from "yup";
 import {
-    Box, Button,
-    Dialog, DialogActions,
-    DialogContent,
-    DialogTitle,
-    FormControl,
-    Grid, MenuItem, Select,
-    TextField,
+  Button,
+  Dialog, DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  Grid, IconButton,
+  TextField, Theme,
 } from "@material-ui/core";
-import Dropzone from 'react-dropzone';
-import HighlightOffOutlinedIcon from "@material-ui/icons/HighlightOffOutlined";
-import {CategoryResponse} from "../../model/dto";
+import {CategoryResponse, TagResponse} from "../../model/dto";
+import FilterSelect from "../../shared/FilterSelect";
+import { makeStyles } from '@material-ui/core/styles';
+import {toast} from "react-toastify";
 import {inputProps} from "../../shared/apiapp";
+import {addImage} from "../../actions/images";
+import {RouteComponentProps, withRouter} from "react-router";
+import CloseIcon from '@material-ui/icons/Close';
+
 
 type FormValues = {
-    file: unknown;
-    categoryId: number | null;
+    name: string | null;
+    // image: any;
+    file: File | null
     description: string;
-    tags: string;
+    // tags: string;
+    resolutionX: number;
+    resolutionY: number;
+    format: string;
+    size: number;
+    categories: CategoryResponse[] | null;
+    tags: TagResponse[] | null;
 };
 
 type Props = {
+    //imageData?: ImageRequest;
     dialogOpened: boolean;
     onClose: () => void;
-};
+} & RouteComponentProps
 
 const getCategories = async (): Promise<CategoryResponse[]> => {
     return [
@@ -34,10 +47,59 @@ const getCategories = async (): Promise<CategoryResponse[]> => {
     ];
 };
 
-export const AddImage = (props: Props) => {
+const formikEnhancer = withFormik<Props, FormValues>({
+    enableReinitialize: true,
+    validationSchema: Yup.object()
+      .shape({
+          name: Yup.string(),
+          image: Yup.object(),
+          description: Yup.string(),
+          tags: Yup.string(),
+      }),
 
+    mapPropsToValues: (props) => ({
+        name: '',
+        description: '',
+        // image: null,
+        // tags: string;
+        file: null,
+        resolutionX: 1,
+        resolutionY: 0,
+        format: "",
+        size: 0,
+        categories: null,
+        tags: null,
+    }),
+
+    handleSubmit: ({file, ...values}, {props, setSubmitting}) => {
+        setSubmitting(true);
+        addImage(values, file!)
+          .then(() => toast.success("Poprawnie dodano zdjęcie"))
+          .then(() => setSubmitting(false))
+          .catch((error) => {
+              toast.error("wystąpił error: " +  error.message)
+          })
+    },
+
+    displayName: 'AddImageDialog',
+});
+
+const AddImage: FC<Props & FormikProps<FormValues>> = (props) => {
     const [isLoading, setLoading] = useState<boolean>(false);
     const [categories, setCategories] = useState<CategoryResponse[]>([]);
+    const [filename, setFilename] = useState<string | undefined>("");
+    const useStyles = makeStyles((theme: Theme) => ({
+        root: {
+            flexGrow: 1,
+        },
+      closeButton: {
+        position: 'absolute',
+        right: theme.spacing(1),
+        top: theme.spacing(1),
+        color: theme.palette.grey[500],
+      },
+    }));
+    const classes = useStyles();
 
     useEffect(() => {
         setLoading(true);
@@ -47,121 +109,120 @@ export const AddImage = (props: Props) => {
         })
     }, [])
 
-    const addImageForm = useFormik<FormValues>({
-        validationSchema: Yup.object().shape({
-            file: Yup.mixed().required(''),
-            categoryId: Yup.number().nullable().required('Provide category').integer('').min(0),
-            description: Yup.string().notRequired(),
-            tags: Yup.string().notRequired(),
-        }),
-        initialValues: {
-            file: null,
-            categoryId: null,
-            description: '',
-            tags: '',
-        },
-        onSubmit: () => {}
-    });
-
-    const handleDrop = (file: File[]) => {
-        addImageForm.setFieldValue('file', file[0]);
-    }
-
-    const deleteFile = () => {
-        addImageForm.setFieldValue('file', null);
-    }
-
-    const displayFileName = () => {
-        const file = addImageForm.values.file as File;
-        return file.name;
-    }
-
     return (
+      <div className={classes.root}>
         <Dialog open={props.dialogOpened} onClose={props.onClose}>
-            <DialogTitle id="responsive-dialog-title">{"Add image"}</DialogTitle>
-            <DialogContent>
-                <form onSubmit={addImageForm.handleSubmit}>
-                    <Grid container spacing={2} alignItems="center">
+            <DialogTitle id="responsive-dialog-title">{"Add image"}
+              <IconButton aria-label="close" className={classes.closeButton}
+                onClick={() => {
+                props.onClose();
+                props.handleReset();
+              }}>
+                <CloseIcon />
+              </IconButton>
+            </DialogTitle>
+            <DialogContent dividers>
+                    <Grid container item xs={12} spacing={2}>
                         <Grid item xs={12}>
-                            <FormControl variant="outlined">
-                                <Dropzone onDrop={handleDrop} accept=".jpg, .png">
-                                    {({getRootProps, getInputProps}) => (
-                                        <div
-                                            {...getRootProps()}
-                                            style={{height: 125, border: "2px dashed  #3f51b5"}}
-                                            data-testid="dropzoneDiv"
-                                        >
-                                            <input {...getInputProps()} />
-                                            <p>{"Upload an image"}</p>
-                                        </div>
-                                    )}
-                                </Dropzone>
-                                <Box mt={2}>
-                                    <strong>{"Files"}</strong>
-                                    <Box display="flex" justifyContent="space-around">
-                                        {displayFileName}
-                                        <HighlightOffOutlinedIcon onClick={deleteFile}/>
-                                    </Box>
-                                </Box>
+                            <FormControl variant="outlined" fullWidth>
+                                <TextField
+                                  fullWidth
+                                  variant="outlined"
+                                  label="Image name"
+                                  placeholder="Enter image name"
+                                  {...inputProps(props, 'name')}
+                                />
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={12} >
+                            <FormControl variant="outlined" fullWidth>
+                                <label htmlFor="file" >
+                                    <Button
+                                      className={classes.root}
+                                      fullWidth
+                                      color="secondary"
+                                      variant="outlined"
+                                      component="span" >
+                                    <input
+                                      hidden
+                                      type="file"
+                                      accept="image/*"
+                                      color="primary"
+                                      id="file"
+                                      name= "file"
+                                      onBlur= {props.handleBlur}
+                                      onChange= {(e) => {
+                                         const id = e.target.id;
+                                         const file = e.target.files?.[0];
+                                         setFilename(e.target.files?.[0].name)
+                                         console.log(filename);
+                                         props.setFieldValue(id, file);
+                                      }}
+                                    />
+                                        Choose Image
+                                    </Button>
+
+                                </label>
+                                {filename !== "" ? (<span>{filename}</span>) : ""}
                             </FormControl>
                         </Grid>
                         <Grid item xs={12}>
-                            <Select
-                                labelId="demo-simple-select-outlined-label"
-                                id="demo-simple-select-outlined"
-                                defaultValue={""}
-                                name="categoryId"
-                                label="Category"
-                                onChange={(e) => {
-                                    addImageForm.setFieldValue('categoryId', e.target.value as number);
-                                }}
-                            >
-                                {categories.map((value: CategoryResponse) => (
-                                    <MenuItem key={value.id} value={value.id}>{value.name} </MenuItem>
-                                ))}
-                            </Select>
-                            <Select
-                                labelId="demo-simple-select-outlined-label"
-                                id="demo-simple-select-outlined"
-                                defaultValue={""}
-                                name="categoryId"
-                                label="Category"
-                                onChange={(e) => {
-                                    addImageForm.setFieldValue('categoryId', e.target.value as number);
-                                }}
-                            >
-                                {categories.map((value: CategoryResponse) => (
-                                    <MenuItem key={value.id} value={value.id}>{value.name} </MenuItem>
-                                ))}
-                            </Select>
+                            <h3>Filter Category</h3>
+                            <FilterSelect
+                              options={categories.map(category => ({name: category.name}))}
+                              placeholder="Category"
+                              {...inputProps(props, 'categories')}
+                            />
                         </Grid>
                         <Grid item xs={12}>
-                            <FormControl variant="outlined">
+                            <FormControl variant="outlined" fullWidth>
                                 <TextField
                                     variant="outlined"
                                     label="Description"
                                     multiline
                                     rows={4}
                                     placeholder="Enter description"
-                                    {...inputProps(addImageForm as FormikProps<FormValues>, 'description')}
+                                    {...inputProps(props, 'description')}
                                 />
                             </FormControl>
                         </Grid>
                         <Grid item xs={12}>
-                            <FormControl variant="outlined">
+                            <FormControl variant="outlined" fullWidth>
                                 <TextField
                                     variant="outlined"
                                     label="Tags"
                                     multiline
                                     rows={4}
                                     placeholder="Enter tags"
-                                    {...inputProps(addImageForm as FormikProps<FormValues>, 'tags')}
+                                    {...inputProps(props, 'tags')}
                                 />
                             </FormControl>
                         </Grid>
                     </Grid>
-                </form>
             </DialogContent>
+            <DialogActions>
+                <Button
+                  color="primary"
+                  autoFocus
+                  type="button"
+                  disabled={props.isSubmitting}
+                  onKeyDown={(e) => {if(e.key === 'Enter'){props.handleSubmit()}}}
+                  onMouseDown={() => {props.handleSubmit()}}
+                  //onClick={() => {props.handleSubmit()}}
+                >
+                    Add image
+                </Button>
+                <Button autoFocus  color="primary"
+                onClick={() => {
+                  props.onClose();
+                  props.handleReset();
+                }}>
+                    Cancel
+                </Button>
+            </DialogActions>
         </Dialog>
+      </div>
     );
 }
+
+export default withRouter(formikEnhancer(AddImage));

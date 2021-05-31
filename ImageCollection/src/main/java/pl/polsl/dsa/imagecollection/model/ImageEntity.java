@@ -1,5 +1,7 @@
 package pl.polsl.dsa.imagecollection.model;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -24,10 +26,12 @@ public class ImageEntity {
     private String name;
 
     @Lob
+    @Type(type = "org.hibernate.type.BinaryType")
     @Column(name = "thumb")
     private byte[] thumbnail;
 
     @Lob
+    @Type(type = "org.hibernate.type.BinaryType")
     @Column(name = "image_proper")
     private byte[] originalImage;
 

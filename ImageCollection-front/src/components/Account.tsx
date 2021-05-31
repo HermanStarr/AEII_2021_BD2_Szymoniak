@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {PaginatedResult, ImageThumbResponse, UserResponse} from "../model/dto";
 import {Avatar, Container, Grid, TextField, Typography} from "@material-ui/core";
-import {ChangeAccountDialog} from "./ChangeAccountDialog";
+import ChangeAccountDialog from "./ChangeAccountDialog";
 import Button from "@material-ui/core/Button";
 import ImagesGrid from "./images/ImagesGrid";
 import {photos} from "./images/photos";
@@ -80,8 +80,8 @@ export const Account = () => {
           </Grid>
           <ChangeAccountDialog
             user={userData}
-            open={isDialogOpen}
-            handleClose={ () => setDialogOpen(false) }
+            dialogOpened={isDialogOpen}
+            onClose={() => setDialogOpen(false)}
           />
         </div>
       )}
