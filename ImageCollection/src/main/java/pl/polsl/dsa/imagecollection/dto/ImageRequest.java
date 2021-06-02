@@ -16,8 +16,8 @@ public class ImageRequest {
     private Integer resolutionY;
     private String description;
     private Integer size;
-//    private Set<CategoryResponse> categories;
-//    private Set<TagResponse> tags;
+    private Set<String> categories;
+    private Set<String> tags;
 
     public String getName() {
         return name;
@@ -63,11 +63,11 @@ public class ImageRequest {
 
     public void setSize(Integer size) { this.size = size; }
 
-//    public Set<CategoryResponse> getCategories() { return categories; }
-//
-//    public void setCategories(Set<CategoryResponse> categories) { this.categories = categories; }
-//
-//    public Set<TagResponse> getTags() { return tags; }
-//
-//    public void setTags(Set<TagResponse> tags) { this.tags = tags; }
+    public Set<String> getCategories() { return categories; }
+
+    public void setCategories(Set<String> categories) { this.categories = categories; }
+
+    public Set<String> getTags() { return tags; }
+
+    public void setTags(Set<String> tags) { this.tags = tags; }
 }

@@ -1,8 +1,6 @@
 package pl.polsl.dsa.imagecollection.specification;
 
-import org.springframework.data.jpa.domain.Specification;
-import pl.polsl.dsa.imagecollection.dto.FilterCriteria;
-
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -12,17 +10,23 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.*;
+import org.apache.commons.text.StringEscapeUtils;
+import org.springframework.data.jpa.domain.Specification;
+import pl.polsl.dsa.imagecollection.dto.FilterCriteria;
 import pl.polsl.dsa.imagecollection.exception.BadRequestException;
 
+
 public class SpecificationBuilder<E, S extends SpecificationWithCriteria<E>> {
+
     private final Supplier<S> specificationSupplier;
-    private final CompositionType compositionType;
+    private CompositionType compositionType;
+
 
     public SpecificationBuilder(Supplier<S> specificationSupplier, CompositionType compositionType) {
         this.specificationSupplier = specificationSupplier;
         this.compositionType = compositionType;
     }
+
 
     public Specification<E> buildFromQuery(String query) {
         if (query == null) {
@@ -30,36 +34,40 @@ public class SpecificationBuilder<E, S extends SpecificationWithCriteria<E>> {
         }
 
         String decodedQuery;
+
         try {
             decodedQuery = URLDecoder.decode(query, StandardCharsets.UTF_8);
         } catch (Exception e) {
-            throw new BadRequestException("Search parameter has not been coded properly");
+            throw new BadRequestException("Search parameter is coded wrong");
         }
 
         List<FilterCriteria> params = new ArrayList<>();
-        Pattern pattern = Pattern.compile("([\\w%\\-.]+?)([:<>~])([\\w%\\-.\\\\/]+),?");
+
+        Pattern pattern = Pattern.compile("([\\w%\\-.]+?)([:<>~])([\\w%\\- .\\\\/]+),?");
 
         Matcher matcher = pattern.matcher(decodedQuery + ",");
 
         while (matcher.find()) {
+
             String rawValue = matcher.group(3);
+
             try {
-                String val = StringEscapeUtils.unescapeJava(rawValue);
+                String value = StringEscapeUtils.unescapeJava(rawValue);
+
                 params.add(new FilterCriteria(
                         matcher.group(1),
                         matcher.group(2),
-                        val
-                ));
+                        value));
             } catch (Exception e) {
                 params.add(new FilterCriteria(
                         matcher.group(1),
                         matcher.group(2),
-                        rawValue
-                ));
+                        rawValue));
             }
-            if (params.isEmpty()) {
-                return null;
-            }
+        }
+
+        if (params.isEmpty()) {
+            return null;
         }
 
         List<Specification<E>> specs = params.stream()
@@ -81,4 +89,5 @@ public class SpecificationBuilder<E, S extends SpecificationWithCriteria<E>> {
         }
         return result;
     }
+
 }

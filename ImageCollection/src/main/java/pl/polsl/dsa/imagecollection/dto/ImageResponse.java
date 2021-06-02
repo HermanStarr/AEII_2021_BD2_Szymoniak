@@ -3,16 +3,18 @@ package pl.polsl.dsa.imagecollection.dto;
 import pl.polsl.dsa.imagecollection.model.ImageEntity;
 
 import java.time.LocalDateTime;
+import java.util.Base64;
 
 public class ImageResponse {
     private Long id;
     private String name;
     private Long ownerId;
-    private String ownerNickname;
-    private byte[] image;
+    private String owner;
+    private String image;
     private LocalDateTime creationDate;
     private Integer size;
-    private String resolution;
+    private Integer resolutionX;
+    private Integer resolutionY;
     private String description;
 
     public static ImageResponse fromEntity(ImageEntity entity) {
@@ -20,11 +22,12 @@ public class ImageResponse {
         dto.setId(entity.getId());
         dto.setName(entity.getName());
         dto.setOwnerId(entity.getOwner().getId());
-        dto.setOwnerNickname(entity.getOwner().getNickname());
-        dto.setImage(entity.getOriginalImage());
+        dto.setOwner(entity.getOwner().getNickname());
+        dto.setImage(Base64.getEncoder().encodeToString(entity.getOriginalImage()));
         dto.setCreationDate(entity.getCreationDate());
         dto.setSize(entity.getSize());
-        dto.setResolution(String.format("%d x %d", entity.getResolutionX(), entity.getResolutionY()));
+        dto.setResolutionX(entity.getResolutionX());
+        dto.setResolutionY(entity.getResolutionY());
         dto.setDescription(entity.getDescription());
 
         //TODO Set categories and tags
@@ -56,19 +59,19 @@ public class ImageResponse {
         this.ownerId = ownerId;
     }
 
-    public String getOwnerNickname() {
-        return ownerNickname;
+    public String getOwner() {
+        return owner;
     }
 
-    public void setOwnerNickname(String ownerNickname) {
-        this.ownerNickname = ownerNickname;
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
-    public byte[] getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(byte[] image) {
+    public void setImage(String image) {
         this.image = image;
     }
 
@@ -88,19 +91,28 @@ public class ImageResponse {
         this.size = size;
     }
 
-    public String getResolution() {
-        return resolution;
-    }
-
-    public void setResolution(String resolution) {
-        this.resolution = resolution;
-    }
-
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+
+    public Integer getResolutionX() {
+        return resolutionX;
+    }
+
+    public void setResolutionX(Integer resolutionX) {
+        this.resolutionX = resolutionX;
+    }
+
+    public Integer getResolutionY() {
+        return resolutionY;
+    }
+
+    public void setResolutionY(Integer resolutionY) {
+        this.resolutionY = resolutionY;
     }
 }

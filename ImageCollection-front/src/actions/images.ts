@@ -1,4 +1,4 @@
-import {ApiResponse, ImageThumbResponse, ImageRequest, PaginatedResult} from "../model/dto";
+import {ApiResponse, ImageThumbResponse, ImageRequest, PaginatedResult, ImageResponse} from "../model/dto";
 import axios from "axios";
 
 export const getImagesWithCriteria = async (criteria: string): Promise<PaginatedResult<ImageThumbResponse>> => {
@@ -10,6 +10,11 @@ export const getImages = async (): Promise<PaginatedResult<ImageThumbResponse>> 
   const response = await axios.get("http://localhost:8080/api/images");
   return response.data;
 };
+
+export const getImage = async (imageId: number): Promise<ImageResponse> => {
+  const response = await axios.get(`http://localhost:8080/api/images/${imageId}`);
+  return response.data;
+}
 
 export const addImage = async (data: ImageRequest, image: File): Promise<ApiResponse<string>> => {
 

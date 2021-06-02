@@ -9,7 +9,8 @@ public class ImageSpecification extends MappedSpecificationWithCriteria<ImageEnt
             field("name", "name"),
             field("ownerId", "owner", "id"),
             field("ownerNickname", "owner", "nickname"),
-            field("creationDate", "creationDate")
+            field("creationDate", "creationDate"),
+            field("categories", "categories")
     );
 
     @Override

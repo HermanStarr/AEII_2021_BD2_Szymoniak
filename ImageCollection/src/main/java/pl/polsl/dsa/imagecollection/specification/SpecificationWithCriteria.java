@@ -1,10 +1,5 @@
 package pl.polsl.dsa.imagecollection.specification;
 
-import org.springframework.data.jpa.domain.Specification;
-import pl.polsl.dsa.imagecollection.dto.FilterCriteria;
-import pl.polsl.dsa.imagecollection.exception.BadRequestException;
-
-import javax.persistence.criteria.*;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -17,29 +12,30 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import org.springframework.data.jpa.domain.Specification;
+import pl.polsl.dsa.imagecollection.dto.FilterCriteria;
+import pl.polsl.dsa.imagecollection.exception.BadRequestException;
+
 
 public interface SpecificationWithCriteria<E> extends Specification<E> {
+
     void setCriteria(FilterCriteria criteria);
+
     FilterCriteria getCriteria();
-    Expression<?> getPredicatePath(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder builder);
-    String getSortingProperty(String queryArguments);
 
-    static LocalDate parseLocalDate(String date) {
-        if (date == null) {
-            return null;
-        }
-        return LocalDate.parse(date.substring(0, Math.min(10, date.length())), DateTimeFormatter.ISO_DATE);
-    }
+    Expression getPredicatePath(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder builder);
 
-    static LocalDateTime parseLocalDateTime(String dateTime) {
-        if (dateTime == null) {
-            return null;
-        }
-        return LocalDateTime.parse(dateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm"));
-    }
+    String getSortingProperty(String queryArgument);
 
     @Override
     default Predicate toPredicate(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+
         FilterCriteria criteria = getCriteria();
 
         Expression path;
@@ -48,7 +44,6 @@ public interface SpecificationWithCriteria<E> extends Specification<E> {
         } catch (IllegalArgumentException e) {
             throw new BadRequestException(e.getMessage());
         }
-
         if (criteria.getOperation().equalsIgnoreCase(">")) {
             if ("java.util.Date".equals(path.getJavaType().getName())
                     || "java.sql.Date".equals(path.getJavaType().getName())) {
@@ -107,7 +102,7 @@ public interface SpecificationWithCriteria<E> extends Specification<E> {
                         .toString()
                         .toLowerCase()
                         .replace("\\", "\\\\")
-                        .replace("", "\\");
+                        .replace("_", "\\_");
 
                 return builder.like(builder.lower(path), "%" + value + "%");
             } else if (path.getJavaType() == Date.class
@@ -158,6 +153,25 @@ public interface SpecificationWithCriteria<E> extends Specification<E> {
             }
         }
         return null;
+    }
 
+    static LocalDate parseLocalDate(String dateString) {
+        if (dateString == null) {
+            return null;
+        }
+
+        return LocalDate.parse(
+                dateString.substring(0, Math.min(10, dateString.length())),
+                DateTimeFormatter.ISO_DATE
+        );
+    }
+
+    static LocalDateTime parseLocalDateTime(String dateString) {
+        if (dateString == null) {
+            return null;
+        }
+
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm");
+        return LocalDateTime.parse(dateString, format);
     }
 }

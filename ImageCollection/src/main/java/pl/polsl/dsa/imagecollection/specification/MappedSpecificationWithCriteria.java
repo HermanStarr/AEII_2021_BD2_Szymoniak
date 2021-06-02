@@ -2,11 +2,16 @@ package pl.polsl.dsa.imagecollection.specification;
 
 import pl.polsl.dsa.imagecollection.dto.FilterCriteria;
 
-import javax.persistence.criteria.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Root;
+
 
 public abstract class MappedSpecificationWithCriteria<T> implements SpecificationWithCriteria<T> {
 
@@ -35,7 +40,7 @@ public abstract class MappedSpecificationWithCriteria<T> implements Specificatio
 
         if (!fieldInfo.isFilterEnabled()) {
             throw new IllegalArgumentException(String.format(
-                    "Invalid key sent: '%s'.",
+                    "Invalid key: '%s'.",
                     field));
         }
 
@@ -61,7 +66,7 @@ public abstract class MappedSpecificationWithCriteria<T> implements Specificatio
         }
         if (!fieldInfo.isSortEnabled()) {
             throw new IllegalArgumentException(String.format(
-                    "Invalid key sent: '%s'.",
+                    "Invalid key: '%s'.",
                     field));
         }
 
@@ -72,7 +77,7 @@ public abstract class MappedSpecificationWithCriteria<T> implements Specificatio
         FieldInfo fieldInfo = getFieldMap().get(field);
 
         if (fieldInfo == null && shouldThrowException(field)) {
-            throw new IllegalArgumentException(String.format("Invalid key sent: '%s'.", field));
+            throw new IllegalArgumentException(String.format("Invalid key: '%s'.", field));
         }
         return fieldInfo;
     }

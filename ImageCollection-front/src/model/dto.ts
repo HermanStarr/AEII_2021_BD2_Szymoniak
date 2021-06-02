@@ -4,7 +4,6 @@ export interface ImageThumbResponse {
     owner: string;
     ownerId: number;
     creationDate: string;
-
     thumb: string;
 }
 
@@ -14,27 +13,18 @@ export interface ApiResponse<T> {
     message: string;
 }
 
-export interface ImageResponse2 {
+export interface ImageResponse {
     id: number,
-    image: Blob | null,
-    title: string;
-    author: string;
-    authorId: number;
+    image: string,
+    name: string;
+    owner: string;
+    ownerId: number;
     description: string;
     resolutionX: number;
     resolutionY: number;
     format: string;
     size: number;
     creationDate: string;
-}
-
-export interface ImageResponse {
-    id: number;
-    image: string;
-    title: string;
-    author: string;
-    authorId: number;
-    description: string;
 }
 
 export interface LoginRequest {

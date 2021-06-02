@@ -1,6 +1,8 @@
 package pl.polsl.dsa.imagecollection.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -11,11 +13,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import pl.polsl.dsa.imagecollection.PaginatedResult;
 import pl.polsl.dsa.imagecollection.dao.UserRepository;
 import pl.polsl.dsa.imagecollection.dto.*;
 import pl.polsl.dsa.imagecollection.exception.ResourceNotFoundException;
 import pl.polsl.dsa.imagecollection.model.UserEntity;
 import pl.polsl.dsa.imagecollection.security.JwtUtils;
+import pl.polsl.dsa.imagecollection.specification.SearchCriteria;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -63,6 +67,11 @@ public class UserService {
         String jwt = jwtUtils.generateJwtToken(authentication);
         JwtResponse token = new JwtResponse(jwt);
         return token.getAccessToken();
+    }
+
+    public PaginatedResult<UserResponse> getUsers(SearchCriteria<UserEntity> criteria) {
+        Page<UserEntity> page = userRepository.findAll(criteria.getSpecification(), criteria.getPaging());
+        return new PaginatedResult<>(page.map(UserResponse::fromEntity));
     }
 
     public void changePassword (String newPassword, UserEntity user){

@@ -9,6 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import pl.polsl.dsa.imagecollection.PaginatedResult;
 import pl.polsl.dsa.imagecollection.dao.UserRepository;
 import pl.polsl.dsa.imagecollection.dto.ApiResponse;
 import pl.polsl.dsa.imagecollection.dto.LoginRequest;
@@ -19,6 +20,9 @@ import pl.polsl.dsa.imagecollection.model.UserEntity;
 import pl.polsl.dsa.imagecollection.security.JwtUtils;
 import pl.polsl.dsa.imagecollection.service.UserDetailsImpl;
 import pl.polsl.dsa.imagecollection.service.UserService;
+import pl.polsl.dsa.imagecollection.specification.SearchCriteria;
+import pl.polsl.dsa.imagecollection.specification.Searchable;
+import pl.polsl.dsa.imagecollection.specification.UserSpecification;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -84,6 +88,12 @@ public class AuthController {
         userService.signUp(request);
         return ResponseEntity.ok(
                 new ApiResponse(true,"User registered successfully!"));
+    }
+
+    @GetMapping
+    @Searchable(specification = UserSpecification.class)
+    public ResponseEntity<PaginatedResult<UserResponse>> getUsers(SearchCriteria<UserEntity> criteria) {
+        return ResponseEntity.ok(userService.getUsers(criteria));
     }
 
     @GetMapping("/userData")

@@ -15,9 +15,10 @@ import pl.polsl.dsa.imagecollection.dto.ImageResponse;
 import pl.polsl.dsa.imagecollection.dto.ImageThumbResponse;
 import pl.polsl.dsa.imagecollection.model.ImageEntity;
 import pl.polsl.dsa.imagecollection.service.ImageService;
+import pl.polsl.dsa.imagecollection.service.UserDetailsImpl;
 import pl.polsl.dsa.imagecollection.specification.ImageSpecification;
 import pl.polsl.dsa.imagecollection.specification.Searchable;
-import pl.polsl.dsa.imagecollection.service.UserDetailsImpl;
+
 
 import javax.validation.Valid;
 import java.io.IOException;

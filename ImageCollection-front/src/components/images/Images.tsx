@@ -14,30 +14,8 @@ import {photos} from "./photos";
 import ImagesGrid from "./ImagesGrid";
 import {getImagesWithCriteria} from "../../actions/images";
 import AddImage from "./AddImageDialog";
+import {getCategories, getTags} from "../../actions/tagsAndCategories";
 
-const getImages = async (): Promise<ImageThumbResponse[]> => {
-  return [
-    {id: 1, thumb: '', title: 'Zdjęcie xD', owner: 'me', ownerId: 1, creationDate: '31-12-2022'},
-    {id: 2, thumb: '', title: 'Zdjęcie xD', owner: 'you', ownerId: 2, creationDate: '31-12-2022'},
-    {id: 3, thumb: '', title: 'Zdjęcie xD', owner: 'them', ownerId: 3, creationDate: '31-12-2022'},
-  ];
-};
-const getCategories = async (): Promise<CategoryResponse[]> => {
-  return [
-    {id: 1, name: 'category'},
-    {id: 2, name: 'dunno'},
-    {id: 3, name: 'neutron'},
-    {id: 4, name: 'proton'},
-  ];
-};
-
-const getTags = async (): Promise<TagResponse[]> => {
-  return [
-    {id: 1, name: 'cat'},
-    {id: 2, name: 'dog'},
-    {id: 3, name: 'pigeon'},
-  ];
-};
 type Props = {
   imageData?: ImageRequest;
 } & RouteComponentProps
@@ -49,42 +27,32 @@ const Images = (props:Props) => {
   const [tags, setTags] = useState<TagResponse[]>([]);
   const [images, setImages] = useState<PaginatedResult<ImageThumbResponse>>({items: [], totalElements: 0});
   const [addImageDialogOpened, setAddImageDialogOpened] = useState<boolean>(false);
-  const [paging, setPaging] = useState<string>('');
   const [searchName, setSearchName] = useState<string>('');
   const classes = useStyles();
 
-  const onSearch = () => {
+  const onSearch = (paging: string) => {
     let query = 'sortOrder=DESC&sortBy=creationDate&'
-      + paging
+      + paging === '' ? 'pageSize=9&pageNumber=0&' : paging
       + 'search='
       + tagSearchCriteria
       + categorySearchCriteria
-      + searchName;
+      + searchName
+      + ',';
     getImagesWithCriteria(query).then(response => {
       setImages(response);
     });
   }
 
   useEffect( () => {
-    getImages().then((response) => {
-      let images1 = photos.map((photo, index) => ({
-        id: index,
-        thumb: photo.src,
-        title: index + "Zdjęcie xD",
-        owner: "Me",
-        ownerId: 1,
-        creationDate: '31-12-2022'
-      }))
-      setImages({items: images1, totalElements: images1.length});
-    })
+    onSearch('pageSize=9&pageNumber=0&');
   }, []);
   useEffect(() => {
-    getCategories().then(response => {
+    getCategories('').then(response => {
       setCategories(response);
     })
   }, [])
   useEffect(() => {
-    getTags().then(response => {
+    getTags('').then(response => {
       setTags(response);
     })
   }, [])
@@ -139,14 +107,15 @@ const Images = (props:Props) => {
               <Grid item xs={12} sm={1}>
                 <Button
                   className={classes.searchButton}
-                  onClick={() => onSearch()}>
+                  onClick={() => onSearch('')}>
                   Search
                 </Button>
               </Grid>
             </Grid>
           </Toolbar>
         </AppBar>
-        <ImagesGrid tiles={images} onPageChange={(value) => setPaging(value)}/>
+        <ImagesGrid tiles={images} onPageChange={(value) => onSearch(value)}
+        />
       </Container>
       <AddImage
         dialogOpened={addImageDialogOpened}
