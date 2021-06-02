@@ -45,6 +45,8 @@ export const Account = () => {
     }
   }, [userData])
 
+  const [refreshToken, setRefreshToken] = useState<number>(0);
+
   return (
     <Container>
       {isLoading ? (
@@ -58,6 +60,7 @@ export const Account = () => {
             <Grid item xs={12} sm={1}>
               <Avatar alt="User"
                 onClick={() => setIsChangeDialogDialogOpen(true)}
+                src={`http://localhost:8080/api/users/${info.userInfo?.id ?? ''}/picture?_ref=${refreshToken}`}
               />
             </Grid>
             <Grid item xs={12} sm={11}>
@@ -90,7 +93,10 @@ export const Account = () => {
           />
           <ChangeIconDialog
             dialogOpened={isChangeDialogDialogOpen}
-            onClose={() => setIsChangeDialogDialogOpen(false)}
+            onClose={() => {
+              setIsChangeDialogDialogOpen(false);
+              setRefreshToken(refreshToken + 1);
+            }}
           />
         </div>
       )}
