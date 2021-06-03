@@ -18,6 +18,7 @@ import {Backup} from "../components/Backup";
 import {Profiles} from "../components/Profiles";
 import {UserContext} from "../App";
 import LoginContext from "../components/signInUp/LoginContext";
+
 type Props = {
   location: { pathname: string },
 } & RouteComponentProps
@@ -96,22 +97,20 @@ const Sidebar: FC<Props> = (props) => {
           {Routes
             .filter((Routes) => {
               if (!info.userInfo) {
-                 return Routes.notLoggedUser;
-               }
-               if (info.userInfo) {
-                 if (!info.userInfo.admin) {
-                   return Routes.loggedUser;
-                 } else {
-                   return Routes.admin;
-                 }
-               } else {
-                 return Routes;
-               }
+                return Routes.notLoggedUser;
+              }
+              if (info.userInfo) {
+                if (!info.userInfo.admin) {
+                  return Routes.loggedUser;
+                } else {
+                  return Routes.admin;
+                }
+              } else {
+                return Routes;
+              }
+              //return Routes
             })
             .map((prop: { path: string, sidebarName: string, icon: OverridableComponent<SvgIconTypeMap> }, key: number) => {
-              if (prop.sidebarName === 'MyProfile') {
-
-              }
               return (
                 <Link to={prop.sidebarName === 'MyProfile' ? `/profiles/${info.userInfo?.nickname}` : prop.path} style={{textDecoration: 'none'}} key={key}>
                   <MenuItem selected={activeRoute(prop.path)}>

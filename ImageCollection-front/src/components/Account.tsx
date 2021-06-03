@@ -9,6 +9,8 @@ import {getImagesWithCriteria} from "../actions/images";
 import {RouteComponentProps} from "react-router";
 import {getUser} from "../actions/user";
 import KeyboardReturnIcon from "@material-ui/icons/KeyboardReturn";
+import AddImage from "./images/AddImageDialog";
+import ChangeIconDialog from "./ChangeIconDialog";
 
 type Params = { nickname: string }
 type Props = RouteComponentProps<Params> & {}
@@ -18,7 +20,9 @@ export const Account = (props: Props) => {
   const [isDialogOpen, setDialogOpen] = useState<boolean>(false);
   const [userImages, setUserImages] = useState<PaginatedResult<ImageThumbResponse>>({items: [], elementCount: 0});
   const [user, setUser] = useState<UserPublicResponse | null>(null);
+  const [isChangeDialogDialogOpen, setIsChangeDialogDialogOpen] = useState<boolean>(false);
   const info = useContext(UserContext);
+  const [refreshToken, setRefreshToken] = useState<number>(0);
 
   useEffect(() => {
     if (props.match.params.nickname === undefined) {
@@ -64,7 +68,11 @@ export const Account = (props: Props) => {
         </Typography>
         <Grid container spacing={2} style={{marginTop: 10}}>
           <Grid item xs={12} sm={1}>
-            <Avatar alt="User" src={`data:image/jpeg;base64,${user.icon}`}/>
+            <Avatar
+              alt="User"
+              onClick={() => setIsChangeDialogDialogOpen(true)}
+              src={`http://localhost:8080/api/users/${info.userInfo?.id ?? ''}/picture?_ref=${refreshToken}`}
+            />
           </Grid>
           <Grid item xs={12} sm={11}>
             <TextField
@@ -84,7 +92,7 @@ export const Account = (props: Props) => {
                   color="primary"
                   onClick={() => setDialogOpen(true)}
               >
-                  Edit
+                Change password
               </Button>
             </Grid>
           }
@@ -101,6 +109,13 @@ export const Account = (props: Props) => {
           user={info.userInfo}
           dialogOpened={isDialogOpen}
           onClose={() => setDialogOpen(false)}
+        />
+        <ChangeIconDialog
+          dialogOpened={isChangeDialogDialogOpen}
+          onClose={() => {
+            setIsChangeDialogDialogOpen(false);
+            setRefreshToken(refreshToken + 1);
+          }}
         />
       </div>
     </Container>

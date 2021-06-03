@@ -1,11 +1,9 @@
-import {ApiResponse, PaginatedResult, UserPublicResponse, UserRequest} from "../model/dto";
+import {ApiResponse, PaginatedResult, UserPublicResponse} from "../model/dto";
 import axios from "axios";
 
-export const editUserIcon = async (data: UserRequest, icon: File): Promise<ApiResponse<string>> => {
+export const editUserIcon = async (icon: File, password: string): Promise<ApiResponse<string>> => {
   const formData = new FormData();
-  formData.append('input', new Blob([JSON.stringify(data)], {
-    type: "application/json"
-  }));
+  formData.append('password', password);
   formData.append('icon', icon);
   const response = await axios.put("http://localhost:8080/api/auth/changeIcon", formData);
   return response.data;
