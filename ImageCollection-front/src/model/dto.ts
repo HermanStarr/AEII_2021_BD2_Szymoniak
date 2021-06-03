@@ -68,7 +68,7 @@ export interface TagResponse{
 
 export interface PaginatedResult<T> {
     items: T[];
-    totalElements: number;
+    elementCount: number;
 }
 
 export interface ImageRequest {

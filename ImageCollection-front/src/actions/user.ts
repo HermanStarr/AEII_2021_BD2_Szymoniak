@@ -23,9 +23,9 @@ export const editUserPassword = async (newPassword: string, oldPassword: string)
 export const getUsers = async (criteria: string): Promise<PaginatedResult<UserPublicResponse>> => {
   const response = await axios.get("http://localhost:8080/api/auth?" + criteria);
   return response.data;
-}
+};
 
-export const getUser = async (id: number): Promise<UserPublicResponse> => {
-  const response = await axios.get(`http://localhost:8080/api/auth/${id}`);
+export const getUser = async (nickname: string): Promise<UserPublicResponse> => {
+  const response = await axios.get(`http://localhost:8080/api/auth/${nickname}`);
   return response.data;
-}
+};

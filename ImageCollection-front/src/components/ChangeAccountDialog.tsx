@@ -69,7 +69,7 @@ const formikEnhancer = withFormik<Props, FormValues>({
   displayName: 'AddImageDialog',
 });
 
-const ChangeAccountDialog: FC<Props & FormikProps<FormValues>> = (props) => {
+export const ChangeAccountDialog: FC<Props & FormikProps<FormValues>> = (props) => {
 
   const useStyles = makeStyles((theme: Theme) => ({
     root: {

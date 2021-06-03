@@ -2,13 +2,12 @@ import React, {useEffect, useState} from 'react';
 import {createStyles, Theme, makeStyles, fade} from '@material-ui/core/styles';
 import {
   CategoryResponse,
-  ImageRequest,
   PaginatedResult,
   TagResponse,
   ImageThumbResponse,
   ImageResponse
 } from "../../model/dto";
-import {RouteComponentProps, withRouter} from "react-router";
+import {withRouter} from "react-router";
 import {
   AppBar,
   Container, Grid,
@@ -22,16 +21,12 @@ import {getImagesWithCriteria} from "../../actions/images";
 import AddImage from "./AddImageDialog";
 import {getCategories, getTags} from "../../actions/tagsAndCategories";
 
-type Props = {
-  imageData?: ImageRequest;
-} & RouteComponentProps
-
-const Images = (props:Props) => {
+const Images = () => {
   const [categorySearchCriteria, setCategorySearchCriteria] = useState<string>("");
   const [categories, setCategories] = useState<CategoryResponse[]>([]);
   const [tagSearchCriteria, setTagSearchCriteria] = useState<string>("");
   const [tags, setTags] = useState<TagResponse[]>([]);
-  const [images, setImages] = useState<PaginatedResult<ImageThumbResponse>>({items: [], totalElements: 0});
+  const [images, setImages] = useState<PaginatedResult<ImageThumbResponse>>({items: [], elementCount: 0});
   const [addImageDialogOpened, setAddImageDialogOpened] = useState<boolean>(false);
   const [searchName, setSearchName] = useState<string>('');
   const [editImage, setEditImage] = useState<ImageResponse | undefined>(undefined);
@@ -45,7 +40,6 @@ const Images = (props:Props) => {
       + categorySearchCriteria
       + searchName
       + ',';
-    console.log(query);
     getImagesWithCriteria(query).then(response => {
       setImages(response);
     });

@@ -85,9 +85,9 @@ public class AuthController {
                 new ApiResponse(true,"User registered successfully!"));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UserPublicResponse> getUser(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getUser(id));
+    @GetMapping("/{nickname}")
+    public ResponseEntity<UserPublicResponse> getUser(@PathVariable String nickname) {
+        return ResponseEntity.ok(userService.getUser(nickname));
     }
 
     @GetMapping

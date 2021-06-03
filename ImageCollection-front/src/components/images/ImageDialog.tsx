@@ -65,7 +65,7 @@ export const ImageDialog = (props: Props) => {
 
   useEffect(() => {
     if (image !== null) {
-      getUser(image.ownerId).then(response => {
+      getUser(image.ownerNickname).then(response => {
         setOwner(response);
       })
     } else {

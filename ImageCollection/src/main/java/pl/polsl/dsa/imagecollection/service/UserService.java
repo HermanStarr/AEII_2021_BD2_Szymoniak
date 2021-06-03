@@ -48,13 +48,13 @@ public class UserService {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String encodedPassword = encoder.encode(signUpRequest.getPassword());
 
-        UserEntity user = new UserEntity( signUpRequest.getUsername(),
-                signUpRequest.getEmail(), stringToByte(encodedPassword) );
+        UserEntity user = new UserEntity(signUpRequest.getUsername(),
+                signUpRequest.getEmail(), stringToByte(encodedPassword));
 
         userRepository.save(user);
     }
 
-    public String login(LoginRequest loginRequest){
+    public String login(LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -76,14 +76,14 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserPublicResponse getUser(Long id) {
+    public UserPublicResponse getUser(String nickname) {
         return UserPublicResponse.fromEntity(
-                userRepository.findById(id)
-                        .orElseThrow(() -> new ResourceNotFoundException("User", "id", id))
+                userRepository.findByNickname(nickname)
+                        .orElseThrow(() -> new ResourceNotFoundException("User", "nickname", nickname))
         );
     }
 
-    public void changePassword (String newPassword, UserEntity user){
+    public void changePassword(String newPassword, UserEntity user) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String encodedPassword = encoder.encode(newPassword);
         user.setPasswordHash(stringToByte(encodedPassword));
@@ -97,7 +97,7 @@ public class UserService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
-    public void changeIcon (MultipartFile imageFile, String password) throws IOException {
+    public void changeIcon(MultipartFile imageFile, String password) throws IOException {
         UserDetails u = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserEntity user = userRepository.findByNickname(u.getUsername())
                 .orElseThrow(() -> new ResourceNotFoundException("User", "nickname", u.getUsername()));
@@ -114,19 +114,19 @@ public class UserService {
     }
 
 
-    public Byte[] stringToByte (String s){
+    public Byte[] stringToByte(String s) {
         byte[] bytes = s.getBytes(StandardCharsets.UTF_8);
         Byte[] byteObjects = new Byte[bytes.length];
-        int i=0;
-        for(byte b: bytes)
+        int i = 0;
+        for (byte b : bytes)
             byteObjects[i++] = b;
         return byteObjects;
     }
 
-    public String byteToString (Byte[] byteObject){
-        int j=0;
+    public String byteToString(Byte[] byteObject) {
+        int j = 0;
         byte[] bytes = new byte[byteObject.length];
-        for(Byte b: byteObject)
+        for (Byte b : byteObject)
             bytes[j++] = b;
         return new String(bytes);
     }

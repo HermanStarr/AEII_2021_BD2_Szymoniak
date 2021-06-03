@@ -49,7 +49,7 @@ export const ImagesGrid = (props: Props) => {
         ))}
       </GridList>
       <Pagination
-        count={Math.ceil(props.tiles.totalElements / 9)}
+        count={Math.ceil(props.tiles.elementCount / 9)}
         shape="rounded"
         showFirstButton
         showLastButton

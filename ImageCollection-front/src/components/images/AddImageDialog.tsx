@@ -56,7 +56,6 @@ const formikEnhancer = withFormik<Props, FormValues>({
     .shape({
       name: Yup.string().required('Image name is required').nullable(),
       image: Yup.mixed().test('fileSize', 'File size is too big', value => {
-        console.log(value);
         if (value === undefined) {
           return true;
         }
@@ -83,7 +82,6 @@ const formikEnhancer = withFormik<Props, FormValues>({
   }),
 
   handleSubmit: ({file, ...values}, {props, setSubmitting}) => {
-    console.log("xd");
     setSubmitting(true);
     if (props.image === undefined) {
       addImage(values, file! as File).then(response => {

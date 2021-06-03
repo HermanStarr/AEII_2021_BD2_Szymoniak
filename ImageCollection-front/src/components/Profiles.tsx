@@ -8,41 +8,30 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  withStyles, Tooltip, Fab, MenuItem
+  withStyles, Tooltip, MenuItem
 } from "@material-ui/core";
 import React, {useEffect, useState} from "react";
 import AccessibilityNewIcon from '@material-ui/icons/AccessibilityNew';
-import {UserResponse} from "../model/dto";
-import {RouteComponentProps, withRouter} from "react-router";
+import {PaginatedResult, UserPublicResponse} from "../model/dto";
+import {withRouter} from "react-router";
 import SearchIcon from "@material-ui/icons/Search";
-import { useRouteMatch, Link } from 'react-router-dom';
-import {getUsersList} from "../actions/loginRegister";
+import { Link } from 'react-router-dom';
 import TablePaginationComponent from "./PagintionComponent";
+import {getUsers} from "../actions/user";
+import {PROFILES} from "../shared/Routes";
 
-type Props = RouteComponentProps & {}
-export const Profiles = (props: Props) => {
+export const Profiles = () => {
   const classes = useStyles();
-  const [profiles, setProfiles] = useState<UserResponse[]>([]);
-  const [searchedProfiles, setSearchedProfiles] = useState<UserResponse[]>([]);
+  const [profiles, setProfiles] = useState<PaginatedResult<UserPublicResponse>>({items: [], elementCount: 0});
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
-
-  let {url, path} = useRouteMatch();
+  const [searchName, setSearchName] = useState<string>('');
 
   useEffect(() => {
-    getUsersList().then((response: UserResponse[]) => {
-      console.log(url);
+    getUsers(`pageSize=${rowsPerPage}&pageNumber=${page}&search=nickname%3A${searchName}`).then(response=> {
       setProfiles(response);
-      setSearchedProfiles(response);
-      console.log(searchedProfiles);
     })
-  }, []);
-
-  const handleOpenProfile = (rowData: UserResponse) => {
-    props.history.push(url + rowData.id);
-  };
-  const emptyRows = rowsPerPage - Math.min(rowsPerPage, searchedProfiles.length - page * rowsPerPage);
+  }, [page, rowsPerPage, searchName]);
 
   const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
     setPage(newPage);
@@ -70,12 +59,7 @@ export const Profiles = (props: Props) => {
                       root: classes.inputRoot,
                       input: classes.inputInput
                     }}
-                    onChange={event => {
-                      let newList = profiles?.filter(item => {
-                        return item.nickname.toLowerCase().includes(event.target.value.toLowerCase());
-                      })
-                      setSearchedProfiles(newList);
-                    }}
+                    onChange={event => setSearchName(event.target.value.toLowerCase())}
                   />
                 </div>
               </StyledTableCell>
@@ -85,14 +69,11 @@ export const Profiles = (props: Props) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {(rowsPerPage > 0
-                ? searchedProfiles.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                : searchedProfiles
-            ).map(row => (
+            {profiles.items.map(row => (
               <StyledTableRow key={row.icon}>
                 <Tooltip aria-setsize={23} title="Enter profile">
                   <StyledTableCell align={'center'}>
-                    <Link to={url + row.nickname} style={{textDecoration: 'none'}}>
+                    <Link to={PROFILES + '/' + row.nickname} style={{textDecoration: 'none'}}>
                       <MenuItem style={{paddingLeft: 13, marginLeft: "200", color: "black"}}>
                         <AccessibilityNewIcon style={{
                           marginRight: 20,
@@ -105,18 +86,18 @@ export const Profiles = (props: Props) => {
                 </Tooltip>
               </StyledTableRow>
             ))}
-            {emptyRows > 0 && (
+            {/*emptyRows > 0 && (
               <TableRow style={{height: 53 * emptyRows}}>
                 <TableCell colSpan={6}/>
               </TableRow>
-            )}
+            )*/}
           </TableBody>
         </Table>
       </TableContainer>
       <TablePagination
         rowsPerPageOptions={[5, 10, 15, {label: 'All', value: -1}]}
         colSpan={12}
-        count={searchedProfiles.length}
+        count={profiles.elementCount}
         width={1000}
         rowsPerPage={rowsPerPage}
         page={page}
