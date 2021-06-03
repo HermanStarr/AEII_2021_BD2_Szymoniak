@@ -11,7 +11,7 @@ public class AzureStorageBlobClientConfig {
     @Value("DefaultEndpointsProtocol=https;AccountName=dsabackupstorageblob;AccountKey=b5Esfj1mBazkLfSv5cE8C6+tp7b3KIIfCBFzzx6BiREkE+it0B5VH8RyRTxFC28gXZuKMpQN+c9ntAqQ0EAPfw==;EndpointSuffix=core.windows.net")
     String connectionString;
 
-    @Value("test")
+    @Value("backup")
     String containerName;
 
     @Bean
