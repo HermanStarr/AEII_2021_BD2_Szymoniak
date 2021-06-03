@@ -30,24 +30,28 @@ const Images = () => {
   const [addImageDialogOpened, setAddImageDialogOpened] = useState<boolean>(false);
   const [searchName, setSearchName] = useState<string>('');
   const [editImage, setEditImage] = useState<ImageResponse | undefined>(undefined);
+  const [pageSize, setPageSize] = useState<number>(9);
+  const [pageNumber, setPageNumber] = useState<number>(0);
   const classes = useStyles();
 
-  const onSearch = (paging: string) => {
-    let query = 'sortOrder=DESC&sortBy=creationDate&'
-      + (paging === '' ? 'pageSize=9&pageNumber=0&' : paging)
-      + 'search='
-      + tagSearchCriteria
-      + categorySearchCriteria
-      + searchName
-      + ',';
+  const onSearch = () => {
+    let query = `sortOrder=DESC&sortBy=creationDate&pageSize=${pageSize}&pageNumber=${pageNumber}`
+      + `&search=${tagSearchCriteria}${categorySearchCriteria}${searchName},`;
+    console.log(query);
     getImagesWithCriteria(query).then(response => {
       setImages(response);
     });
   }
 
   useEffect( () => {
-    onSearch('pageSize=9&pageNumber=0&');
+    onSearch();
   }, []);
+
+  useEffect(() => {
+    onSearch();
+  }, [pageSize, pageNumber])
+
+
   useEffect(() => {
     getCategories('').then(response => {
       setCategories(response);
@@ -110,7 +114,7 @@ const Images = () => {
               <Grid item xs={12} sm={1}>
                 <Button
                   className={classes.searchButton}
-                  onClick={() => onSearch('')}>
+                  onClick={() => onSearch()}>
                   Search
                 </Button>
               </Grid>
@@ -119,11 +123,17 @@ const Images = () => {
         </AppBar>
         <ImagesGrid
           tiles={images}
-          onPageChange={(value) => onSearch(value)}
+          onPageChange={value => {
+            setPageNumber(value);
+          }}
+          onPageSizeChange={value => {
+            setPageSize(value);
+          }}
           onImageEdit={(image) => {
             setEditImage(image);
             setAddImageDialogOpened(true);
           }}
+          pageSize={pageSize}
         />
       </Container>
       <AddImage
@@ -133,7 +143,7 @@ const Images = () => {
           setEditImage(undefined);
         }}
         image={editImage}
-        onRefresh={() => onSearch('pageSize=9&pageNumber=0&')}
+        onRefresh={() => onSearch()}
       />
     </>
   )

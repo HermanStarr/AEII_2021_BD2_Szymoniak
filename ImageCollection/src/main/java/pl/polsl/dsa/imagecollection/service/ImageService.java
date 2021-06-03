@@ -52,17 +52,17 @@ public class ImageService {
         ImageEntity image = new ImageEntity();
         image.setName(imageRequest.getName());
         image.setCreationDate(LocalDateTime.now());
-        image.setOriginalImage(imageFile.getBytes());
-        image.setSize(imageRequest.getSize());
-        image.setFormat(imageRequest.getFormat());
-        image.setResolutionX(imageRequest.getResolutionX());
-        image.setResolutionY(imageRequest.getResolutionY());
-        image.setDescription(imageRequest.getDescription());
-        float width = 200 * (imageRequest.getResolutionX() > imageRequest.getResolutionY()
+        float width = (imageRequest.getResolutionX() > imageRequest.getResolutionY()
                 ? 1 : imageRequest.getResolutionX().floatValue() / imageRequest.getResolutionY());
-        float height = 200 * (imageRequest.getResolutionY() > imageRequest.getResolutionX()
+        float height = (imageRequest.getResolutionY() > imageRequest.getResolutionX()
                 ? 1 : imageRequest.getResolutionY().floatValue() / imageRequest.getResolutionX());
-        image.setThumbnail(resizeImage(imageFile.getBytes(), (int) width, (int) height));
+        image.setOriginalImage(resizeImage(imageFile.getBytes(), (int) (1000 * width), (int) (1000 * height)));
+        image.setSize(image.getOriginalImage().length);
+        image.setFormat(imageRequest.getFormat());
+        image.setResolutionX((int)(width * 1000));
+        image.setResolutionY((int)(height * 1000));
+        image.setDescription(imageRequest.getDescription());
+        image.setThumbnail(resizeImage(imageFile.getBytes(), (int) (200 * width), (int) (200 * height)));
         if (imageRequest.getCategories() != null) {
             image.setCategories(imageRequest.getCategories()
                     .stream()

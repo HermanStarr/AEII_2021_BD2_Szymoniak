@@ -9,7 +9,6 @@ import {getImagesWithCriteria} from "../actions/images";
 import {RouteComponentProps} from "react-router";
 import {getUser} from "../actions/user";
 import KeyboardReturnIcon from "@material-ui/icons/KeyboardReturn";
-import AddImage from "./images/AddImageDialog";
 import ChangeIconDialog from "./ChangeIconDialog";
 
 type Params = { nickname: string }
@@ -21,7 +20,8 @@ export const Account = (props: Props) => {
   const [userImages, setUserImages] = useState<PaginatedResult<ImageThumbResponse>>({items: [], elementCount: 0});
   const [user, setUser] = useState<UserPublicResponse | null>(null);
   const [isChangeDialogDialogOpen, setIsChangeDialogDialogOpen] = useState<boolean>(false);
-  const info = useContext(UserContext);
+  const [pageSize, setPageSize] = useState<number>(9);
+  const [pageNumber, setPageNumber] = useState<number>(0);  const info = useContext(UserContext);
   const [refreshToken, setRefreshToken] = useState<number>(0);
 
   useEffect(() => {
@@ -37,12 +37,12 @@ export const Account = (props: Props) => {
 
   useEffect(() => {
     if (user !== null) {
-      let query = `sortOrder=DESC&sortBy=creationDate&pageSize=9&pageNumber=0&search=ownerId%3D${user.id}`;
+      let query = `sortOrder=DESC&sortBy=creationDate&pageSize=${pageSize}&pageNumber=${pageNumber}&search=ownerId%3D${user.id}`;
       getImagesWithCriteria(query).then(response => {
         setUserImages(response);
       })
     }
-  }, [user])
+  }, [user, pageSize, pageNumber])
 
   if (isLoading) {
     return <></>;
@@ -70,8 +70,8 @@ export const Account = (props: Props) => {
           <Grid item xs={12} sm={1}>
             <Avatar
               alt="User"
-              onClick={() => setIsChangeDialogDialogOpen(true)}
-              src={`http://localhost:8080/api/users/${info.userInfo?.id ?? ''}/picture?_ref=${refreshToken}`}
+              onClick={() => user.nickname === info.userInfo?.nickname && setIsChangeDialogDialogOpen(true)}
+              src={`data:image/jpeg;base64,${user.icon}`}//{`http://localhost:8080/api/users/${info.userInfo?.id ?? ''}/picture?_ref=${refreshToken}`}
             />
           </Grid>
           <Grid item xs={12} sm={11}>
@@ -99,9 +99,10 @@ export const Account = (props: Props) => {
           <Grid item xs={12}>
             <ImagesGrid
               tiles={userImages}
-              onPageChange={(value) => {
-              }}
+              onPageChange={(value) => setPageNumber(value)}
+              onPageSizeChange={(value) => setPageSize(value)}
               onImageEdit={image => (image)}
+              pageSize={pageSize}
             />
           </Grid>
         </Grid>

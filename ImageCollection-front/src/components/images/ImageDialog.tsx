@@ -15,6 +15,8 @@ import ImageDetails from "./ImageDetails";
 import {getImage} from "../../actions/images";
 import {getUser} from "../../actions/user";
 import {UserContext} from "../../App";
+import {RouteComponentProps} from "react-router-dom";
+import {PROFILES} from "../../shared/Routes";
 
 type Props = {
   imageId: number | null;
@@ -22,7 +24,8 @@ type Props = {
   onClose: () => void;
   onImageEdit: (image: ImageResponse) => void;
   onImageDelete: (imageId: number) => void;
-}
+} & RouteComponentProps
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -75,8 +78,9 @@ export const ImageDialog = (props: Props) => {
 
   useEffect(() => {
     setModalHeight(height - 10);
-    setModalWidth(width - 250);
-  }, [height, width]);
+    setModalWidth(image !== null ? image.resolutionX + 100 : width - 250);
+    console.log(image !== null ? image.resolutionX + 100 : '');
+  }, [image, height, width]);
 
   return (
     <Modal
@@ -93,7 +97,7 @@ export const ImageDialog = (props: Props) => {
       }}
     >
       <div style={{
-        background: '#ffffff',
+        background: '#efefef',
         borderRadius: 5,
       }}>
         {image && owner && (
@@ -109,13 +113,15 @@ export const ImageDialog = (props: Props) => {
             ) : (
               <>
                 <Grid container alignItems="center" style={{padding: 2}}>
-                  <Grid item xs={10}>
+                  <Grid item xs={9}>
                     <Grid container direction="row" alignItems="center">
                       <Grid item>
                         <Avatar
                           aria-label="recipe"
                           src={`data:image/jpeg;base64,${owner.icon}`}
-                          onClick={() => {}}
+                          onClick={() => {
+                            props.history.push(PROFILES + "/" + owner.nickname)
+                          }}
                           className={classes.large}/>
                       </Grid>
                       <div style={{width: 20}} />
@@ -126,8 +132,8 @@ export const ImageDialog = (props: Props) => {
                       </Grid>
                     </Grid>
                   </Grid>
-                  <Grid item xs={2}>
-                    <Grid container direction="row" alignItems="center" justify="flex-end">
+                  <Grid item xs={3}>
+                    <Grid container direction="row" alignItems="flex-end" justify="flex-end">
                       {(info.userInfo?.admin || info.userInfo?.nickname === owner.nickname) && (
                         <>
                           <IconButton
@@ -164,12 +170,18 @@ export const ImageDialog = (props: Props) => {
                     style={{
                       display: 'flex',
                       justifyContent: 'center',
+                      alignContent: 'center',
                       width: modalWidth,
                       height: 0.667 * modalHeight,
                       backgroundColor: '#000000',
                     }}>
                     <img
                       src={`data:image/jpeg;base64,${image.image}`}
+                      style={{
+                        maxWidth: image.resolutionX,
+                        maxHeight: image.resolutionY,
+                        alignSelf: 'center',
+                      }}
                       alt={image.name}
                     />
                   </ScrollContainer>
@@ -186,7 +198,7 @@ export const ImageDialog = (props: Props) => {
                     variant="body2"
                     color="textSecondary"
                     component="p"
-                    style={{fontSize: 0.015 * modalHeight}}
+                    style={{fontSize: 0.03 * modalHeight}}
                   >
                     {image.description}
                   </Typography>
@@ -202,7 +214,7 @@ export const ImageDialog = (props: Props) => {
                     variant="body2"
                     color="textSecondary"
                     component="p"
-                    style={{fontSize: 0.03 * modalHeight}}
+                    style={{fontSize: 0.015 * modalHeight}}
                   >
                     {' '}
                   </Typography>
