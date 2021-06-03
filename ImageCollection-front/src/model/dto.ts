@@ -1,12 +1,10 @@
-export interface TileImageResponse {
+export interface ImageThumbResponse {
     id: number
+    name: string;
+    owner: string;
+    ownerId: number;
+    creationDate: string;
     thumb: string;
-    title: string;
-    author: string;
-    authorId: number;
-    description: string;
-    resolutionX: number;
-    resolutionY: number;
 }
 
 export interface ApiResponse<T> {
@@ -15,27 +13,20 @@ export interface ApiResponse<T> {
     message: string;
 }
 
-export interface ImageResponse2 {
+export interface ImageResponse {
     id: number,
-    image: Blob | null,
-    title: string;
-    author: string;
-    authorId: number;
+    image: string,
+    name: string;
+    ownerNickname: string;
+    ownerId: number;
     description: string;
     resolutionX: number;
     resolutionY: number;
     format: string;
     size: number;
     creationDate: string;
-}
-
-export interface ImageResponse {
-    id: number;
-    image: string;
-    title: string;
-    author: string;
-    authorId: number;
-    description: string;
+    tags: TagResponse[];
+    categories: CategoryResponse[];
 }
 
 export interface LoginRequest {
@@ -54,6 +45,14 @@ export interface UserResponse {
     icon: undefined | string;
     nickname: string;
     email: string;
+    admin: boolean;
+}
+
+export interface UserPublicResponse {
+    id: number;
+    icon: undefined | string;
+    nickname: string;
+    email: string;
     isAdmin: boolean;
 }
 
@@ -67,13 +66,9 @@ export interface TagResponse{
     name:string;
 }
 
-export interface TagRequest{
-    name:string;
-}
-
 export interface PaginatedResult<T> {
     items: T[];
-    totalElements: number;
+    elementCount: number;
 }
 
 export interface ImageRequest {
@@ -82,8 +77,8 @@ export interface ImageRequest {
     resolutionX: number;
     resolutionY: number;
     description: string;
-    categories: CategoryResponse[] | null;
-    tags: TagResponse[] | null;
+    categories: string[] | null;
+    tags: string | null;
 }
 
 export interface UserRequest {

@@ -14,9 +14,9 @@ import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 export const HOME = '/home';
 export const REGISTER = '/register';
 export const LOGIN = '/login';
-export const ACCOUNT = '/account';
 export const BACKUP = '/backup';
 export const PROFILES = '/profiles';
+export const ACCOUNT = "/profiles/:nickname";
 
 export const Routes = [
   {
@@ -65,7 +65,9 @@ export const Routes = [
     sidebarName: 'Profiles',
     icon: SupervisorAccountIcon,
     component: Profiles,
-  }
+  },
+
+
 ];
 
 export default Routes;

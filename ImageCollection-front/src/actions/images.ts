@@ -1,15 +1,20 @@
-import {ApiResponse, ImageRequest, PaginatedResult, TileImageResponse} from "../model/dto";
+import {ApiResponse, ImageThumbResponse, ImageRequest, PaginatedResult, ImageResponse} from "../model/dto";
 import axios from "axios";
 
-export const getImagesWithCriteria = async (criteria: string): Promise<PaginatedResult<TileImageResponse>> => {
+export const getImagesWithCriteria = async (criteria: string): Promise<PaginatedResult<ImageThumbResponse>> => {
   const response = await axios.get("http://localhost:8080/api/images?" + criteria);
   return response.data;
 };
 
-export const getImages = async (): Promise<PaginatedResult<TileImageResponse>> => {
+export const getImages = async (): Promise<PaginatedResult<ImageThumbResponse>> => {
   const response = await axios.get("http://localhost:8080/api/images");
   return response.data;
 };
+
+export const getImage = async (imageId: number): Promise<ImageResponse> => {
+  const response = await axios.get(`http://localhost:8080/api/images/${imageId}`);
+  return response.data;
+}
 
 export const addImage = async (data: ImageRequest, image: File): Promise<ApiResponse<string>> => {
 
@@ -28,3 +33,10 @@ export const editImage = async (imageId: number, data: ImageRequest): Promise<Ap
   );
   return response.data;
 };
+
+export const deleteImage = async (imageId: number): Promise<ApiResponse<string>> => {
+  const response = await axios.delete(
+    `http://localhost:8080/api/images/${imageId}`,
+  );
+  return response.data;
+}

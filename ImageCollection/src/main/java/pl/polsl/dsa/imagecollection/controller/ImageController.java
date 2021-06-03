@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pl.polsl.dsa.imagecollection.PaginatedResult;
-import pl.polsl.dsa.imagecollection.SearchCriteria;
+import pl.polsl.dsa.imagecollection.specification.SearchCriteria;
 import pl.polsl.dsa.imagecollection.dto.ApiResponse;
 import pl.polsl.dsa.imagecollection.dto.ImageRequest;
 import pl.polsl.dsa.imagecollection.dto.ImageResponse;
@@ -16,6 +16,9 @@ import pl.polsl.dsa.imagecollection.dto.ImageThumbResponse;
 import pl.polsl.dsa.imagecollection.model.ImageEntity;
 import pl.polsl.dsa.imagecollection.service.ImageService;
 import pl.polsl.dsa.imagecollection.service.UserDetailsImpl;
+import pl.polsl.dsa.imagecollection.specification.ImageSpecification;
+import pl.polsl.dsa.imagecollection.specification.Searchable;
+
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -51,26 +54,16 @@ public class ImageController {
         );
     }
 
-    @GetMapping("/image/{imageId}")
+    @GetMapping("/{imageId}")
     public ResponseEntity<ImageResponse> getImage(@PathVariable Long imageId) {
         return ResponseEntity.ok(imageService.getImage(imageId));
     }
 
-    @GetMapping("/{isOr}")
+    @GetMapping
+    @Searchable(specification = ImageSpecification.class)
     public ResponseEntity<PaginatedResult<ImageThumbResponse>> getImageThumbs(
-            @PathVariable Boolean isOr,
-            SearchCriteria<ImageEntity> searchCriteria ) {
-        //TODO Add user authentication
-        return ResponseEntity.ok(imageService.getImageThumbnails(null, isOr, searchCriteria));
-    }
-
-    @GetMapping("/{userId}/{isOr}")
-    public ResponseEntity<PaginatedResult<ImageThumbResponse>> getUserImageThumbs(
-            @PathVariable Long userId,
-            @PathVariable Boolean isOr,
             SearchCriteria<ImageEntity> searchCriteria) {
-        //TODO Add user authentication
-        return ResponseEntity.ok(imageService.getImageThumbnails(userId, isOr, searchCriteria));
+        return ResponseEntity.ok(imageService.getImageThumbnails(searchCriteria));
     }
 
     @DeleteMapping("/{imageId}")
