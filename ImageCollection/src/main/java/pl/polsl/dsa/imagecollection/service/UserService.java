@@ -1,24 +1,28 @@
 package pl.polsl.dsa.imagecollection.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import pl.polsl.dsa.imagecollection.PaginatedResult;
 import pl.polsl.dsa.imagecollection.dao.UserRepository;
 import pl.polsl.dsa.imagecollection.dto.*;
 import pl.polsl.dsa.imagecollection.exception.ResourceNotFoundException;
 import pl.polsl.dsa.imagecollection.model.UserEntity;
 import pl.polsl.dsa.imagecollection.security.JwtUtils;
+import pl.polsl.dsa.imagecollection.specification.SearchCriteria;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 public class UserService {
@@ -65,6 +69,50 @@ public class UserService {
         return token.getAccessToken();
     }
 
+    @Transactional(readOnly = true)
+    public PaginatedResult<UserPublicResponse> getUsers(SearchCriteria<UserEntity> criteria) {
+        Page<UserEntity> page = userRepository.findAll(criteria.getSpecification(), criteria.getPaging());
+        return new PaginatedResult<>(page.map(UserPublicResponse::fromEntity));
+    }
+
+    @Transactional(readOnly = true)
+    public UserPublicResponse getUser(Long id) {
+        return UserPublicResponse.fromEntity(
+                userRepository.findById(id)
+                        .orElseThrow(() -> new ResourceNotFoundException("User", "id", id))
+        );
+    }
+
+    public void changePassword (String newPassword, UserEntity user){
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String encodedPassword = encoder.encode(newPassword);
+        user.setPasswordHash(stringToByte(encodedPassword));
+
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        user.getNickname(),
+                        newPassword
+                )
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    public void changeIcon (MultipartFile imageFile, String password) throws IOException {
+        UserDetails u = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserEntity user = userRepository.findByNickname(u.getUsername())
+                .orElseThrow(() -> new ResourceNotFoundException("User", "nickname", u.getUsername()));
+        user.setIcon(imageFile.getBytes());
+
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        user.getNickname(),
+                        password
+                )
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
 
     public Byte[] stringToByte (String s){
         byte[] bytes = s.getBytes(StandardCharsets.UTF_8);
@@ -79,37 +127,8 @@ public class UserService {
         int j=0;
         byte[] bytes = new byte[byteObject.length];
         for(Byte b: byteObject)
-            bytes[j++] = b.byteValue();
-        String s = new String(bytes);
-        return s;
-    }
-
-
-    public UserResponse getAllUserDataByUsername(String username){
-    return UserResponse.fromEntity(userRepository.findByNickname(username)
-        .orElseThrow(() -> new ResourceNotFoundException("User","id",username)));
-    }
-
-    public List<UserResponse> getUsersList() {
-        return StreamSupport
-                .stream(userRepository.findAll().spliterator(), false)
-                .map(UserResponse::fromEntity)
-                .collect(Collectors.toList());
-    }
-
-    /*TODO*/
-
-    public List<UserResponse> getUsersListExcludeCurrent() {
-        return StreamSupport
-                .stream(userRepository.findAll().spliterator(), false)
-                .map(UserResponse::fromEntity)
-                .collect(Collectors.toList());
-    }
-
-    public UserResponse getUserById(Long userId)
-    {
-        return UserResponse.fromEntity(userRepository.findById(userId)
-            .orElseThrow(() -> new ResourceNotFoundException("User","id",userId)));
+            bytes[j++] = b;
+        return new String(bytes);
     }
 
 }

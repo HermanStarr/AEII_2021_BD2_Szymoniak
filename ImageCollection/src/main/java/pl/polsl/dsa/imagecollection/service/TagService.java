@@ -1,9 +1,14 @@
 package pl.polsl.dsa.imagecollection.service;
 
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.polsl.dsa.imagecollection.dao.TagRepository;
 import pl.polsl.dsa.imagecollection.dto.*;
+import pl.polsl.dsa.imagecollection.exception.BadRequestException;
+import pl.polsl.dsa.imagecollection.exception.ResourceNotFoundException;
 import pl.polsl.dsa.imagecollection.model.TagEntity;
+import pl.polsl.dsa.imagecollection.specification.SearchCriteria;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,38 +22,22 @@ public class TagService {
         this.tagRepository = tagRepository;
     }
 
-    public TagResponse getTagByName(TagRequest request) {
-        if (checkIfExist(request)) {
-            TagEntity tag = tagRepository.findByName(request.getName());
-            return TagResponse.fromEntity(tag);
-        }
-        else {
-            createTag(request);
-            return getTagByName(request);
-        }
-    }
 
-    public void createTag(TagRequest request) {
-        if (checkIfExist(request)) {
+    @Transactional
+    public TagEntity createTag(String name) {
+        if (tagRepository.existsByName(name)) {
             TagEntity tag = new TagEntity();
-            tag.setName(request.getName());
+            tag.setName(name);
             tagRepository.save(tag);
-        } else throw new IllegalArgumentException("Tag with provided name already exists");
+            return tag;
+        } else {
+            throw new BadRequestException("Tag with provided name already exists");
+        }
     }
 
-    public Boolean checkIfExist(TagRequest request) {
-        //notsure czy bd działać
-        return !tagRepository.findByName(request.getName()).getName().equals("");
-    }
 
-   // public List<String> getTagDropDownList(){
-        //return tagRepository.getAll().forEach(x-> x.getName());
-    //}
-
-    public List<TagResponse> getTagList() {
-        return StreamSupport
-                .stream(tagRepository.findAll().spliterator(), false)
-                .map(TagResponse::fromEntity)
-                .collect(Collectors.toList());
+    public List<TagResponse> getTagList(SearchCriteria<TagEntity> criteria) {
+        Specification<TagEntity> specification = criteria.getSpecification();
+        return tagRepository.findAll(specification).stream().map(TagResponse::fromEntity).collect(Collectors.toList());
     }
 }

@@ -10,15 +10,13 @@ import {
   Typography,
   withStyles
 } from "@material-ui/core";
-import {ImageResponse2} from "../../model/dto";
+import {ImageResponse} from "../../model/dto";
 import CloseIcon from '@material-ui/icons/Close';
 
 type Props = {
   width: number;
   height: number;
-  tags: string[];
-  categories: string[];
-  image: ImageResponse2;
+  image: ImageResponse;
   onClose: () => void;
 }
 
@@ -83,7 +81,7 @@ export const ImageDetails = (props: Props) => {
             </Grid>
             <Grid item>
               <WhiteTextTypography gutterBottom variant="h5">
-                {props.image.title}
+                {props.image.name}
               </WhiteTextTypography>
             </Grid>
           </Grid>
@@ -98,7 +96,7 @@ export const ImageDetails = (props: Props) => {
             </Grid>
             <Grid item>
               <WhiteTextTypography gutterBottom variant="h5">
-                {props.image.author}
+                {props.image.ownerNickname}
               </WhiteTextTypography>
             </Grid>
           </Grid>
@@ -173,9 +171,9 @@ export const ImageDetails = (props: Props) => {
             </Grid>
             <Grid item>
               <WhiteTextTypography gutterBottom variant="h5">
-                {props.tags.map(tag => (
+                {props.image.tags.map(tag => (
                   <>
-                    <a target="_blank" href="https://www.youtube.com/watch?v=qrxv0JNVtgY">{tag}</a>{' '}
+                    <a target="_blank" href="https://www.youtube.com/watch?v=qrxv0JNVtgY">{tag.name}</a>{' '}
                   </>
                 ))}
               </WhiteTextTypography>
@@ -192,7 +190,7 @@ export const ImageDetails = (props: Props) => {
             </Grid>
             <Grid item>
               <WhiteTextTypography gutterBottom variant="h5">
-                {props.categories.join(' ')}
+                {props.image.categories.map(category => category.name).join(' ')}
               </WhiteTextTypography>
             </Grid>
           </Grid>

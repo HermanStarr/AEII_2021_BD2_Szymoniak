@@ -193,7 +193,7 @@ public class ImageEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, thumbnail, originalImage, creationDate, size, format, resolutionX, resolutionY, description, owner);
+        return Objects.hash(id, name, Arrays.hashCode(thumbnail), Arrays.hashCode(originalImage), creationDate, size, format, resolutionX, resolutionY, description, owner);
     }
 
 
