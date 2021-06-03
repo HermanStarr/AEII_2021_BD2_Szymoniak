@@ -2,6 +2,7 @@ package pl.polsl.dsa.imagecollection.service;
 
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.polsl.dsa.imagecollection.dao.TagRepository;
 import pl.polsl.dsa.imagecollection.dto.*;
 import pl.polsl.dsa.imagecollection.exception.BadRequestException;
@@ -22,6 +23,7 @@ public class TagService {
     }
 
 
+    @Transactional
     public TagEntity createTag(String name) {
         if (tagRepository.existsByName(name)) {
             TagEntity tag = new TagEntity();

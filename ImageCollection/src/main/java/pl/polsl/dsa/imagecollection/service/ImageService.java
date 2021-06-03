@@ -26,6 +26,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -35,14 +36,12 @@ public class ImageService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final TagRepository tagRepository;
-    private final TagService tagService;
 
-    public ImageService(ImageRepository imageRepository, UserRepository userRepository, CategoryRepository categoryRepository, TagRepository tagRepository, TagService tagService) {
+    public ImageService(ImageRepository imageRepository, UserRepository userRepository, CategoryRepository categoryRepository, TagRepository tagRepository) {
         this.imageRepository = imageRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
         this.tagRepository = tagRepository;
-        this.tagService = tagService;
     }
 
     @Transactional
@@ -52,27 +51,39 @@ public class ImageService {
 
         ImageEntity image = new ImageEntity();
         image.setName(imageRequest.getName());
-        image.setCreationDate(LocalDateTime.now().withNano(0));
+        image.setCreationDate(LocalDateTime.now());
         image.setOriginalImage(imageFile.getBytes());
-        image.setSize(imageFile.getBytes().length);
+        image.setSize(imageRequest.getSize());
         image.setFormat(imageRequest.getFormat());
         image.setResolutionX(imageRequest.getResolutionX());
         image.setResolutionY(imageRequest.getResolutionY());
         image.setDescription(imageRequest.getDescription());
-        //TODO set proper width and height
-        image.setThumbnail(resizeImage(imageFile.getBytes(),100,100));
-        image.setCategories(imageRequest.getCategories()
-                .stream()
-                .map(name -> categoryRepository.findByName(name)
-                        .orElseThrow(() -> new ResourceNotFoundException("Category", "name", name)))
-                .collect(Collectors.toSet())
-        );
-        image.setTags(imageRequest.getTags()
-                .stream()
-                .map(name -> tagRepository.findByName(name)
-                        .orElse(tagService.createTag(name)))
-                .collect(Collectors.toSet()));
-
+        float width = 200 * (imageRequest.getResolutionX() > imageRequest.getResolutionY()
+                ? 1 : imageRequest.getResolutionX().floatValue() / imageRequest.getResolutionY());
+        float height = 200 * (imageRequest.getResolutionY() > imageRequest.getResolutionX()
+                ? 1 : imageRequest.getResolutionY().floatValue() / imageRequest.getResolutionX());
+        image.setThumbnail(resizeImage(imageFile.getBytes(), (int) width, (int) height));
+        if (imageRequest.getCategories() != null) {
+            image.setCategories(imageRequest.getCategories()
+                    .stream()
+                    .map(name -> categoryRepository.findByName(name)
+                            .orElseThrow(() -> new ResourceNotFoundException("Category", "name", name)))
+                    .collect(Collectors.toSet()));
+        }
+        if (imageRequest.getTags() != null) {
+            image.setTags(Arrays.stream(imageRequest.getTags().trim().split("\\s+"))
+                    .map(name -> {
+                        Optional<TagEntity> tag = tagRepository.findByNameIgnoreCase(name);
+                        if (tag.isPresent()) {
+                            return tag.get();
+                        }
+                        TagEntity newTag = new TagEntity();
+                        newTag.setName(name.toLowerCase());
+                        tagRepository.save(newTag);
+                        return newTag;
+                    })
+                    .collect(Collectors.toSet()));
+        }
         image.setOwner(user);
         imageRepository.save(image);
     }
@@ -83,14 +94,32 @@ public class ImageService {
 
         ImageEntity image = imageRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Image", "id", id));
-        if (!image.getOwner().equals(user)) {
+        if (!image.getOwner().equals(user) && !user.getAdmin()) {
             throw new ForbiddenException("User is not authorized to edit this image");
         }
         image.setName(imageRequest.getName());
         image.setDescription(imageRequest.getDescription());
-
-        //TODO Set categories and tags
-
+        if (imageRequest.getCategories() != null) {
+            image.setCategories(imageRequest.getCategories()
+                    .stream()
+                    .map(name -> categoryRepository.findByName(name)
+                            .orElseThrow(() -> new ResourceNotFoundException("Category", "name", name)))
+                    .collect(Collectors.toSet()));
+        }
+        if (imageRequest.getTags() != null) {
+            image.setTags(Arrays.stream(imageRequest.getTags().trim().split("\\s+"))
+                    .map(name -> {
+                        Optional<TagEntity> tag = tagRepository.findByNameIgnoreCase(name);
+                        if (tag.isPresent()) {
+                            return tag.get();
+                        }
+                        TagEntity newTag = new TagEntity();
+                        newTag.setName(name.toLowerCase());
+                        tagRepository.save(newTag);
+                        return newTag;
+                    })
+                    .collect(Collectors.toSet()));
+        }
         imageRepository.save(image);
     }
 
@@ -113,7 +142,7 @@ public class ImageService {
                 .orElseThrow(() -> new ResourceNotFoundException("User", "nickname", nickname));
         ImageEntity image = imageRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Image", "id", id));
-        if (!image.getOwner().equals(user)) {
+        if (!image.getOwner().equals(user) && !user.getAdmin()) {
             throw new ForbiddenException("User is not authorized to delete this image");
         }
         imageRepository.deleteById(id);

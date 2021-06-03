@@ -1,16 +1,22 @@
 import React, {useEffect, useState} from 'react';
 import {createStyles, Theme, makeStyles, fade} from '@material-ui/core/styles';
-import {CategoryResponse, ImageRequest, PaginatedResult, TagResponse, ImageThumbResponse} from "../../model/dto";
+import {
+  CategoryResponse,
+  ImageRequest,
+  PaginatedResult,
+  TagResponse,
+  ImageThumbResponse,
+  ImageResponse
+} from "../../model/dto";
 import {RouteComponentProps, withRouter} from "react-router";
 import {
-  AppBar, Avatar,
+  AppBar,
   Container, Grid,
   InputBase,
   Toolbar
 } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import FilterSelect from "../../shared/FilterSelect";
-import {photos} from "./photos";
 import ImagesGrid from "./ImagesGrid";
 import {getImagesWithCriteria} from "../../actions/images";
 import AddImage from "./AddImageDialog";
@@ -28,16 +34,18 @@ const Images = (props:Props) => {
   const [images, setImages] = useState<PaginatedResult<ImageThumbResponse>>({items: [], totalElements: 0});
   const [addImageDialogOpened, setAddImageDialogOpened] = useState<boolean>(false);
   const [searchName, setSearchName] = useState<string>('');
+  const [editImage, setEditImage] = useState<ImageResponse | undefined>(undefined);
   const classes = useStyles();
 
   const onSearch = (paging: string) => {
     let query = 'sortOrder=DESC&sortBy=creationDate&'
-      + paging === '' ? 'pageSize=9&pageNumber=0&' : paging
+      + (paging === '' ? 'pageSize=9&pageNumber=0&' : paging)
       + 'search='
       + tagSearchCriteria
       + categorySearchCriteria
       + searchName
       + ',';
+    console.log(query);
     getImagesWithCriteria(query).then(response => {
       setImages(response);
     });
@@ -61,8 +69,9 @@ const Images = (props:Props) => {
     <>
       <Container className={classes.root}>
         <Button
-          variant="contained"
-          color="primary"
+          variant="outlined"
+          color="secondary"
+          component="span"
           className={classes.addImageButton}
           onClick={() => setAddImageDialogOpened(true)}
         >
@@ -89,8 +98,8 @@ const Images = (props:Props) => {
                   options={categories.map(category => ({name: category.name}))}
                   placeholder="Category"
                   freeSolo={false}
-                  onChange={(value: string) =>
-                    setCategorySearchCriteria(value !== '' ? 'categories~' + value + ',' : '')
+                  onChange={(value: string[]) =>
+                    setCategorySearchCriteria(value !== [] ? 'categories~' + value.join('%5Cu007c') + ',' : '')
                   }
                 />
               </Grid>
@@ -99,8 +108,8 @@ const Images = (props:Props) => {
                   options={tags.map(tag => ({name: tag.name}))}
                   placeholder="Tags"
                   freeSolo={false}
-                  onChange={(value: string) =>
-                    setTagSearchCriteria(value !== '' ? 'tags~' + value + ',' : '')
+                  onChange={(value: string[]) =>
+                    setTagSearchCriteria(value !== [] ? 'tags~' + value.join('%5Cu007c') + ',' : '')
                   }
                 />
               </Grid>
@@ -114,12 +123,23 @@ const Images = (props:Props) => {
             </Grid>
           </Toolbar>
         </AppBar>
-        <ImagesGrid tiles={images} onPageChange={(value) => onSearch(value)}
+        <ImagesGrid
+          tiles={images}
+          onPageChange={(value) => onSearch(value)}
+          onImageEdit={(image) => {
+            setEditImage(image);
+            setAddImageDialogOpened(true);
+          }}
         />
       </Container>
       <AddImage
         dialogOpened={addImageDialogOpened}
-        onClose={() => setAddImageDialogOpened(false)}
+        onClose={() => {
+          setAddImageDialogOpened(false);
+          setEditImage(undefined);
+        }}
+        image={editImage}
+        onRefresh={() => onSearch('pageSize=9&pageNumber=0&')}
       />
     </>
   )
@@ -135,13 +155,7 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: theme.palette.background.paper,
     },
     addImageButton: {
-      width: '100%',
-      borderBottomLeftRadius: 0,
-      borderBottomRightRadius: 0,
-      backgroundColor: '#BF6984',
-      '&:hover': {
-        backgroundColor: fade('#BF6984', 0.85),
-      },
+      flexGrow: 1,
     },
     appBar: {
       borderBottomLeftRadius: 5,

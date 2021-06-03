@@ -4,33 +4,37 @@ import pl.polsl.dsa.imagecollection.model.ImageEntity;
 
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ImageResponse {
     private Long id;
     private String name;
     private Long ownerId;
-    private String owner;
+    private String ownerNickname;
     private String image;
     private LocalDateTime creationDate;
     private Integer size;
     private Integer resolutionX;
     private Integer resolutionY;
     private String description;
+    private Set<TagResponse> tags;
+    private Set<CategoryResponse> categories;
 
     public static ImageResponse fromEntity(ImageEntity entity) {
         ImageResponse dto = new ImageResponse();
         dto.setId(entity.getId());
         dto.setName(entity.getName());
         dto.setOwnerId(entity.getOwner().getId());
-        dto.setOwner(entity.getOwner().getNickname());
+        dto.setOwnerNickname(entity.getOwner().getNickname());
         dto.setImage(Base64.getEncoder().encodeToString(entity.getOriginalImage()));
         dto.setCreationDate(entity.getCreationDate());
         dto.setSize(entity.getSize());
         dto.setResolutionX(entity.getResolutionX());
         dto.setResolutionY(entity.getResolutionY());
         dto.setDescription(entity.getDescription());
-
-        //TODO Set categories and tags
+        dto.setTags(entity.getTags().stream().map(TagResponse::fromEntity).collect(Collectors.toSet()));
+        dto.setCategories(entity.getCategories().stream().map(CategoryResponse::fromEntity).collect(Collectors.toSet()));
 
         return dto;
     }
@@ -59,12 +63,12 @@ public class ImageResponse {
         this.ownerId = ownerId;
     }
 
-    public String getOwner() {
-        return owner;
+    public String getOwnerNickname() {
+        return ownerNickname;
     }
 
-    public void setOwner(String owner) {
-        this.owner = owner;
+    public void setOwnerNickname(String ownerNickname) {
+        this.ownerNickname = ownerNickname;
     }
 
     public String getImage() {
@@ -114,5 +118,21 @@ public class ImageResponse {
 
     public void setResolutionY(Integer resolutionY) {
         this.resolutionY = resolutionY;
+    }
+
+    public Set<TagResponse> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<TagResponse> tags) {
+        this.tags = tags;
+    }
+
+    public Set<CategoryResponse> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Set<CategoryResponse> categories) {
+        this.categories = categories;
     }
 }

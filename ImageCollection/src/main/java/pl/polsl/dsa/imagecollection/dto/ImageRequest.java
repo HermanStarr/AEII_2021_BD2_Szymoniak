@@ -17,7 +17,7 @@ public class ImageRequest {
     private String description;
     private Integer size;
     private Set<String> categories;
-    private Set<String> tags;
+    private String tags;
 
     public String getName() {
         return name;
@@ -67,7 +67,7 @@ public class ImageRequest {
 
     public void setCategories(Set<String> categories) { this.categories = categories; }
 
-    public Set<String> getTags() { return tags; }
+    public String getTags() { return tags; }
 
-    public void setTags(Set<String> tags) { this.tags = tags; }
+    public void setTags(String tags) { this.tags = tags; }
 }

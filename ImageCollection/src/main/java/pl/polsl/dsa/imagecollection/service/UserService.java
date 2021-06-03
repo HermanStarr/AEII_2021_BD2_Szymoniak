@@ -69,9 +69,18 @@ public class UserService {
         return token.getAccessToken();
     }
 
-    public PaginatedResult<UserResponse> getUsers(SearchCriteria<UserEntity> criteria) {
+    @Transactional(readOnly = true)
+    public PaginatedResult<UserPublicResponse> getUsers(SearchCriteria<UserEntity> criteria) {
         Page<UserEntity> page = userRepository.findAll(criteria.getSpecification(), criteria.getPaging());
-        return new PaginatedResult<>(page.map(UserResponse::fromEntity));
+        return new PaginatedResult<>(page.map(UserPublicResponse::fromEntity));
+    }
+
+    @Transactional(readOnly = true)
+    public UserPublicResponse getUser(Long id) {
+        return UserPublicResponse.fromEntity(
+                userRepository.findById(id)
+                        .orElseThrow(() -> new ResourceNotFoundException("User", "id", id))
+        );
     }
 
     public void changePassword (String newPassword, UserEntity user){
@@ -122,9 +131,4 @@ public class UserService {
         return new String(bytes);
     }
 
-    @Transactional(readOnly = true)
-    public UserResponse getAllUserDataByUsername(String username){
-    return UserResponse.fromEntity(userRepository.findAllByNickname(username)
-        .orElseThrow(() -> new ResourceNotFoundException("User","id",username)));
-    }
 }

@@ -12,6 +12,6 @@ import java.util.Optional;
 public interface TagRepository extends
         CrudRepository<TagEntity, Long>,
         JpaSpecificationExecutor<TagEntity> {
-    Optional<TagEntity> findByName (String name);
+    Optional<TagEntity> findByNameIgnoreCase(String name);
     boolean existsByName (String name);
 }

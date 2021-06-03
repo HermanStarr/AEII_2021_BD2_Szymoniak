@@ -22,8 +22,6 @@ public class ImageThumbResponse {
         dto.setOwnerNickname(entity.getOwner().getNickname());
         dto.setThumb(Base64.getEncoder().encodeToString(entity.getOriginalImage()));
 
-        //TODO Set categories and tags
-
         return dto;
     }
 

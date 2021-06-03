@@ -10,7 +10,6 @@ public class UserSpecification extends MappedSpecificationWithCriteria<UserEntit
             field("nickname", "nickname"),
             field("email", "email"),
             field("isAdmin", "isAdmin"),
-            field("passwordHash", "passwordHash"),
             field("icon", "icon")
     );
 

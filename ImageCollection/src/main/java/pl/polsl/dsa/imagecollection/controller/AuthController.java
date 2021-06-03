@@ -11,10 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pl.polsl.dsa.imagecollection.PaginatedResult;
 import pl.polsl.dsa.imagecollection.dao.UserRepository;
-import pl.polsl.dsa.imagecollection.dto.ApiResponse;
-import pl.polsl.dsa.imagecollection.dto.LoginRequest;
-import pl.polsl.dsa.imagecollection.dto.SignUpRequest;
-import pl.polsl.dsa.imagecollection.dto.UserResponse;
+import pl.polsl.dsa.imagecollection.dto.*;
 import pl.polsl.dsa.imagecollection.exception.ResourceNotFoundException;
 import pl.polsl.dsa.imagecollection.model.UserEntity;
 import pl.polsl.dsa.imagecollection.security.JwtUtils;
@@ -30,8 +27,6 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
-
-
     @Autowired
     AuthenticationManager authenticationManager;
 
@@ -90,9 +85,14 @@ public class AuthController {
                 new ApiResponse(true,"User registered successfully!"));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<UserPublicResponse> getUser(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getUser(id));
+    }
+
     @GetMapping
     @Searchable(specification = UserSpecification.class)
-    public ResponseEntity<PaginatedResult<UserResponse>> getUsers(SearchCriteria<UserEntity> criteria) {
+    public ResponseEntity<PaginatedResult<UserPublicResponse>> getUsers(SearchCriteria<UserEntity> criteria) {
         return ResponseEntity.ok(userService.getUsers(criteria));
     }
 

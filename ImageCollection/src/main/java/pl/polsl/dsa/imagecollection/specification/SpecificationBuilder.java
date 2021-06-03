@@ -1,6 +1,5 @@
 package pl.polsl.dsa.imagecollection.specification;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -43,7 +42,7 @@ public class SpecificationBuilder<E, S extends SpecificationWithCriteria<E>> {
 
         List<FilterCriteria> params = new ArrayList<>();
 
-        Pattern pattern = Pattern.compile("([\\w%\\-.]+?)([:<>~])([\\w%\\- .\\\\/]+),?");
+        Pattern pattern = Pattern.compile("([\\w%\\-.]+?)([:<>~=])([\\w%\\- .\\\\/]+),?");
 
         Matcher matcher = pattern.matcher(decodedQuery + ",");
 

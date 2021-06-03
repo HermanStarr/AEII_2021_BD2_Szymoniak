@@ -33,3 +33,10 @@ export const editImage = async (imageId: number, data: ImageRequest): Promise<Ap
   );
   return response.data;
 };
+
+export const deleteImage = async (imageId: number): Promise<ApiResponse<string>> => {
+  const response = await axios.delete(
+    `http://localhost:8080/api/images/${imageId}`,
+  );
+  return response.data;
+}

@@ -14,6 +14,7 @@ import pl.polsl.dsa.imagecollection.exception.ResourceNotFoundException;
 import pl.polsl.dsa.imagecollection.model.CategoryEntity;
 import pl.polsl.dsa.imagecollection.model.UserEntity;
 import pl.polsl.dsa.imagecollection.service.CategoryService;
+import pl.polsl.dsa.imagecollection.service.UserDetailsImpl;
 import pl.polsl.dsa.imagecollection.specification.CategorySpecification;
 import pl.polsl.dsa.imagecollection.specification.SearchCriteria;
 import pl.polsl.dsa.imagecollection.specification.Searchable;

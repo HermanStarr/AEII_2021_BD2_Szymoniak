@@ -22,14 +22,6 @@ public class TagController {
     this.tagService = tagService;
   }
 
-  @PostMapping
-  public ResponseEntity<ApiResponse> addTag(String name) {
-    tagService.createTag(name);
-    return ResponseEntity.ok(
-            new ApiResponse(true, "Added new Tag")
-    );
-  }
-
   @Searchable(specification = TagSpecification.class)
   @GetMapping
   public ResponseEntity<List<TagResponse>> getTagList(SearchCriteria<TagEntity> criteria) {

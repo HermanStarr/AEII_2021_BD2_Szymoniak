@@ -1,23 +1,27 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   Avatar, createStyles, Grid,
   IconButton, makeStyles,
   Modal, Theme,
   Typography
 } from "@material-ui/core";
-import {photos} from "./photos";
-import {ImageResponse, TagResponse, UserResponse} from "../../model/dto";
+import {ImageResponse, UserPublicResponse} from "../../model/dto";
 import useWindowDimensions from "../../shared/WindowDimensions";
 import ScrollContainer from "react-indiana-drag-scroll";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
-import {blobToSource} from "../../shared/FileEdition";
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
 import ImageDetails from "./ImageDetails";
 import {getImage} from "../../actions/images";
+import {getUser} from "../../actions/user";
+import {UserContext} from "../../App";
 
 type Props = {
   imageId: number | null;
   dialogOpened: boolean;
   onClose: () => void;
+  onImageEdit: (image: ImageResponse) => void;
+  onImageDelete: (imageId: number) => void;
 }
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -39,7 +43,9 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export const ImageDialog = (props: Props) => {
+  const info = useContext(UserContext);
   const [image, setImage] = useState<ImageResponse | null>(null);
+  const [owner, setOwner] = useState<UserPublicResponse | null>(null);
   const { height, width } = useWindowDimensions();
   const [modalHeight, setModalHeight] = useState<number>(900);
   const [modalWidth, setModalWidth] = useState<number>(1000);
@@ -51,18 +57,27 @@ export const ImageDialog = (props: Props) => {
     if(props.imageId !== null) {
       getImage(props.imageId).then(response => {
         setImage(response);
-        console.log(response);
       })
     } else {
       setImage(null);
     }
   }, [props.imageId]);
 
+  useEffect(() => {
+    if (image !== null) {
+      getUser(image.ownerId).then(response => {
+        setOwner(response);
+      })
+    } else {
+      setOwner(null);
+    }
+  }, [image])
 
   useEffect(() => {
     setModalHeight(height - 10);
     setModalWidth(width - 250);
   }, [height, width]);
+
   return (
     <Modal
       open={props.dialogOpened}
@@ -81,15 +96,13 @@ export const ImageDialog = (props: Props) => {
         background: '#ffffff',
         borderRadius: 5,
       }}>
-        {image && (
+        {image && owner && (
           <>
             {renderDetails ? (
               <>
                 <ImageDetails
                   width={modalWidth}
                   height={modalHeight}
-                  tags={['']}
-                  categories={['']}
                   image={image}
                   onClose={() => setRenderDetails(false)}/>
               </>
@@ -101,7 +114,7 @@ export const ImageDialog = (props: Props) => {
                       <Grid item>
                         <Avatar
                           aria-label="recipe"
-                          src={''}
+                          src={`data:image/jpeg;base64,${owner.icon}`}
                           onClick={() => {}}
                           className={classes.large}/>
                       </Grid>
@@ -115,9 +128,25 @@ export const ImageDialog = (props: Props) => {
                   </Grid>
                   <Grid item xs={2}>
                     <Grid container direction="row" alignItems="center" justify="flex-end">
+                      {(info.userInfo?.admin || info.userInfo?.nickname === owner.nickname) && (
+                        <>
+                          <IconButton
+                            aria-label="delete"
+                            onClick={() => props.onImageDelete(image!.id)}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                          <IconButton
+                            aria-label="edit"
+                            onClick={() => props.onImageEdit(image!)}
+                          >
+                            <EditIcon />
+                          </IconButton>
+                        </>
+                      )}
                       <Grid item>
                         <IconButton
-                          aria-label="settings"
+                          aria-label="details"
                           onClick={() => setRenderDetails(true)}
                         >
                           <MoreVertIcon />
@@ -142,10 +171,7 @@ export const ImageDialog = (props: Props) => {
                     <img
                       src={`data:image/jpeg;base64,${image.image}`}
                       alt={image.name}
-                      style={{
-                        //width: window.innerWidth * coefficient,
-                        //height: window.innerHeight * coefficient
-                      }}/>
+                    />
                   </ScrollContainer>
                 </Grid>
                 <div
@@ -176,7 +202,7 @@ export const ImageDialog = (props: Props) => {
                     variant="body2"
                     color="textSecondary"
                     component="p"
-                    style={{fontSize: 0.015 * modalHeight}}
+                    style={{fontSize: 0.03 * modalHeight}}
                   >
                     {' '}
                   </Typography>

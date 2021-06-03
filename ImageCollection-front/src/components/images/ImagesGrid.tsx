@@ -4,21 +4,23 @@ import GridListTileBar from "@material-ui/core/GridListTileBar";
 import IconButton from "@material-ui/core/IconButton";
 import StarBorderIcon from "@material-ui/icons/StarBorder";
 import React, {useState} from "react";
-import {PaginatedResult, ImageThumbResponse} from "../../model/dto";
+import {PaginatedResult, ImageThumbResponse, ImageResponse} from "../../model/dto";
 import {createStyles, makeStyles} from "@material-ui/core/styles";
 import {ImageDialog} from "./ImageDialog";
 import {Pagination} from "@material-ui/lab";
+import {deleteImage} from "../../actions/images";
+import {toast} from "react-toastify";
 
 type Props = {
   tiles: PaginatedResult<ImageThumbResponse>;
   onPageChange: (value: string) => void;
+  onImageEdit: (image: ImageResponse) => void;
 }
 
 export const ImagesGrid = (props: Props) => {
- const classes = useStyles();
- const [imageId, setImageId] = useState<number | null>(null);
- const [dialogOpen, setDialogOpen] = useState<boolean>(false);
-
+  const classes = useStyles();
+  const [imageId, setImageId] = useState<number | null>(null);
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   return (
     <>
       <GridList spacing={10} className={classes.gridList} cols={3}>
@@ -31,12 +33,12 @@ export const ImagesGrid = (props: Props) => {
               setImageId(tile.id);
               setDialogOpen(true);
             }}>
-            <img src={`data:image/jpeg;base64,${tile.thumb}`} alt={tile.title}/>
+            <img src={`data:image/jpeg;base64,${tile.thumb}`} alt={tile.name}/>
             <GridListTileBar
-              title={tile.title}
+              title={tile.name}
               titlePosition="bottom"
               actionIcon={
-                <IconButton aria-label={`star ${tile.title}`} className={classes.icon}>
+                <IconButton aria-label={`star ${tile.name}`} className={classes.icon}>
                   <StarBorderIcon />
                 </IconButton>
               }
@@ -54,7 +56,6 @@ export const ImagesGrid = (props: Props) => {
         className={classes.pagination}
         onChange={(event: React.ChangeEvent<unknown>, value: number) => {
           props.onPageChange(`pageSize=9&pageNumber=${value - 1}&`);
-            console.log(value);
         }}/>
       <ImageDialog
         imageId={imageId}
@@ -62,7 +63,22 @@ export const ImagesGrid = (props: Props) => {
         onClose={() => {
           setImageId(null);
           setDialogOpen(false);
-        }} />
+        }}
+        onImageDelete={(imageId: number) => {
+          setImageId(null);
+          setDialogOpen(false);
+          deleteImage(imageId).then(response => {
+            toast.success(response.message);
+          }).catch((error) => {
+            toast.error("Error detected: " +  error.message);
+          })
+        }}
+        onImageEdit={(image: ImageResponse) => {
+          setImageId(null);
+          setDialogOpen(false);
+          props.onImageEdit(image);
+        }}
+      />
     </>
   );
 }
