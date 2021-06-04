@@ -64,7 +64,7 @@ const formikEnhancer = withFormik<Props, FormValues>({
   handleSubmit: (values, {props}) => {
     toast.configure();
     registerUser(values)
-      .then((response) => {
+      .then(() => {
       toast.success("Registered succesfully");
       props.history.push(`${LOGIN}`);
     }).catch((error) => {
@@ -140,7 +140,7 @@ const Registration: FunctionComponent<Props & FormikProps<FormValues>> = (props)
           </Button>
           <Grid container justify="flex-end">
             <Grid item>
-              <Link href={LOGIN} variant="body2">
+              <Link onClick={() => props.history.replace(LOGIN)} variant="body2">
                 Already have an account? Sign in
               </Link>
             </Grid>
@@ -150,7 +150,7 @@ const Registration: FunctionComponent<Props & FormikProps<FormValues>> = (props)
       </div>
       <Box mt={5}>
         <Typography variant="body2" color="textSecondary" align="center">
-          {'Copyright © Image collection' + new Date().getFullYear()}
+          {'Copyright © Image collection ' + new Date().getFullYear()}
         </Typography>
       </Box>
     </Container>

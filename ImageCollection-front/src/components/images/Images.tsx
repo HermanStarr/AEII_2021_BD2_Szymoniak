@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {createStyles, Theme, makeStyles, fade} from '@material-ui/core/styles';
 import {
   CategoryResponse,
@@ -20,6 +20,7 @@ import ImagesGrid from "./ImagesGrid";
 import {getImagesWithCriteria} from "../../actions/images";
 import AddImage from "./AddImageDialog";
 import {getCategories, getTags} from "../../actions/tagsAndCategories";
+import {UserContext} from "../../App";
 
 const Images = () => {
   const [categorySearchCriteria, setCategorySearchCriteria] = useState<string>("");
@@ -33,6 +34,7 @@ const Images = () => {
   const [pageSize, setPageSize] = useState<number>(9);
   const [pageNumber, setPageNumber] = useState<number>(0);
   const classes = useStyles();
+  const info = useContext(UserContext);
 
   const onSearch = () => {
     let query = `sortOrder=DESC&sortBy=creationDate&pageSize=${pageSize}&pageNumber=${pageNumber}`
@@ -45,10 +47,12 @@ const Images = () => {
 
   useEffect( () => {
     onSearch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     onSearch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageSize, pageNumber])
 
 
@@ -66,15 +70,18 @@ const Images = () => {
   return (
     <>
       <Container className={classes.root}>
-        <Button
-          variant="outlined"
-          color="secondary"
-          component="span"
-          className={classes.addImageButton}
-          onClick={() => setAddImageDialogOpened(true)}
-        >
-          Add image
-        </Button>
+        {
+          info.userInfo &&
+          <Button
+              variant="outlined"
+              color="secondary"
+              component="span"
+              className={classes.addImageButton}
+              onClick={() => setAddImageDialogOpened(true)}
+          >
+              Add image
+          </Button>
+        }
         <AppBar position="static" className={classes.appBar}>
           <Toolbar>
             <Grid container xs={12} spacing={2}>

@@ -119,9 +119,7 @@ export const ImageDialog = (props: Props) => {
                         <Avatar
                           aria-label="recipe"
                           src={`data:image/jpeg;base64,${owner.icon}`}
-                          onClick={() => {
-                            props.history.push(PROFILES + "/" + owner.nickname)
-                          }}
+                          onClick={() => info.userInfo && props.history.push(PROFILES + "/" + owner.nickname)}
                           className={classes.large}/>
                       </Grid>
                       <div style={{width: 20}} />

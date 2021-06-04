@@ -60,21 +60,32 @@ export const Account = (props: Props) => {
     <Container>
       <div>
         <Grid style={{display: "flex", justifyContent: "flex-end"}}>
-          <Button variant="contained" color="primary" style={{marginLeft: 1, marginRight: 0,}}
-                  onClick={() => handleReturn()}> Return <KeyboardReturnIcon/></Button>
+          <Grid item xs={11}>
+            <Typography component='h1' variant='h5'>
+              {"User nickname: " + user.nickname}
+            </Typography>
+          </Grid>
+          <Grid item xs={1}>
+            <Button
+              variant="contained"
+              color="primary"
+              style={{marginLeft: 1}}
+              onClick={() => handleReturn()}
+            >
+              Return <KeyboardReturnIcon/>
+            </Button>
+          </Grid>
         </Grid>
-        <Typography component='h1' variant='h5'>
-          {"User nickname: " + user.nickname}
-        </Typography>
-        <Grid container spacing={2} style={{marginTop: 10}}>
-          <Grid item xs={12} sm={1}>
+        <Grid container alignItems='center' spacing={2} style={{marginTop: 10}}>
+          <Grid item xs={12} sm={2}>
             <Avatar
               alt="User"
               onClick={() => user.nickname === info.userInfo?.nickname && setIsChangeDialogDialogOpen(true)}
               src={`data:image/jpeg;base64,${user.icon}`}//{`http://localhost:8080/api/users/${info.userInfo?.id ?? ''}/picture?_ref=${refreshToken}`}
+              style={{width: 150, height: 150, maxWidth: '100%'}}
             />
           </Grid>
-          <Grid item xs={12} sm={11}>
+          <Grid item xs={12} sm={10}>
             <TextField
               variant="outlined"
               fullWidth

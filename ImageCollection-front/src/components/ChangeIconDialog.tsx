@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useState} from 'react';
 import {FormikProps, withFormik} from "formik";
 import * as Yup from "yup";
 import {
@@ -17,7 +17,6 @@ import CloseIcon from '@material-ui/icons/Close';
 import {editUserIcon} from "../actions/user";
 import {inputProps} from "../shared/apiapp";
 
-
 type FormValues = {
   icon: File | null;
   password: "";
@@ -28,8 +27,6 @@ type Props = {
   onClose: () => void;
 } & RouteComponentProps
 
-
-
 const formikEnhancer = withFormik<Props, FormValues>({
   enableReinitialize: true,
   validationSchema: Yup.object()
@@ -37,12 +34,12 @@ const formikEnhancer = withFormik<Props, FormValues>({
       imageFile: Yup.object(),
     }),
 
-  mapPropsToValues: (props) => ({
+  mapPropsToValues: () => ({
     icon: null,
     password: "",
   }),
 
-  handleSubmit: ({icon, ...values}, {props, setSubmitting}) => {
+  handleSubmit: ({icon, ...values}, {setSubmitting}) => {
     setSubmitting(true);
     editUserIcon(icon!, values.password)
       .then(() => toast.success("Poprawnie zmieniono ikone"))

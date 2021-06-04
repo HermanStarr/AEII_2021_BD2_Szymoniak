@@ -2,8 +2,9 @@ import React, {FC, useContext} from "react";
 import {
   ListItemIcon, ListItemText, MenuList,
   MenuItem, Drawer, AppBar, IconButton,
-  Toolbar, Divider, Container, SvgIconTypeMap, Button, CssBaseline, makeStyles, Typography
+  Toolbar, Divider, Container, SvgIconTypeMap, Button, CssBaseline, makeStyles, Typography, Avatar, Grid
 } from '@material-ui/core';
+import HomeIcon from '@material-ui/icons/Home';
 import {Link, Route, RouteComponentProps, withRouter} from "react-router-dom";
 import Routes, {ACCOUNT, BACKUP, HOME, LOGIN, PROFILES, REGISTER} from "./Routes";
 import {OverridableComponent} from "@material-ui/core/OverridableComponent";
@@ -45,16 +46,39 @@ const Sidebar: FC<Props> = (props) => {
 
   function logout() {
     if (info.userInfo) {
-      info.userInfo = null
-      props.history.replace(`${LOGIN}`)
+      info.userInfo = null;
+      props.history.replace(HOME);
+    }
+  }
+
+  function login() {
+    if (!info.userInfo) {
+      props.history.replace(LOGIN);
+    }
+  }
+
+  function register() {
+    if (!info.userInfo) {
+      props.history.replace(REGISTER);
+    }
+  }
+
+  function goHome() {
+    props.history.replace(HOME);
+  }
+
+  function goToAccount() {
+    if (info.userInfo) {
+      props.history.replace(`${PROFILES}/${info.userInfo.nickname}`);
     }
   }
 
   return (
     <div className={classes.root}>
       <CssBaseline/>
-      <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
+      <AppBar position="absolute" className={clsx(classes.appBar, open && info.userInfo && classes.appBarShift)}>
         <Toolbar className={classes.toolbar}>
+          {info.userInfo ? (
           <IconButton
             edge="start"
             color="inherit"
@@ -64,76 +88,129 @@ const Sidebar: FC<Props> = (props) => {
           >
             <MenuIcon/>
           </IconButton>
-          <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            {info.userInfo ? 'Username: ' : 'Image Collection '}
-            {info.userInfo ? info.userInfo?.nickname + ' ' : ''}
+          ) : (
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="open drawer"
+              onClick={goHome}
+              className={classes.menuButton}
+            >
+              <HomeIcon/>
+            </IconButton>
+          )}
+          <Typography
+            component="h1"
+            variant="h6"
+            color="inherit"
+            noWrap
+            className={classes.title}
+            onClick={goToAccount}
+          >
+            {info.userInfo ? (
+              <Grid container spacing={1} alignItems='center'>
+                <Grid item>
+                  <Avatar
+                    alt={info.userInfo.nickname}
+                    src={`data:image/jpeg;base64,${info.userInfo.icon}`}
+                  />
+                </Grid>
+                <Grid item>
+                  {info.userInfo.nickname}
+                </Grid>
+              </Grid>
+
+            ) : 'Image Collection '}
           </Typography>
-          {info.userInfo &&
-          <Button
+          {info.userInfo !== null ?
+            <Button
               variant="contained" color="secondary"
               onClick={logout}
               startIcon={<ExitToAppOutlinedIcon/>}
-          >
+            >
               Logout
-          </Button>
+            </Button>
+            :
+            <>
+              <Button
+                variant="contained" color="secondary"
+                onClick={login}
+                startIcon={<ExitToAppOutlinedIcon/>}
+                style={{marginRight: 2}}
+              >
+                Log in
+              </Button>
+              <Button
+                variant="contained" color="secondary"
+                onClick={register}
+                startIcon={<ExitToAppOutlinedIcon/>}
+              >
+                Sign in
+              </Button>
+            </>
           }
 
         </Toolbar>
       </AppBar>
+      {info.userInfo &&
       <Drawer
-        variant="permanent"
-        classes={{
-          paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
-        }}
-        open={open}
+          variant="permanent"
+          classes={{
+            paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
+          }}
+          open={open}
       >
-        <div className={classes.toolbarIcon}>
-          <IconButton onClick={handleDrawerClose}>
-            <ChevronLeftIcon/>
-          </IconButton>
-        </div>
-        <Divider/>
-        <MenuList>
-          {Routes
-            .filter((Routes) => {
-              if (!info.userInfo) {
-                return Routes.notLoggedUser;
-              }
-              if (info.userInfo) {
-                if (!info.userInfo.admin) {
-                  return Routes.loggedUser;
+          <div className={classes.toolbarIcon}>
+              <IconButton onClick={handleDrawerClose}>
+                  <ChevronLeftIcon/>
+              </IconButton>
+          </div>
+          <Divider/>
+          <MenuList>
+            {Routes
+              .filter((Routes) => {
+                if (info.userInfo) {
+                  if (!info.userInfo.admin) {
+                    return Routes.loggedUser;
+                  } else {
+                    return Routes.admin;
+                  }
                 } else {
-                  return Routes.admin;
+                  return Routes;
                 }
-              } else {
-                return Routes;
-              }
-              //return Routes
-            })
-            .map((prop: { path: string, sidebarName: string, icon: OverridableComponent<SvgIconTypeMap> }, key: number) => {
-              return (
-                <Link to={prop.sidebarName === 'MyProfile' ? `/profiles/${info.userInfo?.nickname}` : prop.path} style={{textDecoration: 'none'}} key={key}>
-                  <MenuItem selected={activeRoute(prop.path)}>
-                    <ListItemIcon>
-                      <prop.icon/>
-                    </ListItemIcon>
-                    <ListItemText primary={prop.sidebarName}/>
-                  </MenuItem>
-                </Link>
-              );
-            })}
-        </MenuList>
-        <Divider/>
-      </Drawer>
+              })
+              .map((prop: { path: string, sidebarName: string, icon: OverridableComponent<SvgIconTypeMap> }, key: number) => {
+                return (
+                  <Link to={prop.sidebarName === 'MyProfile' ? `/profiles/${info.userInfo?.nickname}` : prop.path}
+                        style={{textDecoration: 'none'}} key={key}>
+                    <MenuItem selected={activeRoute(prop.path)}>
+                      <ListItemIcon>
+                        <prop.icon/>
+                      </ListItemIcon>
+                      <ListItemText primary={prop.sidebarName}/>
+                    </MenuItem>
+                  </Link>
+                );
+              })}
+          </MenuList>
+          <Divider/>
+      </Drawer>}
       <main className={classes.content}>
         <div className={classes.appBarSpacer}/>
         <Container maxWidth="lg" className={classes.container}>
-          <Route path={LOGIN} exact component={LoginContext}/>
-          <Route path={REGISTER} exact component={Registration}/>
           <Route path={HOME} exact component={Images}/>
-          <Route path={ACCOUNT} exact component={Account}/>
-          <Route path={BACKUP} exact component={Backup}/>
-          <Route path={PROFILES} exact component={Profiles}/>
+          {info.userInfo ? (
+            <>
+              <Route path={ACCOUNT} exact component={Account}/>
+              <Route path={BACKUP} exact component={Backup}/>
+              <Route path={PROFILES} exact component={Profiles}/>
+            </>
+          ) : (
+            <>
+              <Route path={LOGIN} exact component={LoginContext}/>
+              <Route path={REGISTER} exact component={Registration}/>
+            </>
+          )}
         </Container>
       </main>
     </div>

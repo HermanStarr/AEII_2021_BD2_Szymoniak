@@ -6,19 +6,17 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
-  withStyles, Tooltip, MenuItem
+  withStyles, Tooltip, MenuItem, Avatar
 } from "@material-ui/core";
-import React, {useEffect, useState} from "react";
-import AccessibilityNewIcon from '@material-ui/icons/AccessibilityNew';
+import React, { useEffect, useState} from "react";
 import {PaginatedResult, UserPublicResponse} from "../model/dto";
 import {withRouter} from "react-router";
 import SearchIcon from "@material-ui/icons/Search";
 import { Link } from 'react-router-dom';
-import TablePaginationComponent from "./PagintionComponent";
 import {getUsers} from "../actions/user";
 import {PROFILES} from "../shared/Routes";
+import {CustomPagination} from "../shared/CustomPagination";
 
 export const Profiles = () => {
   const classes = useStyles();
@@ -32,16 +30,6 @@ export const Profiles = () => {
       setProfiles(response);
     })
   }, [page, rowsPerPage, searchName]);
-
-  const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
-    setPage(newPage);
-  };
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    //  setPage(0);
-  };
 
   return (
     <Paper>
@@ -70,15 +58,19 @@ export const Profiles = () => {
           </TableHead>
           <TableBody>
             {profiles.items.map(row => (
-              <StyledTableRow key={row.icon}>
+              <StyledTableRow key={row.id}>
                 <Tooltip aria-setsize={23} title="Enter profile">
                   <StyledTableCell align={'center'}>
                     <Link to={PROFILES + '/' + row.nickname} style={{textDecoration: 'none'}}>
                       <MenuItem style={{paddingLeft: 13, marginLeft: "200", color: "black"}}>
-                        <AccessibilityNewIcon style={{
-                          marginRight: 20,
-                          marginLeft: 10
-                        }}/>
+                        <Avatar
+                          alt="User"
+                          src={`data:image/jpeg;base64,${row.icon}`}
+                          style={{
+                            marginRight: 20,
+                            marginLeft: 10
+                          }}
+                        />
                         {row.nickname}
                       </MenuItem>
                     </Link>
@@ -86,30 +78,14 @@ export const Profiles = () => {
                 </Tooltip>
               </StyledTableRow>
             ))}
-            {/*emptyRows > 0 && (
-              <TableRow style={{height: 53 * emptyRows}}>
-                <TableCell colSpan={6}/>
-              </TableRow>
-            )*/}
           </TableBody>
         </Table>
       </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 15, {label: 'All', value: -1}]}
-        colSpan={12}
-        count={profiles.elementCount}
-        width={1000}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        SelectProps={{
-          inputProps: {'aria-label': 'rows per page'},
-          native: true,
-        }}
-        onChangePage={handleChangePage}
-        onChangeRowsPerPage={handleChangeRowsPerPage}
-        ActionsComponent={TablePaginationComponent}
-      />
-
+      <CustomPagination
+        onPageChange={setPage}
+        onPageSizeChange={setRowsPerPage}
+        elementCount={profiles.elementCount}
+        pageSizes={[5, 10, 15, {label: 'All', value: -1}]}/>
     </Paper>
   );
 }
