@@ -46,14 +46,22 @@ const Images = () => {
   }
 
   useEffect( () => {
-    onSearch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    getImagesWithCriteria('sortOrder=DESC&sortBy=creationDate&pageSize=9&pageNumber=0').then(response => {
+      setImages(response);
+    });
   }, []);
 
   useEffect(() => {
-    onSearch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageSize, pageNumber])
+    getImagesWithCriteria(`sortOrder=DESC&sortBy=creationDate&pageSize=${pageSize}&pageNumber=0`).then(response => {
+      setImages(response);
+    });
+  }, [pageSize])
+
+  useEffect(() => {
+    getImagesWithCriteria(`sortOrder=DESC&sortBy=creationDate&pageSize=${pageSize}&pageNumber=${pageNumber}`).then(response => {
+      setImages(response);
+    });
+  }, [pageNumber])
 
 
   useEffect(() => {
@@ -104,7 +112,7 @@ const Images = () => {
                   placeholder="Category"
                   freeSolo={false}
                   onChange={(value: string[]) =>
-                    setCategorySearchCriteria(value !== [] ? 'categories~' + value.join('%5Cu007c') + ',' : '')
+                    setCategorySearchCriteria(value.length !== 0 ? 'categories~' + value.join('%5Cu007c') + ',' : '')
                   }
                 />
               </Grid>
@@ -114,7 +122,7 @@ const Images = () => {
                   placeholder="Tags"
                   freeSolo={false}
                   onChange={(value: string[]) =>
-                    setTagSearchCriteria(value !== [] ? 'tags~' + value.join('%5Cu007c') + ',' : '')
+                    setTagSearchCriteria(value.length !== 0 ? 'tags~' + value.join('%5Cu007c') + ',' : '')
                   }
                 />
               </Grid>

@@ -81,7 +81,7 @@ export const Account = (props: Props) => {
             <Avatar
               alt="User"
               onClick={() => user.nickname === info.userInfo?.nickname && setIsChangeDialogDialogOpen(true)}
-              src={`data:image/jpeg;base64,${user.icon}`}//{`http://localhost:8080/api/users/${info.userInfo?.id ?? ''}/picture?_ref=${refreshToken}`}
+              src={`http://localhost:8080/api/users/${user.id}/picture?_ref=${refreshToken}`}
               style={{width: 150, height: 150, maxWidth: '100%'}}
             />
           </Grid>

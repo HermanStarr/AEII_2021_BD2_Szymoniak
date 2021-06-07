@@ -76,10 +76,11 @@ export const ImageDialog = (props: Props) => {
     }
   }, [image])
 
+
   useEffect(() => {
     setModalHeight(height - 10);
-    setModalWidth(image !== null ? image.resolutionX + 100 : width - 250);
-    console.log(image !== null ? image.resolutionX + 100 : '');
+    setModalWidth(image !== null
+      ? Math.min(image.resolutionX, width - 250) : width - 250);
   }, [image, height, width]);
 
   return (
@@ -114,38 +115,42 @@ export const ImageDialog = (props: Props) => {
               <>
                 <Grid container alignItems="center" style={{padding: 2}}>
                   <Grid item xs={9}>
-                    <Grid container direction="row" alignItems="center">
+                    <Grid container direction="row" alignItems="center" wrap="nowrap">
                       <Grid item>
                         <Avatar
                           aria-label="recipe"
-                          src={`data:image/jpeg;base64,${owner.icon}`}
+                          src={`http://localhost:8080/api/users/${owner.id}/picture`}
                           onClick={() => info.userInfo && props.history.push(PROFILES + "/" + owner.nickname)}
                           className={classes.large}/>
                       </Grid>
                       <div style={{width: 20}} />
-                      <Grid item>
-                        <Typography variant="h4">
+                      <Grid item zeroMinWidth>
+                        <Typography variant="h4" noWrap>
                           {image.name}
                         </Typography>
                       </Grid>
                     </Grid>
                   </Grid>
                   <Grid item xs={3}>
-                    <Grid container direction="row" alignItems="flex-end" justify="flex-end">
+                    <Grid container direction="row" alignItems="flex-end" justify="flex-end" wrap="nowrap">
                       {(info.userInfo?.admin || info.userInfo?.nickname === owner.nickname) && (
                         <>
+                        <Grid item>
                           <IconButton
                             aria-label="delete"
                             onClick={() => props.onImageDelete(image!.id)}
                           >
                             <DeleteIcon />
                           </IconButton>
+                        </Grid>
+                        <Grid item>
                           <IconButton
                             aria-label="edit"
                             onClick={() => props.onImageEdit(image!)}
                           >
                             <EditIcon />
                           </IconButton>
+                        </Grid>
                         </>
                       )}
                       <Grid item>
@@ -167,7 +172,6 @@ export const ImageDialog = (props: Props) => {
                     className="scroll-container"
                     style={{
                       display: 'flex',
-                      justifyContent: 'center',
                       alignContent: 'center',
                       width: modalWidth,
                       height: 0.667 * modalHeight,

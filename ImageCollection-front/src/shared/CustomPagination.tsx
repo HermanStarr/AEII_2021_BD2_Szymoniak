@@ -30,6 +30,7 @@ type Props = {
 
 export const CustomPagination = (props: Props) => {
   const [pageSize, setPageSize] = useState<number>(10);
+  const [rowCount, setRowCount] = useState<number>(1);
 
   useEffect(() => {
     if (props.pageSizes !== []) {
@@ -38,7 +39,11 @@ export const CustomPagination = (props: Props) => {
       props.onPageSizeChange(size);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.pageSizes])
+  }, [])
+
+  useEffect(() => {
+    setRowCount(Math.ceil(props.elementCount / pageSize));
+  }, [props.elementCount, pageSize])
 
   const mapOptions = () => {
     if (props.pageSizes.length > 0) {
@@ -76,7 +81,7 @@ export const CustomPagination = (props: Props) => {
       </Grid>
       <Grid item>
         <Pagination
-          count={Math.ceil(props.elementCount / pageSize)}
+          count={rowCount}
           shape="rounded"
           showFirstButton
           showLastButton

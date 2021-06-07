@@ -112,7 +112,7 @@ const Sidebar: FC<Props> = (props) => {
                 <Grid item>
                   <Avatar
                     alt={info.userInfo.nickname}
-                    src={`data:image/jpeg;base64,${info.userInfo.icon}`}
+                    src={`http://localhost:8080/api/users/${info.userInfo.id}/picture`}
                   />
                 </Grid>
                 <Grid item>
@@ -135,7 +135,6 @@ const Sidebar: FC<Props> = (props) => {
               <Button
                 variant="contained" color="secondary"
                 onClick={login}
-                startIcon={<ExitToAppOutlinedIcon/>}
                 style={{marginRight: 2}}
               >
                 Log in
@@ -143,7 +142,6 @@ const Sidebar: FC<Props> = (props) => {
               <Button
                 variant="contained" color="secondary"
                 onClick={register}
-                startIcon={<ExitToAppOutlinedIcon/>}
               >
                 Sign in
               </Button>

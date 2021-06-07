@@ -39,14 +39,14 @@ const formikEnhancer = withFormik<Props, FormValues>({
     password: "",
   }),
 
-  handleSubmit: ({icon, ...values}, {setSubmitting}) => {
+  handleSubmit: ({icon, ...values}, {setSubmitting, props}) => {
     setSubmitting(true);
     editUserIcon(icon!, values.password)
       .then(() => toast.success("Poprawnie zmieniono ikone"))
       .then(() => setSubmitting(false))
       .catch((error) => {
         toast.error("wystąpił error: " +  error.message)
-      })
+      }).then(() => props.onClose())
   },
 
   displayName: 'AddImageDialog',
@@ -85,6 +85,7 @@ const ChangeIconDialog: FC<Props & FormikProps<FormValues>> = (props) => {
             <Grid item xs={12}>
               <FormControl variant="outlined" fullWidth>
                 <TextField
+                  type="password"
                   fullWidth
                   variant="outlined"
                   label="Password"
