@@ -8,20 +8,29 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pl.polsl.dsa.imagecollection.PaginatedResult;
 import pl.polsl.dsa.imagecollection.dao.UserRepository;
+import pl.polsl.dsa.imagecollection.dto.UserPublicResponse;
+import pl.polsl.dsa.imagecollection.model.UserEntity;
+import pl.polsl.dsa.imagecollection.service.UserService;
+import pl.polsl.dsa.imagecollection.specification.SearchCriteria;
+import pl.polsl.dsa.imagecollection.specification.Searchable;
+import pl.polsl.dsa.imagecollection.specification.UserSpecification;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
     private final UserRepository userRepository;
+    private final UserService userService;
 
-    public UserController(UserRepository userRepository) {
+    public UserController(UserRepository userRepository, UserService userService) {
         this.userRepository = userRepository;
+        this.userService = userService;
     }
 
 
     @GetMapping(value = "{userId}/picture")
-    public ResponseEntity<?> GetUserPicture(@PathVariable  Long userId) {
+    public ResponseEntity<?> getUserPicture(@PathVariable  Long userId) {
         var bytes =  userRepository.findById(userId)
             .orElseThrow()
             .getIcon();
@@ -30,5 +39,16 @@ public class UserController {
         headers.setContentType(MediaType.IMAGE_PNG);
 
         return new ResponseEntity<>(bytes, headers, HttpStatus.OK);
+    }
+
+    @GetMapping("/{nickname}")
+    public ResponseEntity<UserPublicResponse> getUser(@PathVariable String nickname) {
+        return ResponseEntity.ok(userService.getUser(nickname));
+    }
+
+    @GetMapping
+    @Searchable(specification = UserSpecification.class)
+    public ResponseEntity<PaginatedResult<UserPublicResponse>> getUsers(SearchCriteria<UserEntity> criteria) {
+        return ResponseEntity.ok(userService.getUsers(criteria));
     }
 }

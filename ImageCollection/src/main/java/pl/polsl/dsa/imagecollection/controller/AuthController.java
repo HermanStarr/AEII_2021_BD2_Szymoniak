@@ -85,17 +85,6 @@ public class AuthController {
                 new ApiResponse(true,"User registered successfully!"));
     }
 
-    @GetMapping("/{nickname}")
-    public ResponseEntity<UserPublicResponse> getUser(@PathVariable String nickname) {
-        return ResponseEntity.ok(userService.getUser(nickname));
-    }
-
-    @GetMapping
-    @Searchable(specification = UserSpecification.class)
-    public ResponseEntity<PaginatedResult<UserPublicResponse>> getUsers(SearchCriteria<UserEntity> criteria) {
-        return ResponseEntity.ok(userService.getUsers(criteria));
-    }
-
     @GetMapping("/userData")
     public UserResponse getUserData() {
         UserDetails u = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
