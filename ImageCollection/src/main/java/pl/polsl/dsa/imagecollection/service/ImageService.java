@@ -29,6 +29,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.List;
 
 @Service
 public class ImageService {
@@ -134,6 +135,12 @@ public class ImageService {
     public PaginatedResult<ImageThumbResponse> getImageThumbnails(SearchCriteria<ImageEntity> criteria) {
         Page<ImageEntity> page = imageRepository.findAll(criteria.getSpecification(), criteria.getPaging());
         return new PaginatedResult<>(page.map(ImageThumbResponse::fromEntity));
+    }
+
+    @Transactional(readOnly = true)
+    public List<ImageEntity> getImageThumbnailsBackup(SearchCriteria<ImageEntity> criteria) {
+        List<ImageEntity> images = imageRepository.findAll(criteria.getSpecification());
+        return images;
     }
 
     @Transactional
