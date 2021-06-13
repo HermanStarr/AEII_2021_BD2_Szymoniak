@@ -77,7 +77,7 @@ export interface ImageRequest {
     resolutionX: number;
     resolutionY: number;
     description: string;
-    categories: string[] | null;
+    categories: CategoryResponse[] | null;
     tags: string | null;
 }
 

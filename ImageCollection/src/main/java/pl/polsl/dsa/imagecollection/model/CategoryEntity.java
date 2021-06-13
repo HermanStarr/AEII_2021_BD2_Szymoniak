@@ -2,6 +2,7 @@ package pl.polsl.dsa.imagecollection.model;
 
 import javax.persistence.*;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "category")
@@ -18,6 +19,9 @@ public class CategoryEntity {
 
     @Column(name = "name")
     private String name;
+
+    @ManyToMany(mappedBy = "categories")
+    private Set<ImageEntity> images;
 
     public Long getId() {
         return id;
@@ -50,5 +54,13 @@ public class CategoryEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id, name);
+    }
+
+    public Set<ImageEntity> getImages() {
+        return images;
+    }
+
+    public void setImages(Set<ImageEntity> images) {
+        this.images = images;
     }
 }

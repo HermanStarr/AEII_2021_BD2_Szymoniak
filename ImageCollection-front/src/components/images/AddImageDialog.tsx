@@ -37,7 +37,7 @@ type FormValues = {
   resolutionY: number;
   format: string;
   size: number;
-  categories: string[];
+  categories: CategoryResponse[];
   tags: string;
 };
 
@@ -77,7 +77,7 @@ const formikEnhancer = withFormik<Props, FormValues>({
     resolutionY: 0,
     format: props.image !== undefined ? 'edit' : "",
     size: 0,
-    categories: props.image !== undefined ? props.image.categories.map(category => category.name) : [],
+    categories: props.image !== undefined ? props.image.categories : [],
     tags: props.image !== undefined ? props.image.tags.map(tag => tag.name).join(' ') : '',
   }),
 
@@ -203,12 +203,13 @@ const AddImage: FC<Props & FormikProps<FormValues>> = (props) => {
             <Grid item xs={12}>
               <h4>Select categories</h4>
               <FilterSelect
-                options={categories.map(category => ({name: category.name}))}
+                options={categories.map(category => ({name: category.name, id: category.id}))}
                 placeholder="Category"
-                onChange={(value: string[]) => props.setFieldValue('categories', value)}
+                onChange={(value) => props.setFieldValue('categories', value)}
                 values={props.values['categories']}
                 darkMode
                 limitTags={4}
+                isFormik
               />
             </Grid>
             <Grid item xs={12}>
