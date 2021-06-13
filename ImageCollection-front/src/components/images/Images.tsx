@@ -108,7 +108,7 @@ const Images = () => {
               </Grid>
               <Grid item xs={12} sm={4}>
                 <FilterSelect
-                  options={categories.map(category => ({name: category.name}))}
+                  options={categories.map(category => ({name: category.name, id: category.id}))}
                   placeholder="Category"
                   freeSolo={false}
                   onChange={(value: string[]) =>
@@ -118,7 +118,7 @@ const Images = () => {
               </Grid>
               <Grid item xs={12} sm={4}>
                 <FilterSelect
-                  options={tags.map(tag => ({name: tag.name}))}
+                  options={tags.map(tag => ({name: tag.name, id: tag.id}))}
                   placeholder="Tags"
                   freeSolo={false}
                   onChange={(value: string[]) =>

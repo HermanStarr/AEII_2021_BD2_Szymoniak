@@ -173,6 +173,7 @@ export const ImageDialog = (props: Props) => {
                     style={{
                       display: 'flex',
                       alignContent: 'center',
+                      justifyContent: 'center',
                       width: modalWidth,
                       height: 0.667 * modalHeight,
                       backgroundColor: '#000000',
@@ -180,8 +181,9 @@ export const ImageDialog = (props: Props) => {
                     <img
                       src={`data:image/jpeg;base64,${image.image}`}
                       style={{
-                        maxWidth: image.resolutionX,
-                        maxHeight: image.resolutionY,
+                        height: image.resolutionY,
+                        maxHeight: 0.667 * modalHeight,
+                        maxWidth: modalWidth,
                         alignSelf: 'center',
                       }}
                       alt={image.name}
