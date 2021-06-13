@@ -2,12 +2,17 @@ package pl.polsl.dsa.imagecollection.dto;
 
 import pl.polsl.dsa.imagecollection.model.ImageEntity;
 
+import java.time.LocalDateTime;
+import java.util.Base64;
+
 public class ImageThumbResponse {
     private Long id;
     private String name;
     private Long ownerId;
     private String ownerNickname;
-    private byte[] thumb;
+    private LocalDateTime creationDate;
+
+    private String thumb;
 
     public static ImageThumbResponse fromEntity(ImageEntity entity) {
         ImageThumbResponse dto = new ImageThumbResponse();
@@ -15,9 +20,7 @@ public class ImageThumbResponse {
         dto.setName(entity.getName());
         dto.setOwnerId(entity.getOwner().getId());
         dto.setOwnerNickname(entity.getOwner().getNickname());
-        dto.setThumb(entity.getThumbnail());
-
-        //TODO Set categories and tags
+        dto.setThumb(Base64.getEncoder().encodeToString(entity.getOriginalImage()));
 
         return dto;
     }
@@ -54,11 +57,19 @@ public class ImageThumbResponse {
         this.ownerNickname = ownerNickname;
     }
 
-    public byte[] getThumb() {
+    public String getThumb() {
         return thumb;
     }
 
-    public void setThumb(byte[] thumb) {
+    public void setThumb(String thumb) {
         this.thumb = thumb;
+    }
+
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
     }
 }

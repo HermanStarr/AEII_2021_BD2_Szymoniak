@@ -3,29 +3,30 @@ package pl.polsl.dsa.imagecollection.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import pl.polsl.dsa.imagecollection.PaginatedResult;
 import pl.polsl.dsa.imagecollection.dao.UserRepository;
 import pl.polsl.dsa.imagecollection.dto.*;
 import pl.polsl.dsa.imagecollection.exception.ResourceNotFoundException;
 import pl.polsl.dsa.imagecollection.model.UserEntity;
 import pl.polsl.dsa.imagecollection.security.JwtUtils;
 import pl.polsl.dsa.imagecollection.service.UserDetailsImpl;
-import pl.polsl.dsa.imagecollection.service.UserDetailsServiceImpl;
 import pl.polsl.dsa.imagecollection.service.UserService;
+import pl.polsl.dsa.imagecollection.specification.SearchCriteria;
+import pl.polsl.dsa.imagecollection.specification.Searchable;
+import pl.polsl.dsa.imagecollection.specification.UserSpecification;
 
 import javax.validation.Valid;
-import java.util.List;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
-
-
     @Autowired
     AuthenticationManager authenticationManager;
 
@@ -92,12 +93,31 @@ public class AuthController {
         return UserResponse.fromEntity(user);
     }
 
-    @GetMapping("/userList")
-    public ResponseEntity<List<UserResponse>>getUsersList() {
-        return ResponseEntity.ok(userService.getUsersList());
+    @PutMapping("/changePassword")
+    public ResponseEntity<ApiResponse> changePassword(String newPassword, String oldPassword) {
+
+        UserDetails u = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserEntity user = userRepository.findByNickname(u.getUsername())
+                .orElseThrow(() -> new ResourceNotFoundException("User", "nickname", u.getUsername()));
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+        if ( !encoder.matches(oldPassword, userService.byteToString(user.getPasswordHash())) ) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ApiResponse(false,"Error: Wrong password"));
+        }
+
+        userService.changePassword(newPassword, user);
+        return ResponseEntity.ok(new ApiResponse(true,"password changed"));
     }
-    @GetMapping("/userListExludeCurrent")
-    public ResponseEntity<List<UserResponse>>getUserListExcludeCurrent() {
-        return ResponseEntity.ok(userService.getUsersListExcludeCurrent());
+
+    @PutMapping("/changeIcon")
+    public ResponseEntity<ApiResponse> changeIcon(@Valid @RequestPart("icon") MultipartFile icon,
+                                                  String password) throws IOException {
+
+        userService.changeIcon(icon, password);
+        return ResponseEntity.ok(new ApiResponse(true,"Icon changed"));
+
     }
 }

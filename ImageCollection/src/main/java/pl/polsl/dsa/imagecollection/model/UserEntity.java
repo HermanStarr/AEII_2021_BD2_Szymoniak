@@ -33,7 +33,7 @@ public class UserEntity {
     private Byte[] passwordHash;
 
     @Column(name="icon")
-    private Byte[] icon;
+    private byte[] icon;
 
     @Column(name="is_admin")
     private Boolean isAdmin;
@@ -45,7 +45,7 @@ public class UserEntity {
         this.nickname = nickname;
         this.email = email;
         this.passwordHash = passwordHash;
-        this.icon = new Byte[] {};
+        this.icon = new byte[] {};
         this.isAdmin = false;
     }
 
@@ -82,11 +82,11 @@ public class UserEntity {
         this.passwordHash = passwordHash;
     }
 
-    public Byte[] getIcon() {
+    public byte[] getIcon() {
         return icon;
     }
 
-    public void setIcon(Byte[] icon) {
+    public void setIcon(byte[] icon) {
         this.icon = icon;
     }
 

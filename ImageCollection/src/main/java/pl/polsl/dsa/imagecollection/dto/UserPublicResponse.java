@@ -1,15 +1,25 @@
 package pl.polsl.dsa.imagecollection.dto;
 
-import pl.polsl.dsa.imagecollection.model.ImageEntity;
 import pl.polsl.dsa.imagecollection.model.UserEntity;
 
-public class UserResponse {
+import java.util.Base64;
+
+public class UserPublicResponse {
     private Long id;
     private String nickname;
     private String email;
-    private Byte[] passwordHash;
-    private byte[] icon;
+    private String icon;
     private Boolean isAdmin;
+
+    public static UserPublicResponse fromEntity(UserEntity entity) {
+        UserPublicResponse dto = new UserPublicResponse();
+        dto.setId(entity.getId());
+        dto.setNickname(entity.getNickname());
+        dto.setEmail(entity.getEmail());
+        dto.setIcon(Base64.getEncoder().encodeToString(entity.getIcon()));
+        dto.setAdmin(entity.getAdmin());
+        return dto;
+    }
 
     public Long getId() {
         return id;
@@ -35,19 +45,11 @@ public class UserResponse {
         this.email = email;
     }
 
-    public Byte[] getPasswordHash() {
-        return passwordHash;
-    }
-
-    public void setPasswordHash(Byte[] passwordHash) {
-        this.passwordHash = passwordHash;
-    }
-
-    public byte[] getIcon() {
+    public String getIcon() {
         return icon;
     }
 
-    public void setIcon(byte[] icon) {
+    public void setIcon(String icon) {
         this.icon = icon;
     }
 
@@ -57,17 +59,5 @@ public class UserResponse {
 
     public void setAdmin(Boolean admin) {
         isAdmin = admin;
-    }
-
-    public static UserResponse fromEntity(UserEntity entity) {
-        UserResponse dto = new UserResponse();
-        dto.setId(entity.getId());
-        dto.setNickname(entity.getNickname());
-        dto.setEmail(entity.getEmail());
-        dto.setPasswordHash(entity.getPasswordHash());
-        dto.setIcon(entity.getIcon());
-        dto.setAdmin(entity.getAdmin());
-
-        return dto;
     }
 }

@@ -6,10 +6,12 @@ import org.springframework.stereotype.Repository;
 import pl.polsl.dsa.imagecollection.model.TagEntity;
 
 import java.util.List;
+import java.util.Optional;
+
 @Repository
 public interface TagRepository extends
         CrudRepository<TagEntity, Long>,
         JpaSpecificationExecutor<TagEntity> {
-    TagEntity findByName (String name);
-
+    Optional<TagEntity> findByNameIgnoreCase(String name);
+    boolean existsByName (String name);
 }

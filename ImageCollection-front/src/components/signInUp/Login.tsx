@@ -80,7 +80,12 @@ const Login: FunctionComponent<Props & FormikProps<FormValues>> = (props) => {
   const classes = useStyles();
 
   return (
-    <Container maxWidth="xs">
+    <Container
+      maxWidth="xs"
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') {
+          props.handleSubmit();
+        }}}>
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon/>
@@ -119,7 +124,7 @@ const Login: FunctionComponent<Props & FormikProps<FormValues>> = (props) => {
           </Button>
           <Grid container>
             <Grid item>
-              <Link href={REGISTER} variant="body2">
+              <Link onClick={() => props.history.replace(REGISTER)} variant="body2">
                 {"Don't have an account? Sign Up"}
               </Link>
             </Grid>

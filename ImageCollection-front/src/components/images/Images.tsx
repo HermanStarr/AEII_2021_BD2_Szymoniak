@@ -1,7 +1,13 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {createStyles, Theme, makeStyles, fade} from '@material-ui/core/styles';
-import {CategoryResponse, ImageRequest, PaginatedResult, TagResponse, TileImageResponse} from "../../model/dto";
-import {RouteComponentProps, withRouter} from "react-router";
+import {
+  CategoryResponse,
+  PaginatedResult,
+  TagResponse,
+  ImageThumbResponse,
+  ImageResponse
+} from "../../model/dto";
+import {withRouter} from "react-router";
 import {
   AppBar,
   Container, Grid,
@@ -10,81 +16,61 @@ import {
 } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import FilterSelect from "../../shared/FilterSelect";
-import {photos} from "./photos";
 import ImagesGrid from "./ImagesGrid";
 import {getImagesWithCriteria} from "../../actions/images";
 import AddImage from "./AddImageDialog";
+import {getCategories, getTags} from "../../actions/tagsAndCategories";
+import {UserContext} from "../../App";
 
-const getImages = async (): Promise<TileImageResponse[]> => {
-  return [
-    {id: 1, thumb: '', title: 'Zdjęcie xD', author: 'me', authorId: 1, description: 'just a photo', resolutionY: 450, resolutionX: 800},
-    {id: 2, thumb: '', title: 'Zdjęcie xD', author: 'you', authorId: 2, description: 'just a photo', resolutionY: 450, resolutionX: 800},
-    {id: 3, thumb: '', title: 'Zdjęcie xD', author: 'them', authorId: 3, description: 'just a photo', resolutionY: 450, resolutionX: 800},
-  ];
-};
-const getCategories = async (): Promise<CategoryResponse[]> => {
-  return [
-    {id: 1, name: 'category'},
-    {id: 2, name: 'dunno'},
-  ];
-};
-
-const getTags = async (): Promise<TagResponse[]> => {
-  return [
-    {id: 1, name: 'cat'},
-    {id: 2, name: 'dog'},
-    {id: 3, name: 'pigeon'},
-  ];
-};
-type Props = {
-  imageData?: ImageRequest;
-} & RouteComponentProps
-
-const Images = (props:Props) => {
+const Images = () => {
   const [categorySearchCriteria, setCategorySearchCriteria] = useState<string>("");
   const [categories, setCategories] = useState<CategoryResponse[]>([]);
   const [tagSearchCriteria, setTagSearchCriteria] = useState<string>("");
   const [tags, setTags] = useState<TagResponse[]>([]);
-  const [images, setImages] = useState<PaginatedResult<TileImageResponse>>({items: [], totalElements: 0});
+  const [images, setImages] = useState<PaginatedResult<ImageThumbResponse>>({items: [], elementCount: 0});
   const [addImageDialogOpened, setAddImageDialogOpened] = useState<boolean>(false);
-  const [paging, setPaging] = useState<string>('');
   const [searchName, setSearchName] = useState<string>('');
+  const [editImage, setEditImage] = useState<ImageResponse | undefined>(undefined);
+  const [pageSize, setPageSize] = useState<number>(9);
+  const [pageNumber, setPageNumber] = useState<number>(0);
   const classes = useStyles();
+  const info = useContext(UserContext);
 
   const onSearch = () => {
-    let query = 'sortOrder=DESC&sortBy=creationDate&'
-      + paging
-      + 'search='
-      + tagSearchCriteria
-      + categorySearchCriteria
-      + searchName;
+    let query = `sortOrder=DESC&sortBy=creationDate&pageSize=${pageSize}&pageNumber=${pageNumber}`
+      + `&search=${tagSearchCriteria}${categorySearchCriteria}${searchName},`;
+    console.log(query);
     getImagesWithCriteria(query).then(response => {
       setImages(response);
     });
   }
 
   useEffect( () => {
-    getImages().then((response) => {
-      let images1 = photos.map((photo, index) => ({
-        id: index,
-        thumb: photo.src,
-        title: index + "Zdjęcie xD",
-        author: "Me",
-        authorId: 1,
-        description: "2 Kartka papieru",
-        resolutionX: photo.width,
-        resolutionY: photo.height,
-      }))
-      setImages({items: images1, totalElements: images1.length});
-    })
+    getImagesWithCriteria('sortOrder=DESC&sortBy=creationDate&pageSize=9&pageNumber=0').then(response => {
+      setImages(response);
+    });
   }, []);
+
   useEffect(() => {
-    getCategories().then(response => {
+    getImagesWithCriteria(`sortOrder=DESC&sortBy=creationDate&pageSize=${pageSize}&pageNumber=0`).then(response => {
+      setImages(response);
+    });
+  }, [pageSize])
+
+  useEffect(() => {
+    getImagesWithCriteria(`sortOrder=DESC&sortBy=creationDate&pageSize=${pageSize}&pageNumber=${pageNumber}`).then(response => {
+      setImages(response);
+    });
+  }, [pageNumber])
+
+
+  useEffect(() => {
+    getCategories('').then(response => {
       setCategories(response);
     })
   }, [])
   useEffect(() => {
-    getTags().then(response => {
+    getTags('').then(response => {
       setTags(response);
     })
   }, [])
@@ -92,14 +78,18 @@ const Images = (props:Props) => {
   return (
     <>
       <Container className={classes.root}>
-        <Button
-          variant="contained"
-          color="primary"
-          className={classes.addImageButton}
-          onClick={() => setAddImageDialogOpened(true)}
-        >
-          Add image
-        </Button>
+        {
+          info.userInfo &&
+          <Button
+              variant="outlined"
+              color="secondary"
+              component="span"
+              className={classes.addImageButton}
+              onClick={() => setAddImageDialogOpened(true)}
+          >
+              Add image
+          </Button>
+        }
         <AppBar position="static" className={classes.appBar}>
           <Toolbar>
             <Grid container xs={12} spacing={2}>
@@ -120,9 +110,9 @@ const Images = (props:Props) => {
                 <FilterSelect
                   options={categories.map(category => ({name: category.name}))}
                   placeholder="Category"
-                  freeSolo={true}
-                  onChange={(value: string) =>
-                    setCategorySearchCriteria(value !== '' ? 'categories~' + value + ',' : '')
+                  freeSolo={false}
+                  onChange={(value: string[]) =>
+                    setCategorySearchCriteria(value.length !== 0 ? 'categories~' + value.join('%5Cu007c') + ',' : '')
                   }
                 />
               </Grid>
@@ -131,8 +121,8 @@ const Images = (props:Props) => {
                   options={tags.map(tag => ({name: tag.name}))}
                   placeholder="Tags"
                   freeSolo={false}
-                  onChange={(value: string) =>
-                    setTagSearchCriteria(value !== '' ? 'tags~' + value + ',' : '')
+                  onChange={(value: string[]) =>
+                    setTagSearchCriteria(value.length !== 0 ? 'tags~' + value.join('%5Cu007c') + ',' : '')
                   }
                 />
               </Grid>
@@ -146,12 +136,29 @@ const Images = (props:Props) => {
             </Grid>
           </Toolbar>
         </AppBar>
-        <ImagesGrid tiles={images} onPageChange={(value) => setPaging(value)}/>
+        <ImagesGrid
+          tiles={images}
+          onPageChange={value => {
+            setPageNumber(value);
+          }}
+          onPageSizeChange={value => {
+            setPageSize(value);
+          }}
+          onImageEdit={(image) => {
+            setEditImage(image);
+            setAddImageDialogOpened(true);
+          }}
+          pageSize={pageSize}
+        />
       </Container>
       <AddImage
         dialogOpened={addImageDialogOpened}
-        onClose={() => setAddImageDialogOpened(false)}
-        //imageData={}
+        onClose={() => {
+          setAddImageDialogOpened(false);
+          setEditImage(undefined);
+        }}
+        image={editImage}
+        onRefresh={() => onSearch()}
       />
     </>
   )
@@ -167,13 +174,7 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: theme.palette.background.paper,
     },
     addImageButton: {
-      width: '100%',
-      borderBottomLeftRadius: 0,
-      borderBottomRightRadius: 0,
-      backgroundColor: '#BF6984',
-      '&:hover': {
-        backgroundColor: fade('#BF6984', 0.85),
-      },
+      flexGrow: 1,
     },
     appBar: {
       borderBottomLeftRadius: 5,

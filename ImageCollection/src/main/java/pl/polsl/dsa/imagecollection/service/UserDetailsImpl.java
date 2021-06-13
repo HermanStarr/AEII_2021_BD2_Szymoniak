@@ -2,6 +2,7 @@ package pl.polsl.dsa.imagecollection.service;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import pl.polsl.dsa.imagecollection.model.UserEntity;
 
@@ -25,11 +26,11 @@ public class UserDetailsImpl implements UserDetails {
 
     private final Collection<?> authorities;
 
-    private final Byte[] icon;
+    private final byte[] icon;
 
     public UserDetailsImpl(Long id,
                            String username, String email, String password,
-                           Collection<?> authorities, Byte[] icon, Boolean isAdmin) {
+                           Collection<?> authorities, byte[] icon, Boolean isAdmin) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -40,12 +41,12 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     public static UserDetailsImpl build(UserEntity user) {
-        List authorities = new ArrayList<>();
+        List<?> authorities = new ArrayList<>();
 
         int j = 0;
         byte[] bytes = new byte[user.getPasswordHash().length];
         for (Byte b : user.getPasswordHash())
-            bytes[j++] = b.byteValue();
+            bytes[j++] = b;
         String psw = new String(bytes);
 
         return new UserDetailsImpl(
@@ -112,7 +113,7 @@ public class UserDetailsImpl implements UserDetails {
         return Objects.equals(id, user.id);
     }
 
-    public Byte[] getIcon() {
+    public byte[] getIcon() {
         return icon;
     }
 
