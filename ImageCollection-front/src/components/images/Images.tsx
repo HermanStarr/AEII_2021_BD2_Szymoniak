@@ -108,7 +108,10 @@ const Images = () => {
               </Grid>
               <Grid item xs={12} sm={4}>
                 <FilterSelect
-                  options={categories.map(category => ({name: category.name, id: category.id}))}
+                  options={categories.map(category => ({
+                    name: category.name,
+                    id: category.id,
+                  }))}
                   placeholder="Category"
                   freeSolo={false}
                   onChange={(value: string[]) =>

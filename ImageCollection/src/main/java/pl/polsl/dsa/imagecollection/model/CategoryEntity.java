@@ -20,6 +20,9 @@ public class CategoryEntity {
     @Column(name = "name")
     private String name;
 
+    @Column(name="icon")
+    private byte[] icon;
+
     @ManyToMany(mappedBy = "categories")
     private Set<ImageEntity> images;
 
@@ -62,5 +65,13 @@ public class CategoryEntity {
 
     public void setImages(Set<ImageEntity> images) {
         this.images = images;
+    }
+
+    public byte[] getIcon() {
+        return icon;
+    }
+
+    public void setIcon(byte[] icon) {
+        this.icon = icon;
     }
 }
