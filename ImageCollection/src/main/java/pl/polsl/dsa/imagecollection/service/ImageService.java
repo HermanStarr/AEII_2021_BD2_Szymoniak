@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import pl.polsl.dsa.imagecollection.PaginatedResult;
 import pl.polsl.dsa.imagecollection.dao.CategoryRepository;
 import pl.polsl.dsa.imagecollection.dao.TagRepository;
+import pl.polsl.dsa.imagecollection.model.CategoryEntity;
 import pl.polsl.dsa.imagecollection.model.TagEntity;
 import pl.polsl.dsa.imagecollection.specification.SearchCriteria;
 import pl.polsl.dsa.imagecollection.dao.ImageRepository;
@@ -29,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.List;
 
 @Service
 public class ImageService {
@@ -36,12 +38,15 @@ public class ImageService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final TagRepository tagRepository;
+    private final AzureBlobAdapterService azureBlobAdapterService;
 
-    public ImageService(ImageRepository imageRepository, UserRepository userRepository, CategoryRepository categoryRepository, TagRepository tagRepository) {
+    public ImageService(ImageRepository imageRepository, UserRepository userRepository, CategoryRepository categoryRepository,
+                        TagRepository tagRepository, AzureBlobAdapterService azureBlobAdapterService ) {
         this.imageRepository = imageRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
         this.tagRepository = tagRepository;
+        this.azureBlobAdapterService = azureBlobAdapterService;
     }
 
     @Transactional
@@ -51,7 +56,7 @@ public class ImageService {
 
         ImageEntity image = new ImageEntity();
         image.setName(imageRequest.getName());
-        image.setCreationDate(LocalDateTime.now());
+        image.setCreationDate(LocalDateTime.now().withNano(0));
         float width = (imageRequest.getResolutionX() > imageRequest.getResolutionY()
                 ? 1 : imageRequest.getResolutionX().floatValue() / imageRequest.getResolutionY());
         float height = (imageRequest.getResolutionY() > imageRequest.getResolutionX()
@@ -86,6 +91,11 @@ public class ImageService {
         }
         image.setOwner(user);
         imageRepository.save(image);
+        for(String category : imageRequest.getCategories()){
+            if (category.equals("backup")){
+                azureBlobAdapterService.upload(image);
+            }
+        }
     }
 
     public void editImage(ImageRequest imageRequest, Long id, String nickname) {
@@ -96,6 +106,20 @@ public class ImageService {
                 .orElseThrow(() -> new ResourceNotFoundException("Image", "id", id));
         if (!image.getOwner().equals(user) && !user.getAdmin()) {
             throw new ForbiddenException("User is not authorized to edit this image");
+        }
+        Boolean wasBackup = false;
+        Boolean nameChanged = false;
+        LocalDateTime oldDate = image.getCreationDate();
+        for(CategoryEntity category : image.getCategories()) {
+            if (category.getName().equals("backup")) {
+                wasBackup = true;
+                break;
+            }
+        }
+        String oldName = "";
+        if (!image.getName().equals(imageRequest.getName())){
+            nameChanged = true;
+            oldName = image.getName();
         }
         image.setName(imageRequest.getName());
         image.setDescription(imageRequest.getDescription());
@@ -121,6 +145,26 @@ public class ImageService {
                     .collect(Collectors.toSet()));
         }
         imageRepository.save(image);
+        Boolean doBackup = false;
+        for(String category : imageRequest.getCategories()) {
+            if (category.equals("backup")) {
+                doBackup = true;
+                break;
+            }
+        }
+            if (doBackup && !wasBackup){
+                azureBlobAdapterService.upload(image);
+            }
+            else if (!doBackup && wasBackup && !nameChanged){
+                azureBlobAdapterService.deleteFile(image, image.getName(), oldDate);
+            }
+            else if (!doBackup && wasBackup && nameChanged) {
+                azureBlobAdapterService.deleteFile(image, oldName, oldDate);
+            }
+            else if (doBackup && nameChanged){
+                azureBlobAdapterService.deleteFile(image, oldName, oldDate);
+                azureBlobAdapterService.upload(image);
+            }
     }
 
     @Transactional(readOnly = true)
@@ -136,6 +180,12 @@ public class ImageService {
         return new PaginatedResult<>(page.map(ImageThumbResponse::fromEntity));
     }
 
+    @Transactional(readOnly = true)
+    public List<ImageEntity> getImageThumbnailsBackup(SearchCriteria<ImageEntity> criteria) {
+        List<ImageEntity> images = imageRepository.findAll(criteria.getSpecification());
+        return images;
+    }
+
     @Transactional
     public void deleteImage(Long id, String nickname) {
         UserEntity user = userRepository.findByNickname(nickname)
@@ -144,6 +194,16 @@ public class ImageService {
                 .orElseThrow(() -> new ResourceNotFoundException("Image", "id", id));
         if (!image.getOwner().equals(user) && !user.getAdmin()) {
             throw new ForbiddenException("User is not authorized to delete this image");
+        }
+        Boolean inBackup = false;
+        for(CategoryEntity category : image.getCategories()) {
+            if (category.getName().equals("backup")) {
+                inBackup = true;
+                break;
+            }
+        }
+        if (inBackup) {
+            azureBlobAdapterService.deleteFile(image, image.getName(), image.getCreationDate());
         }
         imageRepository.deleteById(id);
     }
