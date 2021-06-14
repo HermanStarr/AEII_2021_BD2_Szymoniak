@@ -6,12 +6,12 @@ import {TextField} from "@material-ui/core";
 import {FilterOptionsState} from "@material-ui/lab";
 
 type Props ={
-  options: {name: string, id: number, avatar?: React.ReactElement}[];
+  options: {name: string, id: number | null, avatar?: React.ReactElement}[];
   onChange: (value: string[] | any[]) => void;
   placeholder?: string;
   label?: string;
   freeSolo?: boolean;
-  values?: {name: string, id: number, avatar?: React.ReactElement}[];
+  values?: {name: string, id: number | null, avatar?: React.ReactElement}[];
   darkMode?: boolean;
   limitTags?: number;
   isFormik?: boolean;

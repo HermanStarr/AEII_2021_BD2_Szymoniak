@@ -1,7 +1,7 @@
 import {Container, Grid, GridList, GridListTile} from "@material-ui/core";
 import React, {useEffect, useState} from "react";
 import Typography from "@material-ui/core/Typography";
-import {CategoryResponse, ImageThumbResponse} from "../model/dto";
+import {CategoryDTO, ImageThumbResponse} from "../model/dto";
 import {DateRange} from "@material-ui/icons";
 
 const getImages = async (): Promise<ImageThumbResponse[]> => {
@@ -9,7 +9,7 @@ const getImages = async (): Promise<ImageThumbResponse[]> => {
     return [];
 };
 
-const getCategories = async (): Promise<CategoryResponse[]> => {
+const getCategories = async (): Promise<CategoryDTO[]> => {
     return [
         {id: 1, name: 'category'},
         {id: 2, name: 'dunno'},
@@ -20,7 +20,7 @@ type Props = {}
 
 export const Backup = (props: Props) => {
     const [isLoading, setLoading] = useState<boolean>(false);
-   const [categories, setCategories] = useState<CategoryResponse[]>([]);
+   const [categories, setCategories] = useState<CategoryDTO[]>([]);
    const [additionalFiles, setAdditionalFiles] = useState<ImageThumbResponse[]>([]);
 
    useEffect(() => {

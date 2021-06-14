@@ -26,7 +26,7 @@ export interface ImageResponse {
     size: number;
     creationDate: string;
     tags: TagResponse[];
-    categories: CategoryResponse[];
+    categories: CategoryDTO[];
 }
 
 export interface LoginRequest {
@@ -56,8 +56,8 @@ export interface UserPublicResponse {
     isAdmin: boolean;
 }
 
-export interface CategoryResponse {
-    id: number;
+export interface CategoryDTO {
+    id: number | null;
     name: string;
 }
 
@@ -77,7 +77,7 @@ export interface ImageRequest {
     resolutionX: number;
     resolutionY: number;
     description: string;
-    categories: CategoryResponse[] | null;
+    categories: CategoryDTO[] | null;
     tags: string | null;
 }
 

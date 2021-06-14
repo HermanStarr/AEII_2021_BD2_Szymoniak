@@ -2,7 +2,7 @@ package pl.polsl.dsa.imagecollection.dto;
 
 import pl.polsl.dsa.imagecollection.model.CategoryEntity;
 
-public class CategoryResponse {
+public class CategoryDTO {
     private Long id;
     private String name;
 
@@ -22,8 +22,8 @@ public class CategoryResponse {
         this.name = name;
     }
 
-    public static CategoryResponse fromEntity(CategoryEntity entity) {
-        CategoryResponse dto = new CategoryResponse();
+    public static CategoryDTO fromEntity(CategoryEntity entity) {
+        CategoryDTO dto = new CategoryDTO();
         dto.setId(entity.getId());
         dto.setName(entity.getName());
 

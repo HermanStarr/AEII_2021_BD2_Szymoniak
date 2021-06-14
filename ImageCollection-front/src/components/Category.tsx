@@ -11,7 +11,7 @@ import {
 } from "@material-ui/core";
 import React, {ChangeEvent, FC, useEffect, useState} from "react";
 import Button from "@material-ui/core/Button";
-import {CategoryResponse} from "../model/dto";
+import {CategoryDTO} from "../model/dto";
 import {FormikProps, withFormik} from "formik";
 import * as Yup from "yup";
 import {addCategory, getCategories} from "../actions/tagsAndCategories";
@@ -22,7 +22,7 @@ import {StyledTableCell, StyledTableRow} from "./Profiles";
 import {toast} from "react-toastify";
 
 type FormValues = {
-  id: number;
+  id: number | null;
   name: string;
   file: File | null;
 };
@@ -31,7 +31,7 @@ type Props = {
   dialogOpened: boolean;
   onClose: () => void;
   dialogMode: 'create' | 'edit';
-  category?: CategoryResponse;
+  category?: CategoryDTO;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -52,8 +52,8 @@ const useStyles = makeStyles((theme: Theme) => ({
 export const CategoryManager = () => {
   const classes = useStyles();
   const [isLoading, setLoading] = useState<boolean>(false);
-  const [currentCategory, setCurrentCategory] = useState<CategoryResponse | undefined>(undefined);
-  const [categories, setCategories] = useState<CategoryResponse[]>([]);
+  const [currentCategory, setCurrentCategory] = useState<CategoryDTO | undefined>(undefined);
+  const [categories, setCategories] = useState<CategoryDTO[]>([]);
   const [newCategoryDialogOpen, setNewCategoryDialogOpen] = useState<boolean>(false);
   const [categoryDialogMode, setCategoryDialogMode] = useState<'create' | 'edit'>('create');
 
@@ -80,7 +80,7 @@ export const CategoryManager = () => {
       }),
 
     mapPropsToValues: (props) => ({
-      id: props.dialogMode === 'edit' ? props.category!.id : -1,
+      id: props.dialogMode === 'edit' ? props.category!.id : null,
       name: props.dialogMode === 'edit' ? props.category!.name : '',
       file: null,
     }),
