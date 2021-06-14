@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {createStyles, Theme, makeStyles, fade} from '@material-ui/core/styles';
 import {
-  CategoryResponse,
+  CategoryDTO,
   PaginatedResult,
   TagResponse,
   ImageThumbResponse,
@@ -24,7 +24,7 @@ import {UserContext} from "../../App";
 
 const Images = () => {
   const [categorySearchCriteria, setCategorySearchCriteria] = useState<string>("");
-  const [categories, setCategories] = useState<CategoryResponse[]>([]);
+  const [categories, setCategories] = useState<CategoryDTO[]>([]);
   const [tagSearchCriteria, setTagSearchCriteria] = useState<string>("");
   const [tags, setTags] = useState<TagResponse[]>([]);
   const [images, setImages] = useState<PaginatedResult<ImageThumbResponse>>({items: [], elementCount: 0});
@@ -52,13 +52,15 @@ const Images = () => {
   }, []);
 
   useEffect(() => {
-    getImagesWithCriteria(`sortOrder=DESC&sortBy=creationDate&pageSize=${pageSize}&pageNumber=0`).then(response => {
+    getImagesWithCriteria(`sortOrder=DESC&sortBy=creationDate&pageSize=${pageSize}&pageNumber=0`
+        + `&search=${tagSearchCriteria}${categorySearchCriteria}${searchName},`).then(response => {
       setImages(response);
     });
   }, [pageSize])
 
   useEffect(() => {
-    getImagesWithCriteria(`sortOrder=DESC&sortBy=creationDate&pageSize=${pageSize}&pageNumber=${pageNumber}`).then(response => {
+    getImagesWithCriteria(`sortOrder=DESC&sortBy=creationDate&pageSize=${pageSize}&pageNumber=${pageNumber}`
+      + `&search=${tagSearchCriteria}${categorySearchCriteria}${searchName},`).then(response => {
       setImages(response);
     });
   }, [pageNumber])

@@ -16,7 +16,7 @@ public class ImageRequest {
     private Integer resolutionY;
     private String description;
     private Integer size;
-    private Set<CategoryResponse> categories;
+    private Set<CategoryDTO> categories;
     private String tags;
 
     public String getName() {
@@ -63,9 +63,9 @@ public class ImageRequest {
 
     public void setSize(Integer size) { this.size = size; }
 
-    public Set<CategoryResponse> getCategories() { return categories; }
+    public Set<CategoryDTO> getCategories() { return categories; }
 
-    public void setCategories(Set<CategoryResponse> categories) { this.categories = categories; }
+    public void setCategories(Set<CategoryDTO> categories) { this.categories = categories; }
 
     public String getTags() { return tags; }
 
