@@ -9,8 +9,8 @@ import {
 } from "../../model/dto";
 import {withRouter} from "react-router";
 import {
-  AppBar,
-  Container, Grid,
+  AppBar, Checkbox,
+  Container, FormControlLabel, Grid,
   InputBase,
   Toolbar
 } from "@material-ui/core";
@@ -33,12 +33,13 @@ const Images = () => {
   const [editImage, setEditImage] = useState<ImageResponse | undefined>(undefined);
   const [pageSize, setPageSize] = useState<number>(9);
   const [pageNumber, setPageNumber] = useState<number>(0);
+  const [searchType, setSearchType] = useState<'AND' | 'OR'>('OR');
   const classes = useStyles();
   const info = useContext(UserContext);
 
   const onSearch = () => {
     let query = `sortOrder=DESC&sortBy=creationDate&pageSize=${pageSize}&pageNumber=${pageNumber}`
-      + `&search=${tagSearchCriteria}${categorySearchCriteria}${searchName},`;
+      + `&searchType=${searchType}&search=${tagSearchCriteria}${categorySearchCriteria}${searchName},`;
     console.log(query);
     getImagesWithCriteria(query).then(response => {
       setImages(response);
@@ -53,15 +54,15 @@ const Images = () => {
 
   useEffect(() => {
     getImagesWithCriteria(`sortOrder=DESC&sortBy=creationDate&pageSize=${pageSize}&pageNumber=0`
-        + `&search=${tagSearchCriteria}${categorySearchCriteria}${searchName},`).then(response => {
-      setImages(response);
+      + `&searchType=${searchType}&search=${tagSearchCriteria}${categorySearchCriteria}${searchName},`).then(response => {
+        setImages(response);
     });
   }, [pageSize])
 
   useEffect(() => {
     getImagesWithCriteria(`sortOrder=DESC&sortBy=creationDate&pageSize=${pageSize}&pageNumber=${pageNumber}`
-      + `&search=${tagSearchCriteria}${categorySearchCriteria}${searchName},`).then(response => {
-      setImages(response);
+      + `&searchType=${searchType}&search=${tagSearchCriteria}${categorySearchCriteria}${searchName},`).then(response => {
+        setImages(response);
     });
   }, [pageNumber])
 
@@ -94,47 +95,70 @@ const Images = () => {
         }
         <AppBar position="static" className={classes.appBar}>
           <Toolbar>
-            <Grid container xs={12} spacing={2}>
-              <Grid item xs={12} sm={3}>
-                <div className={classes.search}>
-                  <InputBase
-                    placeholder="Search for an image"
-                    classes={{root: classes.inputRoot, input: classes.inputInput}}
-                    onChange={event => {
-                      let phrase = event.target.value;
-                        setSearchName(phrase !== '' ? 'name%3A' + phrase.toLowerCase() + ',' : '');
-                    }}
-                    inputProps={{'aria-label': 'search'}}
-                  />
-                </div>
+            <Grid container>
+              <Grid item xs={10}>
+                <Grid container xs={12}>
+                  <Grid item xs={12}>
+                    <Grid container xs={12} spacing={2} style={{paddingBottom: 10, paddingTop: 10}}>
+                      <Grid item xs={12} sm={6}>
+                        <div className={classes.search}>
+                          <InputBase
+                              placeholder="Search for an image"
+                              classes={{root: classes.inputRoot, input: classes.inputInput}}
+                              onChange={event => {
+                                let phrase = event.target.value;
+                                setSearchName(phrase !== '' ? 'name%3A' + phrase.toLowerCase() + ',' : '');
+                              }}
+                              inputProps={{'aria-label': 'search'}}
+                          />
+                        </div>
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <FilterSelect
+                            options={categories.map(category => ({
+                              name: category.name,
+                              id: category.id,
+                            }))}
+                            placeholder="Category"
+                            freeSolo={false}
+                            onChange={(value: string[]) =>
+                                setCategorySearchCriteria(value.length !== 0 ? 'categories~' + value.join('%5Cu007c') + ',' : '')
+                            }
+                        />
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Grid container xs={12} spacing={2}>
+                      <Grid item xs={12} sm={6}>
+                        <FilterSelect
+                          options={tags.map(tag => ({name: tag.name, id: tag.id}))}
+                          placeholder="Tags"
+                          freeSolo={false}
+                          onChange={(value: string[]) =>
+                            setTagSearchCriteria(value.length !== 0 ? 'tags~' + value.join('%5Cu007c') + ',' : '')
+                          }
+                        />
+                      </Grid>
+                      <Grid item xs={6}>
+                        <FormControlLabel
+                            control={
+                              <Checkbox
+                                  onChange={(e) => setSearchType(e.target.checked ? 'OR' : 'AND')}
+                              />
+                            }
+                            label="Inclusive search"
+                        />
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </Grid>
               </Grid>
-              <Grid item xs={12} sm={4}>
-                <FilterSelect
-                  options={categories.map(category => ({
-                    name: category.name,
-                    id: category.id,
-                  }))}
-                  placeholder="Category"
-                  freeSolo={false}
-                  onChange={(value: string[]) =>
-                    setCategorySearchCriteria(value.length !== 0 ? 'categories~' + value.join('%5Cu007c') + ',' : '')
-                  }
-                />
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <FilterSelect
-                  options={tags.map(tag => ({name: tag.name, id: tag.id}))}
-                  placeholder="Tags"
-                  freeSolo={false}
-                  onChange={(value: string[]) =>
-                    setTagSearchCriteria(value.length !== 0 ? 'tags~' + value.join('%5Cu007c') + ',' : '')
-                  }
-                />
-              </Grid>
-              <Grid item xs={12} sm={1}>
+              <Grid item xs={2} style={{padding: 10}}>
                 <Button
-                  className={classes.searchButton}
-                  onClick={() => onSearch()}>
+                    className={classes.searchButton}
+                    onClick={() => onSearch()}
+                    style={{width: '100%'}}>
                   Search
                 </Button>
               </Grid>

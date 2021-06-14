@@ -4,6 +4,7 @@ import {Profiles} from "../components/Profiles";
 import ImageIcon from '@material-ui/icons/Image';
 import BackupIcon from '@material-ui/icons/Backup';
 import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
+import CategoryIcon from '@material-ui/icons/Category';
 import {CategoryManager} from "../components/Category";
 
 export const HOME = '/home';
@@ -34,7 +35,7 @@ export const Routes = [
     admin: true,
     path: CATEGORIES,
     sidebarName: 'Categories',
-    icon: BackupIcon,
+    icon: CategoryIcon,
     component: CategoryManager,
   },
   {
