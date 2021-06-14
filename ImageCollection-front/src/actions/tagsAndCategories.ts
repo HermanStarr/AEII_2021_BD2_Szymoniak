@@ -1,4 +1,4 @@
-import {CategoryResponse, TagResponse} from "../model/dto";
+import {ApiResponse, CategoryDTO, TagResponse} from "../model/dto";
 import axios from "axios";
 
 export const getTags = async (criteria: string): Promise<TagResponse[]> => {
@@ -6,7 +6,17 @@ export const getTags = async (criteria: string): Promise<TagResponse[]> => {
     return response.data;
 }
 
-export const getCategories = async (criteria: string): Promise<CategoryResponse[]> => {
+export const getCategories = async (criteria: string): Promise<CategoryDTO[]> => {
     const response = await axios.get("http://localhost:8080/api/categories?search=" + criteria + ',');
     return response.data;
 }
+
+export const addCategory = async (data: CategoryDTO, icon: File): Promise<ApiResponse<string>> => {
+    const formData = new FormData();
+    formData.append('input', new Blob([JSON.stringify(data)], {
+        type: "application/json"
+    }));
+    formData.append('icon', icon);
+    const response = await axios.post("http://localhost:8080/api/categories", formData);
+    return response.data;
+};

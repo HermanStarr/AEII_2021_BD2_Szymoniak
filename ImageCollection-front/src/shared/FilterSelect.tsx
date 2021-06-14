@@ -1,19 +1,35 @@
 import Chip from "@material-ui/core/Chip";
-import Autocomplete from '@material-ui/lab/Autocomplete';
+import Autocomplete, {createFilterOptions} from '@material-ui/lab/Autocomplete';
 import React from "react";
 import {createStyles, fade, makeStyles, Theme} from "@material-ui/core/styles";
 import {TextField} from "@material-ui/core";
-
+import {FilterOptionsState} from "@material-ui/lab";
 
 type Props ={
-  options: {name: string, avatar?: React.ReactElement}[];
-  onChange: (value: string[]) => void;
+  options: {name: string, id: number | null, avatar?: React.ReactElement}[];
+  onChange: (value: string[] | any[]) => void;
   placeholder?: string;
   label?: string;
   freeSolo?: boolean;
-  values?: string[];
+  values?: {name: string, id: number | null, avatar?: React.ReactElement}[];
   darkMode?: boolean;
   limitTags?: number;
+  isFormik?: boolean;
+};
+
+const _filterOptions = createFilterOptions();
+const filterOptions = (options: unknown[], state: FilterOptionsState<unknown>) => {
+  const result = _filterOptions(options, state);
+
+  if (result.length === 0) {
+    return _filterOptions(options, {
+      ...state,
+      // @ts-ignore
+      getOptionLabel: (o) => o.id.toString()
+    });
+  }
+
+  return result;
 };
 
 export const FilterSelect = (props: Props) => {
@@ -56,18 +72,21 @@ export const FilterSelect = (props: Props) => {
         multiple
         limitTags={props.limitTags ?? 2}
         classes={{root: classes.inputRoot, input: classes.inputInput}}
-        options={props.options.map(option => option.name)}
+        options={props.options}
+        getOptionLabel={(option) => (option as ({name: string, id: number, avatar?: React.ReactElement})).name}
+        filterOptions={filterOptions}
         freeSolo={props.freeSolo ?? true}
-        renderTags={(value: string[], getTagProps) =>
-          value.map((option: string, index: number) => (
-            <Chip
-              avatar={props.options[index].avatar}
-              variant="outlined"
-              label={option}
-              style={{color: props.darkMode ? '#000000' : '#ffffff'}}
-              className={classes.chip}
-              {...getTagProps({ index })} />
-          ))
+        renderTags={(value, getTagProps) =>
+          (value as ({name: string, id: number, avatar?: React.ReactElement})[])
+            .map((option: {name: string, id: number, avatar?: React.ReactElement}, index: number) => (
+              <Chip
+                avatar={option.avatar}
+                variant="outlined"
+                label={option.name}
+                style={{color: props.darkMode ? '#000000' : '#ffffff'}}
+                className={classes.chip}
+                {...getTagProps({ index })} />
+            ))
         }
         renderInput={(params) => (
           <TextField
@@ -78,7 +97,11 @@ export const FilterSelect = (props: Props) => {
           />
         )}
         onChange={(event, value) => {
-          props.onChange((value as string[]));
+          if (!props.isFormik) {
+            props.onChange((value as ({ name: string, id: number, avatar?: React.ReactElement })[]).map(val => val.id.toString()));
+          } else {
+            props.onChange((value as ({ name: string, id: number, avatar?: React.ReactElement })[]));
+          }
         }}
       />
     </div>

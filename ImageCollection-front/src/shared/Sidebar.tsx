@@ -6,7 +6,7 @@ import {
 } from '@material-ui/core';
 import HomeIcon from '@material-ui/icons/Home';
 import {Link, Route, RouteComponentProps, withRouter} from "react-router-dom";
-import Routes, {ACCOUNT, HOME, LOGIN, PROFILES, REGISTER} from "./Routes";
+import Routes, {ACCOUNT, CATEGORIES, HOME, LOGIN, PROFILES, REGISTER} from "./Routes";
 import {OverridableComponent} from "@material-ui/core/OverridableComponent";
 import clsx from 'clsx';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -18,6 +18,7 @@ import {Account} from "../components/Account";
 import {Profiles} from "../components/Profiles";
 import {UserContext} from "../App";
 import LoginContext from "../components/signInUp/LoginContext";
+import {CategoryManager} from "../components/Category";
 
 type Props = {
   location: { pathname: string },
@@ -205,6 +206,7 @@ const Sidebar: FC<Props> = (props) => {
                   render={(props) => (
                       <Account {...props} onRefreshToken={(value: number) => setRefreshToken(value)}/>
                   )}/>
+              <Route path={CATEGORIES} exact component={CategoryManager}/>
               <Route path={PROFILES} exact component={Profiles}/>
             </>
           ) : (

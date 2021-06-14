@@ -3,14 +3,11 @@ package pl.polsl.dsa.imagecollection.specification;
 import pl.polsl.dsa.imagecollection.dto.FilterCriteria;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 
 
 public abstract class MappedSpecificationWithCriteria<T> implements SpecificationWithCriteria<T> {
@@ -48,6 +45,10 @@ public abstract class MappedSpecificationWithCriteria<T> implements Specificatio
 
         for (String subPath : fieldInfo.getPath()) {
             path = path.get(subPath);
+        }
+
+        if (Collection.class.isAssignableFrom(path.getJavaType())) {
+            return root.join(criteria.getKey()).get("id");
         }
 
         return path;

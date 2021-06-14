@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -150,6 +151,28 @@ public interface SpecificationWithCriteria<E> extends Specification<E> {
                         .split("\\|"))
                         .collect(Collectors.toList());
                 return builder.isTrue(path.as(String.class).in(values));
+            } else if (path.getJavaType() == Long.class || path.getJavaType() == long.class) {
+                List<Long> ids = Arrays.stream(criteria.getValue()
+                        .toString()
+                        .split("\\|"))
+                        .map(value -> {
+                            try {
+                                return Long.parseLong(value);
+                            } catch (NumberFormatException e) {
+                                return -1L;
+                            }
+                        }).collect(Collectors.toList());
+                query.distinct(true);
+                AtomicReference<Predicate> p = new AtomicReference<>();
+                ids.forEach(id -> {
+                    if (p.get() == null) {
+                        p.set(builder.equal(root.join(criteria.getKey()).get("id"), id));
+                    } else {
+                        p.set(builder.and(builder.equal(root.join(criteria.getKey()).get("id"), id), p.get()));
+                    }
+                });
+                return p.get();
+                //return path.in(ids);
             }
         }
         return null;

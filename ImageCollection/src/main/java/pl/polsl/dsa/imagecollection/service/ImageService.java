@@ -56,17 +56,17 @@ public class ImageService {
                 ? 1 : imageRequest.getResolutionX().floatValue() / imageRequest.getResolutionY());
         float height = (imageRequest.getResolutionY() > imageRequest.getResolutionX()
                 ? 1 : imageRequest.getResolutionY().floatValue() / imageRequest.getResolutionX());
-        image.setOriginalImage(resizeImage(imageFile.getBytes(), (int) (1000 * width), (int) (1000 * height)));
+        image.setOriginalImage(resizeImage(imageFile.getBytes(), (int) (800 * width), (int) (800 * height)));
         image.setSize(image.getOriginalImage().length);
         image.setFormat(imageRequest.getFormat());
-        image.setResolutionX((int)(width * 1000));
-        image.setResolutionY((int)(height * 1000));
+        image.setResolutionX((int)(width * 800));
+        image.setResolutionY((int)(height * 800));
         image.setDescription(imageRequest.getDescription());
         image.setThumbnail(resizeImage(imageFile.getBytes(), (int) (200 * width), (int) (200 * height)));
         if (imageRequest.getCategories() != null) {
             image.setCategories(imageRequest.getCategories()
                     .stream()
-                    .map(name -> categoryRepository.findByName(name)
+                    .map(name -> categoryRepository.findByName(name.getName())
                             .orElseThrow(() -> new ResourceNotFoundException("Category", "name", name)))
                     .collect(Collectors.toSet()));
         }
@@ -102,7 +102,7 @@ public class ImageService {
         if (imageRequest.getCategories() != null) {
             image.setCategories(imageRequest.getCategories()
                     .stream()
-                    .map(name -> categoryRepository.findByName(name)
+                    .map(name -> categoryRepository.findByName(name.getName())
                             .orElseThrow(() -> new ResourceNotFoundException("Category", "name", name)))
                     .collect(Collectors.toSet()));
         }

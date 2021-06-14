@@ -17,9 +17,10 @@ public class ImageResponse {
     private Integer size;
     private Integer resolutionX;
     private Integer resolutionY;
+    private String format;
     private String description;
     private Set<TagResponse> tags;
-    private Set<CategoryResponse> categories;
+    private Set<CategoryDTO> categories;
 
     public static ImageResponse fromEntity(ImageEntity entity) {
         ImageResponse dto = new ImageResponse();
@@ -32,9 +33,10 @@ public class ImageResponse {
         dto.setSize(entity.getSize());
         dto.setResolutionX(entity.getResolutionX());
         dto.setResolutionY(entity.getResolutionY());
+        dto.setFormat(entity.getFormat());
         dto.setDescription(entity.getDescription());
         dto.setTags(entity.getTags().stream().map(TagResponse::fromEntity).collect(Collectors.toSet()));
-        dto.setCategories(entity.getCategories().stream().map(CategoryResponse::fromEntity).collect(Collectors.toSet()));
+        dto.setCategories(entity.getCategories().stream().map(CategoryDTO::fromEntity).collect(Collectors.toSet()));
 
         return dto;
     }
@@ -128,11 +130,19 @@ public class ImageResponse {
         this.tags = tags;
     }
 
-    public Set<CategoryResponse> getCategories() {
+    public Set<CategoryDTO> getCategories() {
         return categories;
     }
 
-    public void setCategories(Set<CategoryResponse> categories) {
+    public void setCategories(Set<CategoryDTO> categories) {
         this.categories = categories;
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    public void setFormat(String format) {
+        this.format = format;
     }
 }
