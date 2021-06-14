@@ -12,7 +12,9 @@ import KeyboardReturnIcon from "@material-ui/icons/KeyboardReturn";
 import ChangeIconDialog from "./ChangeIconDialog";
 
 type Params = { nickname: string }
-type Props = RouteComponentProps<Params> & {}
+type Props = RouteComponentProps<Params> & {
+  onRefreshToken: (value: number) => void;
+}
 
 export const Account = (props: Props) => {
   const [isLoading, setLoading] = useState<boolean>(false);
@@ -43,6 +45,10 @@ export const Account = (props: Props) => {
       })
     }
   }, [user, pageSize, pageNumber])
+
+  useEffect(() => {
+    props.onRefreshToken(refreshToken);
+  }, [refreshToken])
 
   if (isLoading) {
     return <></>;

@@ -1,4 +1,4 @@
-import React, {FC, useContext} from "react";
+import React, {FC, useContext, useState} from "react";
 import {
   ListItemIcon, ListItemText, MenuList,
   MenuItem, Drawer, AppBar, IconButton,
@@ -6,7 +6,7 @@ import {
 } from '@material-ui/core';
 import HomeIcon from '@material-ui/icons/Home';
 import {Link, Route, RouteComponentProps, withRouter} from "react-router-dom";
-import Routes, {ACCOUNT, BACKUP, HOME, LOGIN, PROFILES, REGISTER} from "./Routes";
+import Routes, {ACCOUNT, HOME, LOGIN, PROFILES, REGISTER} from "./Routes";
 import {OverridableComponent} from "@material-ui/core/OverridableComponent";
 import clsx from 'clsx';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -15,7 +15,6 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import Registration from "../components/signInUp/Registration";
 import Images from "../components/images/Images";
 import {Account} from "../components/Account";
-import {Backup} from "../components/Backup";
 import {Profiles} from "../components/Profiles";
 import {UserContext} from "../App";
 import LoginContext from "../components/signInUp/LoginContext";
@@ -31,6 +30,7 @@ const Sidebar: FC<Props> = (props) => {
 
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
+  const [refreshToken, setRefreshToken] = useState<number>(0);
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -112,7 +112,7 @@ const Sidebar: FC<Props> = (props) => {
                 <Grid item>
                   <Avatar
                     alt={info.userInfo.nickname}
-                    src={`http://localhost:8080/api/users/${info.userInfo.id}/picture`}
+                    src={`http://localhost:8080/api/users/${info.userInfo.id}/picture?_ref=${refreshToken}`}
                   />
                 </Grid>
                 <Grid item>
@@ -199,8 +199,12 @@ const Sidebar: FC<Props> = (props) => {
           <Route path={HOME} exact component={Images}/>
           {info.userInfo ? (
             <>
-              <Route path={ACCOUNT} exact component={Account}/>
-              <Route path={BACKUP} exact component={Backup}/>
+              <Route
+                  path={ACCOUNT}
+                  exact
+                  render={(props) => (
+                      <Account {...props} onRefreshToken={(value: number) => setRefreshToken(value)}/>
+                  )}/>
               <Route path={PROFILES} exact component={Profiles}/>
             </>
           ) : (
