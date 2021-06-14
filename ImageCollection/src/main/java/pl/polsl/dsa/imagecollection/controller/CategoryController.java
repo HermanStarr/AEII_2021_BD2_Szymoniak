@@ -37,7 +37,7 @@ public class CategoryController {
     }
 
     @PostMapping(consumes = {"multipart/form-data", MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<ApiResponse> addCategory(@Valid @RequestPart("icon") MultipartFile icon, CategoryDTO dto) {
+    public ResponseEntity<ApiResponse> addCategory(@Valid @RequestPart("icon") MultipartFile icon, @RequestPart("input") CategoryDTO dto) {
         UserDetails u = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserEntity user = userRepository.findByNickname(u.getUsername())
                 .orElseThrow(() -> new ResourceNotFoundException("User", "nickname", u.getUsername()));

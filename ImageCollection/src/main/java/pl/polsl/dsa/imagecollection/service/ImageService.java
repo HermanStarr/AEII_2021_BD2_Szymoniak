@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import pl.polsl.dsa.imagecollection.PaginatedResult;
 import pl.polsl.dsa.imagecollection.dao.CategoryRepository;
 import pl.polsl.dsa.imagecollection.dao.TagRepository;
+import pl.polsl.dsa.imagecollection.dto.CategoryDTO;
 import pl.polsl.dsa.imagecollection.model.CategoryEntity;
 import pl.polsl.dsa.imagecollection.model.TagEntity;
 import pl.polsl.dsa.imagecollection.specification.SearchCriteria;
@@ -28,6 +29,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.List;
@@ -91,11 +93,10 @@ public class ImageService {
         }
         image.setOwner(user);
         imageRepository.save(image);
-        for(String category : imageRequest.getCategories()){
-            if (category.equals("backup")){
-                azureBlobAdapterService.upload(image);
-            }
-        }
+        image.getCategories().forEach(category->{if (category.getName().equalsIgnoreCase("backup")){
+            azureBlobAdapterService.upload(image);
+        }});
+
     }
 
     public void editImage(ImageRequest imageRequest, Long id, String nickname) {
@@ -111,7 +112,7 @@ public class ImageService {
         Boolean nameChanged = false;
         LocalDateTime oldDate = image.getCreationDate();
         for(CategoryEntity category : image.getCategories()) {
-            if (category.getName().equals("backup")) {
+            if (category.getName().equalsIgnoreCase("backup")) {
                 wasBackup = true;
                 break;
             }
@@ -146,8 +147,8 @@ public class ImageService {
         }
         imageRepository.save(image);
         Boolean doBackup = false;
-        for(String category : imageRequest.getCategories()) {
-            if (category.equals("backup")) {
+        for(CategoryDTO category : imageRequest.getCategories()) {
+            if (category.getName().equals("backup")) {
                 doBackup = true;
                 break;
             }
@@ -180,12 +181,6 @@ public class ImageService {
         return new PaginatedResult<>(page.map(ImageThumbResponse::fromEntity));
     }
 
-    @Transactional(readOnly = true)
-    public List<ImageEntity> getImageThumbnailsBackup(SearchCriteria<ImageEntity> criteria) {
-        List<ImageEntity> images = imageRepository.findAll(criteria.getSpecification());
-        return images;
-    }
-
     @Transactional
     public void deleteImage(Long id, String nickname) {
         UserEntity user = userRepository.findByNickname(nickname)
@@ -195,16 +190,7 @@ public class ImageService {
         if (!image.getOwner().equals(user) && !user.getAdmin()) {
             throw new ForbiddenException("User is not authorized to delete this image");
         }
-        Boolean inBackup = false;
-        for(CategoryEntity category : image.getCategories()) {
-            if (category.getName().equals("backup")) {
-                inBackup = true;
-                break;
-            }
-        }
-        if (inBackup) {
-            azureBlobAdapterService.deleteFile(image, image.getName(), image.getCreationDate());
-        }
+
         imageRepository.deleteById(id);
     }
 
