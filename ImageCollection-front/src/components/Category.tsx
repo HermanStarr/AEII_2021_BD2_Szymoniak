@@ -24,6 +24,7 @@ import {toast} from "react-toastify";
 type FormValues = {
   id: number | null;
   name: string;
+  backup: boolean;
   file: File | null;
 };
 
@@ -82,12 +83,12 @@ export const CategoryManager = () => {
     mapPropsToValues: (props) => ({
       id: props.dialogMode === 'edit' ? props.category!.id : null,
       name: props.dialogMode === 'edit' ? props.category!.name : '',
+      backup: props.dialogMode === 'edit' ? props.category!.backup : false,
       file: null,
     }),
 
     handleSubmit: ({file, ...values}, {setSubmitting}) => {
       setSubmitting(true);
-      console.log(values);
       addCategory(values, file! as File).then(response => {
         toast.success(response.message);
         setSubmitting(false);
@@ -154,6 +155,20 @@ export const CategoryManager = () => {
                     </Button>
                   </label>
                   {props.errors.file != null ? (<>{props.errors.file}<br/></>) : <></>}
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} >
+                <FormControl variant="outlined" fullWidth>
+                  <Button
+                    className={classes.root}
+                    fullWidth
+                    color={props.values.backup ? 'primary' : 'secondary'}
+                    variant="outlined"
+                    component="span"
+                    onClick={() => props.setFieldValue('backup', !props.values.backup)}
+                  >
+                    {props.values.backup ? 'Backup category' : 'Default category'}
+                  </Button>
                 </FormControl>
               </Grid>
             </Grid>

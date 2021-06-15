@@ -37,6 +37,7 @@ public class CategoryService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void addCategory(MultipartFile icon, CategoryDTO dto) {
         CategoryEntity category;
         if (dto.getId() == null) {
@@ -44,6 +45,9 @@ public class CategoryService {
         } else {
             category = categoryRepository.findById(dto.getId())
                     .orElseThrow(() -> new ResourceNotFoundException("Category", "id", dto.getId()));
+            if (!dto.getBackup().equals(category.getBackup())) {
+                imageService.manageBackedUpImagesAfterCategoryChange(category.getId(), dto.getBackup());
+            }
         }
         category.setName(dto.getName());
         if (icon != null) {
@@ -53,6 +57,7 @@ public class CategoryService {
                 throw new BadRequestException("Icon could not be processed");
             }
         }
+        category.setBackup(dto.getBackup() != null ? dto.getBackup() : false);
         categoryRepository.save(category);
     }
 
