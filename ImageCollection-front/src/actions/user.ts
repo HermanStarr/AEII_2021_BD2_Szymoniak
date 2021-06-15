@@ -27,3 +27,8 @@ export const getUser = async (nickname: string): Promise<UserPublicResponse> => 
   const response = await axios.get(`http://localhost:8080/api/users/${nickname}`);
   return response.data;
 };
+
+export const getPdfExport = async (id: string): Promise<any> => {
+  const response = await axios.get(`http://localhost:8080/api/users/${id}/export`);
+  return response.data;
+};

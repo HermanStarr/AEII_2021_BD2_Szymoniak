@@ -7,7 +7,7 @@ import ImagesGrid from "./images/ImagesGrid";
 import {UserContext} from "../App";
 import {getImagesWithCriteria} from "../actions/images";
 import {RouteComponentProps} from "react-router";
-import {getUser} from "../actions/user";
+import {getPdfExport, getUser} from "../actions/user";
 import KeyboardReturnIcon from "@material-ui/icons/KeyboardReturn";
 import ChangeIconDialog from "./ChangeIconDialog";
 
@@ -107,6 +107,16 @@ export const Account = (props: Props) => {
               </Button>
             </Grid>
           }
+          <Grid item xs={12}>
+            <Button
+              fullWidth
+              variant="contained"
+              color="primary"
+              onClick={() => getPdfExport(user?.id.toString()).then(()=>{})}
+            >
+              Download statistics
+            </Button>
+          </Grid>
           <Grid item xs={12}>
             <ImagesGrid
               tiles={userImages}

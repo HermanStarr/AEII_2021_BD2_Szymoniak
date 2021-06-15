@@ -13,5 +13,6 @@ public interface ImageRepository extends
         JpaSpecificationExecutor<ImageEntity> {
     public List<ImageEntity> getAllBySize(Integer size);
     public ImageEntity getById(Long id);
+    List<ImageEntity> findAllByOwner(UserEntity user);
 
 }
