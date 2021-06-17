@@ -57,7 +57,7 @@
     ]
   },
   "devDependencies": {
-    "@material-ui/lab": "^5.0.0-alpha.36",
+    "@material-ui/lab": "^4.0.0-alpha.58",
     "react-image-resizer": "^1.3.0",
     "react-images": "^1.2.0-beta.7",
     "react-photo-gallery": "^8.0.0"
