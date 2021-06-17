@@ -7,7 +7,8 @@ import java.util.Map;
 public class CategorySpecification extends MappedSpecificationWithCriteria<CategoryEntity> {
     private static final Map<String, FieldInfo> map = fieldMap(
             field("id", "id"),
-            field("name", "name")
+            field("name", "name"),
+            field("backup", "backup")
     );
 
     @Override

@@ -21,6 +21,7 @@ import {getImagesWithCriteria} from "../../actions/images";
 import AddImage from "./AddImageDialog";
 import {getCategories, getTags} from "../../actions/tagsAndCategories";
 import {UserContext} from "../../App";
+import {toast} from "react-toastify";
 
 const Images = () => {
   const [categorySearchCriteria, setCategorySearchCriteria] = useState<string>("");
@@ -34,49 +35,82 @@ const Images = () => {
   const [pageSize, setPageSize] = useState<number>(9);
   const [pageNumber, setPageNumber] = useState<number>(0);
   const [searchType, setSearchType] = useState<'AND' | 'OR'>('OR');
+  const [isLoading, setLoading] = useState<boolean>(false);
   const classes = useStyles();
   const info = useContext(UserContext);
 
   const onSearch = () => {
+    setLoading(true);
     let query = `sortOrder=DESC&sortBy=creationDate&pageSize=${pageSize}&pageNumber=${pageNumber}`
       + `&searchType=${searchType}&search=${tagSearchCriteria}${categorySearchCriteria}${searchName},`;
     console.log(query);
     getImagesWithCriteria(query).then(response => {
       setImages(response);
+    }).catch(error => {
+      toast.error("Error detected: " +  error.message)
+    }).finally(() => {
+      setLoading(false);
     });
   }
 
   useEffect( () => {
+    setLoading(true);
     getImagesWithCriteria('sortOrder=DESC&sortBy=creationDate&pageSize=9&pageNumber=0').then(response => {
       setImages(response);
+    }).catch(error => {
+      toast.error("Error detected: " +  error.message)
+    }).finally(() => {
+      setLoading(false);
     });
   }, []);
 
   useEffect(() => {
+    setLoading(true);
     getImagesWithCriteria(`sortOrder=DESC&sortBy=creationDate&pageSize=${pageSize}&pageNumber=0`
       + `&searchType=${searchType}&search=${tagSearchCriteria}${categorySearchCriteria}${searchName},`).then(response => {
         setImages(response);
+    }).catch(error => {
+      toast.error("Error detected: " +  error.message)
+    }).finally(() => {
+      setLoading(false);
     });
-  }, [pageSize])
+  }, [pageSize]);
 
   useEffect(() => {
+    setLoading(true);
     getImagesWithCriteria(`sortOrder=DESC&sortBy=creationDate&pageSize=${pageSize}&pageNumber=${pageNumber}`
       + `&searchType=${searchType}&search=${tagSearchCriteria}${categorySearchCriteria}${searchName},`).then(response => {
         setImages(response);
+    }).catch(error => {
+      toast.error("Error detected: " +  error.message)
+    }).finally(() => {
+      setLoading(false);
     });
-  }, [pageNumber])
+  }, [pageNumber]);
 
 
   useEffect(() => {
+    setLoading(true);
     getCategories('').then(response => {
       setCategories(response);
-    })
-  }, [])
+    }).catch(error => {
+      toast.error("Error detected: " +  error.message)
+    }).finally(() => {
+      setLoading(false);
+    });
+  }, []);
+
   useEffect(() => {
+    setLoading(true);
     getTags('').then(response => {
       setTags(response);
-    })
-  }, [])
+    }).catch(error => {
+      toast.error("Error detected: " +  error.message)
+    }).finally(() => {
+      setLoading(false);
+    });
+  }, []);
+
 
   return (
     <>
@@ -178,6 +212,7 @@ const Images = () => {
             setAddImageDialogOpened(true);
           }}
           pageSize={pageSize}
+          isLoading={isLoading}
         />
       </Container>
       <AddImage
