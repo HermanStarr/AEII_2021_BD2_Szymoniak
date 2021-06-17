@@ -23,9 +23,6 @@ public class CategoryEntity {
     @Column(name="icon")
     private byte[] icon;
 
-    @Column(name="backup")
-    private Boolean backup;
-
     @ManyToMany(mappedBy = "categories")
     private Set<ImageEntity> images;
 
@@ -45,30 +42,6 @@ public class CategoryEntity {
         this.name = name;
     }
 
-    public Set<ImageEntity> getImages() {
-        return images;
-    }
-
-    public void setImages(Set<ImageEntity> images) {
-        this.images = images;
-    }
-
-    public byte[] getIcon() {
-        return icon;
-    }
-
-    public void setIcon(byte[] icon) {
-        this.icon = icon;
-    }
-
-    public Boolean getBackup() {
-        return backup;
-    }
-
-    public void setBackup(Boolean backup) {
-        this.backup = backup;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -84,5 +57,21 @@ public class CategoryEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id, name);
+    }
+
+    public Set<ImageEntity> getImages() {
+        return images;
+    }
+
+    public void setImages(Set<ImageEntity> images) {
+        this.images = images;
+    }
+
+    public byte[] getIcon() {
+        return icon;
+    }
+
+    public void setIcon(byte[] icon) {
+        this.icon = icon;
     }
 }

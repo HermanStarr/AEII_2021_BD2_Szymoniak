@@ -9,5 +9,7 @@ import java.util.Optional;
 public interface CategoryRepository extends
         CrudRepository<CategoryEntity, Long>,
         JpaSpecificationExecutor<CategoryEntity> {
+
+    boolean existsByName(String name);
     Optional<CategoryEntity> findByName(String name);
 }

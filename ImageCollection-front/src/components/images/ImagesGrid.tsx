@@ -11,7 +11,6 @@ import {deleteImage} from "../../actions/images";
 import {toast} from "react-toastify";
 import {withRouter, RouteComponentProps} from "react-router-dom";
 import {CustomPagination} from "../../shared/CustomPagination";
-import {CircularProgress} from "@material-ui/core";
 
 
 type Props = {
@@ -20,7 +19,6 @@ type Props = {
   onPageSizeChange: (value: number) => void;
   onImageEdit: (image: ImageResponse) => void;
   pageSize: number;
-  isLoading?: boolean;
 } & RouteComponentProps
 
 export const ImagesGrid = (props: Props) => {
@@ -30,35 +28,32 @@ export const ImagesGrid = (props: Props) => {
 
   return (
     <>
-      {props.isLoading ? <CircularProgress /> : (
-        <>
-          <GridList spacing={10} className={classes.gridList} cols={3}>
-            {props.tiles.items.map((tile) => (
-              <GridListTile
-                key={tile.id}
-                cols={1}
-                rows={2}
-                onClick={() => {
-                  setImageId(tile.id);
-                  setDialogOpen(true);
-                }}>
-                <img src={`data:image/jpeg;base64,${tile.thumb}`} alt={tile.name}/>
-                <GridListTileBar
-                  title={tile.name}
-                  titlePosition="bottom"
-                  actionIcon={
-                    <IconButton aria-label={`star ${tile.name}`} className={classes.icon}>
-                      <StarBorderIcon />
-                    </IconButton>
-                  }
-                  actionPosition="left"
-                  className={classes.titleBar}
-                />
-              </GridListTile>
-            ))}
-          </GridList>
-        </>
-      )}
+      <GridList spacing={10} className={classes.gridList} cols={3}>
+        {props.tiles.items.map((tile) => (
+          <GridListTile
+
+            key={tile.id}
+            cols={1}
+            rows={2}
+            onClick={() => {
+              setImageId(tile.id);
+              setDialogOpen(true);
+            }}>
+            <img src={`data:image/jpeg;base64,${tile.thumb}`} alt={tile.name}/>
+            <GridListTileBar
+              title={tile.name}
+              titlePosition="bottom"
+              actionIcon={
+                <IconButton aria-label={`star ${tile.name}`} className={classes.icon}>
+                  <StarBorderIcon />
+                </IconButton>
+              }
+              actionPosition="left"
+              className={classes.titleBar}
+            />
+          </GridListTile>
+        ))}
+      </GridList>
       <CustomPagination
         onPageChange={props.onPageChange}
         onPageSizeChange={props.onPageSizeChange}
