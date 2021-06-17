@@ -59,6 +59,7 @@ export interface UserPublicResponse {
 export interface CategoryDTO {
     id: number | null;
     name: string;
+    backup: boolean;
 }
 
 export interface TagResponse{

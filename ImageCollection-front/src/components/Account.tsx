@@ -10,6 +10,8 @@ import {RouteComponentProps} from "react-router";
 import {getUser} from "../actions/user";
 import KeyboardReturnIcon from "@material-ui/icons/KeyboardReturn";
 import ChangeIconDialog from "./ChangeIconDialog";
+import {toast} from "react-toastify";
+import {PROFILES} from "../shared/Routes";
 
 type Params = { nickname: string }
 type Props = RouteComponentProps<Params> & {
@@ -18,6 +20,7 @@ type Props = RouteComponentProps<Params> & {
 
 export const Account = (props: Props) => {
   const [isLoading, setLoading] = useState<boolean>(false);
+  const [isGridLoading, setGridLoading] = useState<boolean>(false);
   const [isDialogOpen, setDialogOpen] = useState<boolean>(false);
   const [userImages, setUserImages] = useState<PaginatedResult<ImageThumbResponse>>({items: [], elementCount: 0});
   const [user, setUser] = useState<UserPublicResponse | null>(null);
@@ -33,16 +36,23 @@ export const Account = (props: Props) => {
     setLoading(true);
     getUser(props.match.params.nickname)
       .then(response => setUser(response))
-      .catch(() => setUser(null))
-      .then(() => setLoading(false));
+      .catch(error => {
+        setUser(null);
+        toast.error("Error detected: " +  error.message);
+        props.history.push(PROFILES);
+      })
+      .finally(() => setLoading(false));
   }, [props.match.params.nickname])
 
   useEffect(() => {
     if (user !== null) {
+      setGridLoading(true);
       let query = `sortOrder=DESC&sortBy=creationDate&pageSize=${pageSize}&pageNumber=${pageNumber}&search=ownerId%3D${user.id}`;
       getImagesWithCriteria(query).then(response => {
         setUserImages(response);
-      })
+      }).catch(
+
+      ).finally(() => setGridLoading(false))
     }
   }, [user, pageSize, pageNumber])
 
@@ -50,11 +60,7 @@ export const Account = (props: Props) => {
     props.onRefreshToken(refreshToken);
   }, [refreshToken])
 
-  if (isLoading) {
-    return <></>;
-  }
-
-  if (user === null) {
+  if (user === null || isLoading) {
     return <></>
   }
 
@@ -120,6 +126,7 @@ export const Account = (props: Props) => {
               onPageSizeChange={(value) => setPageSize(value)}
               onImageEdit={image => (image)}
               pageSize={pageSize}
+              isLoading={isGridLoading}
             />
           </Grid>
         </Grid>

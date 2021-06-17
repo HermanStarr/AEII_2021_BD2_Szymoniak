@@ -1,7 +1,6 @@
 package pl.polsl.dsa.imagecollection.service;
 
 import com.azure.storage.blob.BlobClientBuilder;
-import com.azure.storage.blob.models.BlobProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.polsl.dsa.imagecollection.model.ImageEntity;
