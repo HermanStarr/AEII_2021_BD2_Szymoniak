@@ -93,30 +93,12 @@ public class ImageService {
         }
         image.setOwner(user);
         imageRepository.save(image);
-        if (image.getCategories().stream().anyMatch(CategoryEntity::getBackup)) {
+        image.getCategories().forEach(category->{if (category.getName().equalsIgnoreCase("backup")){
             azureBlobAdapterService.upload(image);
-        }
+        }});
+
     }
 
-    @Transactional
-    public void manageBackedUpImagesAfterCategoryChange(Long categoryId, Boolean backupState) {
-        imageRepository.findAllByCategoryId(categoryId).forEach(image -> {
-            if (backupState) {
-                if (image.getCategories().stream().noneMatch(category ->
-                        category.getBackup().equals(true))) {
-                    azureBlobAdapterService.upload(image);
-                }
-            } else {
-                if (image.getCategories().stream().noneMatch(category ->
-                        category.getBackup().equals(true)
-                        && !category.getId().equals(categoryId))) {
-                    azureBlobAdapterService.deleteFile(image, image.getName(), image.getCreationDate());
-                }
-            }
-        });
-    }
-
-    @Transactional
     public void editImage(ImageRequest imageRequest, Long id, String nickname) {
         UserEntity user = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "nickname", nickname));
@@ -166,24 +148,24 @@ public class ImageService {
         imageRepository.save(image);
         Boolean doBackup = false;
         for(CategoryDTO category : imageRequest.getCategories()) {
-            if (category.getBackup()) {
+            if (category.getName().equals("backup")) {
                 doBackup = true;
                 break;
             }
         }
-        if (doBackup && !wasBackup){
-            azureBlobAdapterService.upload(image);
-        }
-        else if (!doBackup && wasBackup && !nameChanged){
-            azureBlobAdapterService.deleteFile(image, image.getName(), oldDate);
-        }
-        else if (!doBackup && wasBackup && nameChanged) {
-            azureBlobAdapterService.deleteFile(image, oldName, oldDate);
-        }
-        else if (doBackup && nameChanged){
-            azureBlobAdapterService.deleteFile(image, oldName, oldDate);
-            azureBlobAdapterService.upload(image);
-        }
+            if (doBackup && !wasBackup){
+                azureBlobAdapterService.upload(image);
+            }
+            else if (!doBackup && wasBackup && !nameChanged){
+                azureBlobAdapterService.deleteFile(image, image.getName(), oldDate);
+            }
+            else if (!doBackup && wasBackup && nameChanged) {
+                azureBlobAdapterService.deleteFile(image, oldName, oldDate);
+            }
+            else if (doBackup && nameChanged){
+                azureBlobAdapterService.deleteFile(image, oldName, oldDate);
+                azureBlobAdapterService.upload(image);
+            }
     }
 
     @Transactional(readOnly = true)

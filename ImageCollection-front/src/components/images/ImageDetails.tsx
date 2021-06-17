@@ -171,7 +171,11 @@ export const ImageDetails = (props: Props) => {
             </Grid>
             <Grid item>
               <WhiteTextTypography gutterBottom variant="h5">
-                {props.image.tags.map(tag => tag.name).join(' ')}
+                {props.image.tags.map(tag => (
+                  <>
+                    <a target="_blank" href="https://www.youtube.com/watch?v=qrxv0JNVtgY">{tag.name}</a>{' '}
+                  </>
+                ))}
               </WhiteTextTypography>
             </Grid>
           </Grid>
