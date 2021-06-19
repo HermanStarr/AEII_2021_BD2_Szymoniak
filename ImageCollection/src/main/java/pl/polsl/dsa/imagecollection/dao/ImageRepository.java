@@ -14,5 +14,5 @@ public interface ImageRepository extends
     public List<ImageEntity> getAllBySize(Integer size);
     public ImageEntity getById(Long id);
     List<ImageEntity> findAllByOwner(UserEntity user);
-
+    List<ImageEntity> findAllByOriginalImageAndOwner(ImageEntity image, UserEntity user);
 }

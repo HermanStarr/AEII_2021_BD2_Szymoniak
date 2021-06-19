@@ -93,6 +93,11 @@
         <field name="size" class="java.lang.String"/>
     </subDataset>
     <parameter name="PhotoCollection" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+    <parameter name="Username" class="java.lang.String"/>
+    <parameter name="email" class="java.lang.String"/>
+    <parameter name="isAdmin" class="java.lang.String"/>
+    <parameter name="creationDate" class="java.lang.String"/>
+    <parameter name="imagesNumber" class="java.lang.String"/>
     <queryString>
         <![CDATA[]]>
     </queryString>
@@ -100,31 +105,68 @@
         <band splitType="Stretch"/>
     </background>
     <title>
-        <band height="79" splitType="Stretch"/>
+        <band height="95" splitType="Stretch">
+            <staticText>
+                <reportElement x="0" y="0" width="100" height="20" uuid="9fa36e7c-167b-4c27-a2f5-c465309f074f"/>
+                <text><![CDATA[Username:]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="100" y="0" width="100" height="20" uuid="281067f3-9f52-4b9b-ba08-80d95633b89b"/>
+                <textFieldExpression><![CDATA[$P{Username}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="0" y="20" width="100" height="20" uuid="7ed5bd5f-dbf1-4226-b96d-ec679f6d2043"/>
+                <text><![CDATA[E-mail:]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="0" y="40" width="100" height="20" uuid="5920977a-0d05-4cc1-a71a-ed68beee76a1"/>
+                <text><![CDATA[isAdmin:]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="100" y="20" width="100" height="20" uuid="9873fea3-fd1b-45c2-aa84-987cd9ac2081"/>
+                <textFieldExpression><![CDATA[$P{email}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="100" y="40" width="100" height="20" uuid="eb331034-3b03-4e9b-ab4a-dbac041794a2"/>
+                <textFieldExpression><![CDATA[$P{isAdmin}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="0" y="60" width="100" height="20" uuid="27dc1682-d130-45a4-8069-e11fab9fa796"/>
+                <text><![CDATA[Creation Date:]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="100" y="60" width="100" height="20" uuid="f04b1554-a908-4cb9-bb30-489ae28cec5b"/>
+                <textFieldExpression><![CDATA[$P{creationDate}]]></textFieldExpression>
+            </textField>
+        </band>
     </title>
-    <pageHeader>
-        <band height="35" splitType="Stretch"/>
-    </pageHeader>
     <columnHeader>
-        <band height="61" splitType="Stretch"/>
+        <band height="30" splitType="Stretch">
+            <staticText>
+                <reportElement x="0" y="0" width="110" height="30" uuid="2c26cbfa-cce1-4e18-98f6-da916a36b293"/>
+                <text><![CDATA[Number of user images:]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="110" y="0" width="100" height="30" uuid="40cdf983-70e8-40ad-9fad-c742aa4f5bad"/>
+                <textFieldExpression><![CDATA[$P{imagesNumber}]]></textFieldExpression>
+            </textField>
+        </band>
     </columnHeader>
     <detail>
         <band height="250" splitType="Stretch">
             <componentElement>
-                <reportElement x="80" y="20" width="400" height="200" uuid="fe84b223-02b2-4b4a-978c-19dfa7649ac2">
+                <reportElement x="80" y="20" width="400" height="60" uuid="fe84b223-02b2-4b4a-978c-19dfa7649ac2">
                     <property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
                     <property name="com.jaspersoft.studio.table.style.table_header" value="Table 2_TH"/>
                     <property name="com.jaspersoft.studio.table.style.column_header" value="Table 2_CH"/>
                     <property name="com.jaspersoft.studio.table.style.detail" value="Table 2_TD"/>
                 </reportElement>
-                <jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+                <jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="AllSectionsNoDetail">
                     <datasetRun subDataset="imageList" uuid="9249b816-5c14-4108-b856-89c0afc03ea0">
                         <dataSourceExpression><![CDATA[$P{PhotoCollection}]]></dataSourceExpression>
                     </datasetRun>
                     <jr:column width="100" uuid="61de2ea8-61d9-4112-9d97-601d298e6600">
                         <property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
-                        <jr:tableHeader style="Table 2_TH" height="30" rowSpan="1"/>
-                        <jr:tableFooter style="Table 2_TH" height="30" rowSpan="1"/>
                         <jr:columnHeader style="Table 2_CH" height="30" rowSpan="1">
                             <staticText>
                                 <reportElement x="0" y="0" width="100" height="30" uuid="477bfc51-cd65-464f-ab24-34c5361cee50"/>
@@ -132,7 +174,6 @@
                                 <text><![CDATA[Image Name]]></text>
                             </staticText>
                         </jr:columnHeader>
-                        <jr:columnFooter style="Table 2_CH" height="30" rowSpan="1"/>
                         <jr:detailCell style="Table 2_TD" height="30">
                             <textField>
                                 <reportElement x="0" y="0" width="100" height="30" uuid="46ba6e55-c38a-4fcd-8434-cb4dcacf6ae6"/>
@@ -143,8 +184,6 @@
                     </jr:column>
                     <jr:column width="100" uuid="33737073-0708-4fcb-8ebf-4e5d384840df">
                         <property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
-                        <jr:tableHeader style="Table 2_TH" height="30" rowSpan="1"/>
-                        <jr:tableFooter style="Table 2_TH" height="30" rowSpan="1"/>
                         <jr:columnHeader style="Table 2_CH" height="30" rowSpan="1">
                             <staticText>
                                 <reportElement x="0" y="0" width="100" height="30" uuid="1c98c97b-ac5f-45ad-934b-4cf83c08ef32"/>
@@ -152,7 +191,6 @@
                                 <text><![CDATA[Categories]]></text>
                             </staticText>
                         </jr:columnHeader>
-                        <jr:columnFooter style="Table 2_CH" height="30" rowSpan="1"/>
                         <jr:detailCell style="Table 2_TD" height="30">
                             <textField>
                                 <reportElement x="0" y="0" width="100" height="30" uuid="d197df5f-162f-49d9-a559-3af1cc9c34ad"/>
@@ -163,8 +201,6 @@
                     </jr:column>
                     <jr:column width="100" uuid="9cf76b5e-f2a3-43a4-ba08-7bfeb408b315">
                         <property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
-                        <jr:tableHeader style="Table 2_TH" height="30" rowSpan="1"/>
-                        <jr:tableFooter style="Table 2_TH" height="30" rowSpan="1"/>
                         <jr:columnHeader style="Table 2_CH" height="30" rowSpan="1">
                             <staticText>
                                 <reportElement x="0" y="0" width="100" height="30" uuid="67ae1fa7-fdba-4958-b833-ba89884668ca"/>
@@ -172,7 +208,6 @@
                                 <text><![CDATA[Tags]]></text>
                             </staticText>
                         </jr:columnHeader>
-                        <jr:columnFooter style="Table 2_CH" height="30" rowSpan="1"/>
                         <jr:detailCell style="Table 2_TD" height="30">
                             <textField>
                                 <reportElement x="0" y="0" width="100" height="30" uuid="24201fb4-426c-44fe-8796-d31794a3af1b"/>
@@ -183,8 +218,6 @@
                     </jr:column>
                     <jr:column width="100" uuid="651f45d8-3549-4494-840d-4a218617c7e6">
                         <property name="com.jaspersoft.studio.components.table.model.column.name" value="Column4"/>
-                        <jr:tableHeader style="Table 2_TH" height="30" rowSpan="1"/>
-                        <jr:tableFooter style="Table 2_TH" height="30" rowSpan="1"/>
                         <jr:columnHeader style="Table 2_CH" height="30" rowSpan="1">
                             <staticText>
                                 <reportElement x="0" y="0" width="100" height="30" uuid="bd9df422-f318-4680-aed4-44c8e216c41e"/>
@@ -192,7 +225,6 @@
                                 <text><![CDATA[Size]]></text>
                             </staticText>
                         </jr:columnHeader>
-                        <jr:columnFooter style="Table 2_CH" height="30" rowSpan="1"/>
                         <jr:detailCell style="Table 2_TD" height="30">
                             <textField>
                                 <reportElement x="0" y="0" width="100" height="30" uuid="68f509bf-56ae-4b1d-80bc-b67866cd734a"/>

@@ -112,7 +112,7 @@ export const Account = (props: Props) => {
               fullWidth
               variant="contained"
               color="primary"
-              onClick={() => getPdfExport(user?.id.toString()).then(()=>{})}
+              onClick={() => getPdfExport(user?.id.toString(), "statistics")}
             >
               Download statistics
             </Button>

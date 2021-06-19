@@ -2,6 +2,7 @@ package pl.polsl.dsa.imagecollection.service;
 
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import org.hibernate.mapping.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.InputStreamResource;
@@ -30,11 +31,9 @@ import pl.polsl.dsa.imagecollection.specification.SearchCriteria;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -156,7 +155,8 @@ public class UserService {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(
             () -> new ResourceNotFoundException("User", "id", userId));
 
-        List<ImageEntity> imageEntityList = imageRepository.findAllByOwner(userEntity);
+       List<ImageEntity> imageEntityList = imageRepository.findAllByOwner(userEntity);
+
 
 
         //Generowanie statystyk uzytkonika
@@ -177,16 +177,33 @@ public class UserService {
         UserEntity user = userRepository.findById(userId)
             .orElseThrow(() -> new ResourceNotFoundException("Nie użytkownika o tym id"));
 
-//        parameters.put("userName", user.getNickname());
-//        parameters.put("date", LocalDateTime.now().toString());
+        List<ImageEntity> image = imageRepository.findAllByOwner(user);
+
+        Integer size = image.size();
+
+        parameters.put("Username", user.getNickname());
+        parameters.put("email", user.getEmail());
+        parameters.put("isAdmin", user.getAdmin().toString());
+        parameters.put("creationDate", LocalDate.now().toString());
+        parameters.put("imagesNumber", size.toString());
+
+        List<String> linkedWords = new ArrayList<>();
+        linkedWords.add("lalal");
+
 
         //Tabela 1 - Lista zdjec uzytkownika
         parameters.put("PhotoCollection",
-            new JRBeanCollectionDataSource(imageEntities
+            new JRBeanCollectionDataSource(
+              imageEntities
                 .stream()
                 .map(ImageDataToPrint::fromEntity)
                 .collect(Collectors.toList())
             ));
+
+        List<?> x = imageEntities
+          .stream()
+          .map(ImageDataToPrint::fromEntity)
+          .collect(Collectors.toList());
 
         return parameters;
     }

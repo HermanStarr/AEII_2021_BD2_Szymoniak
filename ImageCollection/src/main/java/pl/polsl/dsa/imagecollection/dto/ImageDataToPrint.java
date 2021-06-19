@@ -1,12 +1,14 @@
 package pl.polsl.dsa.imagecollection.dto;
 
 import pl.polsl.dsa.imagecollection.model.ImageEntity;
+import java.util.stream.Collectors;
 
 public class ImageDataToPrint {
     private String name;
     private String size;
     private String categories;
     private String tags;
+
 
     public String getName() {
         return name;
@@ -44,9 +46,9 @@ public class ImageDataToPrint {
         ImageDataToPrint dto = new ImageDataToPrint();
 
         dto.setName(entity.getName());
-        dto.setCategories(entity.getCategories().toString());
+        dto.setCategories(entity.getCategories().stream().map(CategoryResponse::fromEntity).map(CategoryResponse::getName).collect(Collectors.joining(", ")));
+        dto.setTags(entity.getTags().stream().map(TagResponse::fromEntity).map(TagResponse::getName).collect(Collectors.joining(", ")));
         dto.setSize(entity.getSize().toString());
-        dto.setTags(entity.getTags().toString());
 
         return dto;
     }
