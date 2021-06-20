@@ -107,6 +107,8 @@ export const Account = (props: Props) => {
               </Button>
             </Grid>
           }
+          {
+            info.userInfo &&
           <Grid item xs={12}>
             <Button
               fullWidth
@@ -117,6 +119,7 @@ export const Account = (props: Props) => {
               Download statistics
             </Button>
           </Grid>
+          }
           <Grid item xs={12}>
             <ImagesGrid
               tiles={userImages}
