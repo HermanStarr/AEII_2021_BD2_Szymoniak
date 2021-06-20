@@ -14,6 +14,11 @@ import java.util.Set;
 public interface ImageRepository extends
         CrudRepository<ImageEntity, Long>,
         JpaSpecificationExecutor<ImageEntity> {
+
     @Query("select distinct i from ImageEntity i inner join i.categories c where c.id = :id")
     Set<ImageEntity> findAllByCategoryId(@Param("id") Long categoryId);
+
+    public List<ImageEntity> getAllBySize(Integer size);
+    public ImageEntity getById(Long id);
+    List<ImageEntity> findAllByOwner(UserEntity user);
 }
