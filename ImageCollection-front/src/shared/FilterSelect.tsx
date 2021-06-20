@@ -2,20 +2,26 @@ import Chip from "@material-ui/core/Chip";
 import Autocomplete, {createFilterOptions} from '@material-ui/lab/Autocomplete';
 import React from "react";
 import {createStyles, fade, makeStyles, Theme} from "@material-ui/core/styles";
-import {TextField} from "@material-ui/core";
+import {Avatar, Grid, TextField} from "@material-ui/core";
 import {FilterOptionsState} from "@material-ui/lab";
 
 type Props ={
-  options: {name: string, id: number | null, avatar?: React.ReactElement}[];
+  options: Option[];
   onChange: (value: string[] | any[]) => void;
   placeholder?: string;
   label?: string;
   freeSolo?: boolean;
-  values?: {name: string, id: number | null, avatar?: React.ReactElement}[];
+  values?: Option[];
   darkMode?: boolean;
   limitTags?: number;
   isFormik?: boolean;
 };
+
+type Option = {
+  name: string;
+  id: number | null;
+  backup?: boolean;
+}
 
 const _filterOptions = createFilterOptions();
 const filterOptions = (options: unknown[], state: FilterOptionsState<unknown>) => {
@@ -73,14 +79,29 @@ export const FilterSelect = (props: Props) => {
         limitTags={props.limitTags ?? 2}
         classes={{root: classes.inputRoot, input: classes.inputInput}}
         options={props.options}
-        getOptionLabel={(option) => (option as ({name: string, id: number, avatar?: React.ReactElement})).name}
+        getOptionLabel={(option) => (option as Option).name}
         filterOptions={filterOptions}
         freeSolo={props.freeSolo ?? true}
+        renderOption={option => (
+          <React.Fragment>
+            <Grid container spacing={2}>
+              <Grid item xs={11}>
+                {(option as Option).name}
+              </Grid>
+              {(option as Option).backup && (
+                <Grid>
+                  <Avatar
+                    src={'https://www.clipartmax.com/png/small/100-1001164_daily-automated-backups-backup-icon-png-white.png'}/>
+                </Grid>
+              )}
+            </Grid>
+          </React.Fragment>
+        )}
         renderTags={(value, getTagProps) =>
-          (value as ({name: string, id: number, avatar?: React.ReactElement})[])
-            .map((option: {name: string, id: number, avatar?: React.ReactElement}, index: number) => (
+          (value as Option[])
+            .map((option: Option, index: number) => (
               <Chip
-                avatar={option.avatar}
+                avatar={option.backup ? (<Avatar src={'https://www.clipartmax.com/png/small/100-1001164_daily-automated-backups-backup-icon-png-white.png'}/>) : undefined}
                 variant="outlined"
                 label={option.name}
                 style={{color: props.darkMode ? '#000000' : '#ffffff'}}
@@ -98,9 +119,9 @@ export const FilterSelect = (props: Props) => {
         )}
         onChange={(event, value) => {
           if (!props.isFormik) {
-            props.onChange((value as ({ name: string, id: number, avatar?: React.ReactElement })[]).map(val => val.id.toString()));
+            props.onChange((value as Option[]).map(val => val.id?.toString()));
           } else {
-            props.onChange((value as ({ name: string, id: number, avatar?: React.ReactElement })[]));
+            props.onChange((value as Option[]));
           }
         }}
       />

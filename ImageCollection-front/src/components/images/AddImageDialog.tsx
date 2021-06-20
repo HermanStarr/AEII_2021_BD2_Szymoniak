@@ -203,7 +203,7 @@ const AddImage: FC<Props & FormikProps<FormValues>> = (props) => {
             <Grid item xs={12}>
               <h4>Select categories</h4>
               <FilterSelect
-                options={categories.map(category => ({name: category.name, id: category.id!}))}
+                options={categories}
                 placeholder="Category"
                 onChange={(value) => props.setFieldValue('categories', value)}
                 values={props.values['categories']}
