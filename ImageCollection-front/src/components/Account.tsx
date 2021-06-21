@@ -120,7 +120,7 @@ export const Account = (props: Props) => {
             </Grid>
           }
           {
-            info.userInfo &&
+            info.userInfo?.id === user.id &&
           <Grid item xs={12}>
             <Button
               fullWidth

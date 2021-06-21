@@ -46,7 +46,7 @@ public class ImageDataToPrint {
         ImageDataToPrint dto = new ImageDataToPrint();
 
         dto.setName(entity.getName());
-        dto.setCategories(entity.getCategories().stream().map(CategoryResponse::fromEntity).map(CategoryResponse::getName).collect(Collectors.joining(", ")));
+        dto.setCategories(entity.getCategories().stream().map(CategoryDTO::fromEntity).map(CategoryDTO::getName).collect(Collectors.joining(", ")));
         dto.setTags(entity.getTags().stream().map(TagResponse::fromEntity).map(TagResponse::getName).collect(Collectors.joining(", ")));
         dto.setSize(entity.getSize().toString());
 
